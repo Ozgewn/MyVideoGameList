@@ -18,6 +18,7 @@ CREATE TABLE Videojuegos(
 	,DificultadMedia float NULL
 	,FechaDeLanzamiento DateTime Not NULL
 	,Generos varChar(50) Not NULL
+	,urlImagen varChar(200) Not NULL
 )
 CREATE TABLE ListaVideojuegos(
 	IdUsuario int Not NULL CONSTRAINT FK_Usuarios FOREIGN KEY REFERENCES Usuarios(Id)
@@ -103,17 +104,16 @@ IF @Count >= 1
 GO
 INSERT INTO Usuarios(Nickname, UserPassword) VALUES('Prueba123', 'Constrasenya123')
 INSERT INTO Usuarios(Nickname, UserPassword) VALUES('Prueba321', 'Constrasenya321')
-INSERT INTO Videojuegos(Nombre, Desarrollador, Distribuidores, Plataformas, FechaDeLanzamiento, Generos) VALUES('The Witcher 3', 'CD Projekt RED', 'Warner Bros, Namco Bandai Games', 'PC, XboxONE, Series X y Series Y, PS4, PS5, Nintendo Switch', '19-05-2015', 'ARPG')
 INSERT INTO ListaVideojuegos (IdUsuario, IdVideojuego, FechaDeComienzo, FechaDeFinalizacion, Nota, Dificultad) VALUES(1,1,CURRENT_TIMESTAMP, NULL, 9, 2)
 INSERT INTO ListaVideojuegos (IdUsuario, IdVideojuego, FechaDeComienzo, FechaDeFinalizacion, Nota, Dificultad) VALUES(2,1,CURRENT_TIMESTAMP, NULL, 4, 3)
 
-INSERT INTO Videojuegos(Nombre, Desarrollador, Distribuidores, Plataformas, FechaDeLanzamiento, Generos) VALUES
+INSERT INTO Videojuegos(Nombre, Desarrollador, Distribuidores, Plataformas, FechaDeLanzamiento, Generos, urlImagen) VALUES
+	('The Witcher 3', 'CD Projekt RED', 'Warner Bros, Namco Bandai Games', 'PC, XboxONE, Series X y Series Y, PS4, PS5, Nintendo Switch', '19-05-2015', 'ARPG'),
 	('Lost Ark', 'SmileGate RPG', 'SmileGate, Amazon Games', 'PC', '11-02-2022', 'MMORPG'),
 	('Red Dead Redemption 2', 'Rockstar Games', 'Rockstar Games', 'PC, PS4, PS5, Google Stadia, Xbox One, Xbox Series X y S', '26-10-2018', 'MMORPG'),
-	('The Legend of Zelda: Breath of the Wild', 'Nintendo EPD', 'Nintendo', 'Wii U, Nintendo Switch', '03-03-2017', 'Accion-Aventura, Rol'),
-	('Viva Piñata', 'Rare', 'Xbox Game Studios', 'Xbox 360, PC, Nintendo DS', '09-11-2006', 'Life Simulation'),
-	('Pokemon Legends: Arceus', 'Game Freak', 'The Pokemon Company, Nintendo', 'Nintendo Switch', '28-01-2022', 'RPG'),
-	('NieR: Automata', 'PlatinumGames', 'Square Enix', 'PS4, PC, Xbox One', '23-02-2017', 'Rol de Acción'),
-	('Undertale', 'Toby Fox', '8-4', 'PC, PS4, PSVita, Nintendo Switch, Xbox One, Series X y S', '15-09-2015', 'RPG, Puzzle'),
-	('Pokemon Legends: Arceus', 'Game Freak', 'The Pokemon Company, Nintendo', 'Nintendo Switch', '28-01-2022', 'RPG'),
-	('Pokemon Legends: Arceus', 'Game Freak', 'The Pokemon Company, Nintendo', 'Nintendo Switch', '28-01-2022', 'RPG')
+	('The Legend of Zelda: Breath of the Wild', 'Nintendo EPD', 'Nintendo', 'Wii U, Nintendo Switch', '03-03-2017', 'Accion-Aventura, Rol', ''),
+	('Viva Piñata', 'Rare', 'Xbox Game Studios', 'Xbox 360, PC, Nintendo DS', '09-11-2006', 'Life Simulation', 'https://m.media-amazon.com/images/I/81Vt4mfirVL._AC_SY500_.jpg'),
+	('Pokemon Legends: Arceus', 'Game Freak', 'The Pokemon Company, Nintendo', 'Nintendo Switch', '28-01-2022', 'RPG', 'https://m.media-amazon.com/images/I/81vaoG0k9CS._AC_SY500_.jpg'),
+	('NieR: Automata', 'PlatinumGames', 'Square Enix', 'PS4, PC, Xbox One', '23-02-2017', 'Rol de Acción', 'https://cdn.cloudflare.steamstatic.com/steam/apps/524220/header.jpg?t=1624266255'),
+	('Undertale', 'Toby Fox', '8-4', 'PC, PS4, PSVita, Nintendo Switch, Xbox One, Series X y S', '15-09-2015', 'RPG, Puzzle', 'https://cdn.cloudflare.steamstatic.com/steam/apps/391540/header.jpg?t=1579096091'),
+	('Death Stranding', 'Kojima Productions', 'Sony Interactive Entertainment', 'PC, PS4, PS5', '08-11-2019', 'Accion y exploracion', 'https://cdn.cloudflare.steamstatic.com/steam/apps/1190460/header.jpg?t=1636451066')
