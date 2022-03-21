@@ -10,7 +10,7 @@ CREATE TABLE Usuarios(
 )
 CREATE TABLE Videojuegos(
 	Id int IDENTITY(1,1) Not NULL CONSTRAINT PK_Videojuegos PRIMARY KEY
-	,Nombre varChar(35) Not NULL
+	,Nombre varChar(70) Not NULL
 	,Desarrollador varChar(50) Not NULL
 	,Distribuidores varChar(50) Not NULL
 	,Plataformas varChar(60) Not NULL
@@ -42,6 +42,7 @@ SELECT @Media = AVG(Nota) FROM ListaVideojuegos
 
 	UPDATE Videojuegos
 		SET NotaMedia = @Media FROM ListaVideojuegos AS LV
+		WHERE Id = @NuevoIdVideojuego
 GO
 CREATE OR ALTER TRIGGER Calcular_NotaMediaBorrado ON ListaVideojuegos AFTER DELETE AS
 --TRIGGER PARA CALCULAR LA NOTA MEDIA CADA VEZ QUE SE BORRE UN DATO EN LA LA TABLA DE LA LISTA DE VIDEOJUEGOS
@@ -78,6 +79,7 @@ SELECT @Media = AVG(Dificultad) FROM ListaVideojuegos
 
 	UPDATE Videojuegos
 		SET DificultadMedia = @Media FROM ListaVideojuegos AS LV
+		WHERE Id = @NuevoIdVideojuego
 GO
 CREATE OR ALTER TRIGGER Calcular_DificultadMediaBorrado ON ListaVideojuegos AFTER DELETE AS
 --TRIGGER PARA CALCULAR LA DIFICULTAD MEDIA CADA VEZ QUE SE BORRE UN DATO EN LA LA TABLA DE LA LISTA DE VIDEOJUEGOS
@@ -104,16 +106,20 @@ IF @Count >= 1
 GO
 INSERT INTO Usuarios(Nickname, UserPassword) VALUES('Prueba123', 'Constrasenya123')
 INSERT INTO Usuarios(Nickname, UserPassword) VALUES('Prueba321', 'Constrasenya321')
-INSERT INTO ListaVideojuegos (IdUsuario, IdVideojuego, FechaDeComienzo, FechaDeFinalizacion, Nota, Dificultad) VALUES(1,1,CURRENT_TIMESTAMP, NULL, 9, 2)
-INSERT INTO ListaVideojuegos (IdUsuario, IdVideojuego, FechaDeComienzo, FechaDeFinalizacion, Nota, Dificultad) VALUES(2,1,CURRENT_TIMESTAMP, NULL, 4, 3)
 
 INSERT INTO Videojuegos(Nombre, Desarrollador, Distribuidores, Plataformas, FechaDeLanzamiento, Generos, urlImagen) VALUES
-	('The Witcher 3', 'CD Projekt RED', 'Warner Bros, Namco Bandai Games', 'PC, XboxONE, Series X y Series Y, PS4, PS5, Nintendo Switch', '19-05-2015', 'ARPG'),
-	('Lost Ark', 'SmileGate RPG', 'SmileGate, Amazon Games', 'PC', '11-02-2022', 'MMORPG'),
-	('Red Dead Redemption 2', 'Rockstar Games', 'Rockstar Games', 'PC, PS4, PS5, Google Stadia, Xbox One, Xbox Series X y S', '26-10-2018', 'MMORPG'),
-	('The Legend of Zelda: Breath of the Wild', 'Nintendo EPD', 'Nintendo', 'Wii U, Nintendo Switch', '03-03-2017', 'Accion-Aventura, Rol', ''),
+	('The Witcher 3', 'CD Projekt RED', 'Warner Bros, Namco Bandai Games', 'PC, XboxONE, Series X y Series Y, PS4, PS5, Nintendo Switch', '19-05-2015', 'ARPG', 'https://images.ctfassets.net/umhrp0op95v1/7rn68TUGN1lZuQRQz1zqSY/f3da676f0ce14f07653cfc5a97aad211/la-key-600.jpg'),
+	('Lost Ark', 'SmileGate RPG', 'SmileGate, Amazon Games', 'PC', '11-02-2022', 'MMORPG', 'https://images.ctfassets.net/umhrp0op95v1/7rn68TUGN1lZuQRQz1zqSY/f3da676f0ce14f07653cfc5a97aad211/la-key-600.jpg'),
+	('Red Dead Redemption 2', 'Rockstar Games', 'Rockstar Games', 'PC, PS4, PS5, Google Stadia, Xbox One, Xbox Series X y S', '26-10-2018', 'MMORPG', 'https://s1.gaming-cdn.com/images/products/5679/orig/red-dead-redemption-2-pc-juego-rockstar-cover.jpg'),
+	('The Legend of Zelda: Breath of the Wild', 'Nintendo EPD', 'Nintendo', 'Wii U, Nintendo Switch', '03-03-2017', 'Accion-Aventura, Rol', 'https://media.vandal.net/m/43030/the-legend-of-zelda-breath-of-the-wild-201732131429_1.jpg'),
 	('Viva Piñata', 'Rare', 'Xbox Game Studios', 'Xbox 360, PC, Nintendo DS', '09-11-2006', 'Life Simulation', 'https://m.media-amazon.com/images/I/81Vt4mfirVL._AC_SY500_.jpg'),
 	('Pokemon Legends: Arceus', 'Game Freak', 'The Pokemon Company, Nintendo', 'Nintendo Switch', '28-01-2022', 'RPG', 'https://m.media-amazon.com/images/I/81vaoG0k9CS._AC_SY500_.jpg'),
 	('NieR: Automata', 'PlatinumGames', 'Square Enix', 'PS4, PC, Xbox One', '23-02-2017', 'Rol de Acción', 'https://cdn.cloudflare.steamstatic.com/steam/apps/524220/header.jpg?t=1624266255'),
 	('Undertale', 'Toby Fox', '8-4', 'PC, PS4, PSVita, Nintendo Switch, Xbox One, Series X y S', '15-09-2015', 'RPG, Puzzle', 'https://cdn.cloudflare.steamstatic.com/steam/apps/391540/header.jpg?t=1579096091'),
 	('Death Stranding', 'Kojima Productions', 'Sony Interactive Entertainment', 'PC, PS4, PS5', '08-11-2019', 'Accion y exploracion', 'https://cdn.cloudflare.steamstatic.com/steam/apps/1190460/header.jpg?t=1636451066')
+
+INSERT INTO ListaVideojuegos (IdUsuario, IdVideojuego, FechaDeComienzo, FechaDeFinalizacion, Nota, Dificultad) VALUES(1,1,CURRENT_TIMESTAMP, NULL, 9, 2)
+INSERT INTO ListaVideojuegos (IdUsuario, IdVideojuego, FechaDeComienzo, FechaDeFinalizacion, Nota, Dificultad) VALUES(2,1,CURRENT_TIMESTAMP, NULL, 4, 3)
+
+SELECT * FROM ListaVideojuegos
+SELECT * FROM Videojuegos
