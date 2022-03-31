@@ -117,38 +117,69 @@ IF @Count >= 1
 		SET DificultadMedia = @Media
 			WHERE Id = @AntiguoIdVideojuego
 GO
-CREATE OR ALTER TRIGGER Conteo_EstadosUsuario ON ListaVideojuegos AFTER INSERT AS
---TRIGGER PARA HACER EL CONTEO DE CUANTOS JUEGOS HAN JUGADO/PLANEAN JUGAR/ESTAN JUGANDO, ETC.
-DECLARE @prueba int
-DECLARE @antiguoIdUsuario int
-DECLARE @conteo int
 
-SELECT @prueba = Estado from inserted
-SELECT @antiguoIdUsuario = IdUsuario from inserted
-SELECT @conteo = COUNT(Estado) from inserted WHERE Estado = @prueba
-/*
-	Tengo una duda: Me funciona, pero al actualizar (porque antes el update tmbn usaba este trigger), 
-	el campo previo no se actualiza, esto se puede solucionar de 2 maneras:
-	1.- Haciendo un count del numero de videojuegosjugados, jugando, etc.
-	2.- De alguna manera, obteniendo los valores previos y restandole 1 al valor que se haya editado
-*/
+CREATE OR ALTER TRIGGER Conteo_EstadosUsuarioInsertar ON ListaVideojuegos AFTER INSERT AS
+--TRIGGER PARA HACER EL CONTEO DE CUANTOS JUEGOS HAN JUGADO/PLANEAN JUGAR/ESTAN JUGANDO, SOLO CUANDO INSERTAN EL REGISTRO ETC.
+DECLARE @nuevoEstado int
+DECLARE @antiguoEstado int
+DECLARE @nuevoIdUsuario int
+DECLARE @conteo int
+DECLARE @antiguoConteo int
+
+SELECT @nuevoEstado = Estado from inserted
+SELECT @antiguoEstado = Estado from deleted
+SELECT @nuevoIdUsuario = IdUsuario from inserted
+SELECT @conteo = COUNT(Estado) from ListaVideojuegos WHERE Estado = @nuevoEstado
+SELECT @antiguoConteo = COUNT(Estado) from ListaVideojuegos WHERE Estado = @antiguoEstado
+
 UPDATE Usuarios SET
-	VideojuegosJugados = (case when @prueba = 1 then @conteo else VideojuegosJugados end),
-	VideojuegosPlaneados = (case when @prueba = 2 then @conteo else VideojuegosPlaneados end),
-	VideojuegosDropeados = (case when @prueba = 3 then @conteo else VideojuegosDropeados end),
-	VideojuegosEnPausa = (case when @prueba = 4 then @conteo else VideojuegosEnPausa end),
-	VideojuegosJugando = (case when @prueba = 5 then @conteo else VideojuegosJugando end)
-WHERE Id = @antiguoIdUsuario
+	VideojuegosJugados = (case when @nuevoEstado = 1 then @conteo else VideojuegosJugados end),
+	VideojuegosPlaneados = (case when @nuevoEstado = 2 then @conteo else VideojuegosPlaneados end),
+	VideojuegosDropeados = (case when @nuevoEstado = 3 then @conteo else VideojuegosDropeados end),
+	VideojuegosEnPausa = (case when @nuevoEstado = 4 then @conteo else VideojuegosEnPausa end),
+	VideojuegosJugando = (case when @nuevoEstado = 5 then @conteo else VideojuegosJugando end)
+WHERE Id = @nuevoIdUsuario
 GO
 
-INSERT INTO ListaVideojuegos(IdUsuario, IdVideojuego, FechaDeComienzo, FechaDeFinalizacion, Nota, Dificultad, Estado)
-	VALUES(1,1, '11/02/2022', '30/03/2022', 9, 5, 1)
+CREATE OR ALTER TRIGGER Conteo_EstadosUsuarioActualizar ON ListaVideojuegos AFTER UPDATE AS
+--TRIGGER PARA HACER EL CONTEO DE CUANTOS JUEGOS HAN JUGADO/PLANEAN JUGAR/ESTAN JUGANDO, SOLO CUANDO ACTUALIZAN EL RE ETC.
+DECLARE @nuevoEstado int
+DECLARE @antiguoEstado int
+DECLARE @nuevoIdUsuario int
+DECLARE @conteo int
+DECLARE @antiguoConteo int
 
-UPDATE ListaVideojuegos SET Estado = 2 WHERE IdUsuario = 1
+SELECT @nuevoEstado = Estado from inserted
+SELECT @antiguoEstado = Estado from deleted
+SELECT @nuevoIdUsuario = IdUsuario from inserted
+SELECT @conteo = COUNT(Estado) from ListaVideojuegos WHERE Estado = @nuevoEstado
+SELECT @antiguoConteo = COUNT(Estado) from ListaVideojuegos WHERE Estado = @antiguoEstado
+
+UPDATE Usuarios SET
+	VideojuegosJugados = (case when @nuevoEstado = 1 then @conteo else @antiguoConteo end),
+	VideojuegosPlaneados = (case when @nuevoEstado = 2 then @conteo else @antiguoConteo end),
+	VideojuegosDropeados = (case when @nuevoEstado = 3 then @conteo else @antiguoConteo end),
+	VideojuegosEnPausa = (case when @nuevoEstado = 4 then @conteo else @antiguoConteo end),
+	VideojuegosJugando = (case when @nuevoEstado = 5 then @conteo else @antiguoConteo end)
+WHERE Id = @nuevoIdUsuario
+GO
+
+/*INSERT INTO ListaVideojuegos(IdUsuario, IdVideojuego, FechaDeComienzo, FechaDeFinalizacion, Nota, Dificultad, Estado)
+	VALUES(1,1, '11/02/2022', '30/03/2022', 9, 5, 1)
+	INSERT INTO ListaVideojuegos(IdUsuario, IdVideojuego, FechaDeComienzo, FechaDeFinalizacion, Nota, Dificultad, Estado)
+	VALUES(1,2, '11/02/2022', '30/03/2022', 9, 5, 1)
+	INSERT INTO ListaVideojuegos(IdUsuario, IdVideojuego, FechaDeComienzo, FechaDeFinalizacion, Nota, Dificultad, Estado)
+	VALUES(1,3, '11/02/2022', '30/03/2022', 9, 5, 1)
+
+UPDATE ListaVideojuegos SET Estado = 3 WHERE IdUsuario = 1
 
 SELECT * FROM Usuarios
 
-SELECT * FROM ListaVideojuegos
+DELETE FROM ListaVideojuegos WHERE IdUsuario = 1
+
+update Usuarios set VideojuegosJugados = 0, VideojuegosPlaneados = 0, VideojuegosDropeados = 0, VideojuegosEnPausa = 0, VideojuegosJugando =0
+
+SELECT * FROM ListaVideojuegos*/
 
 INSERT INTO Usuarios(Nickname, UserPassword, VideojuegosJugados, VideojuegosPlaneados, VideojuegosDropeados, VideojuegosEnPausa, VideojuegosJugando) VALUES('Prueba123', 'Constrasenya123', 0, 0, 0, 0, 0)
 INSERT INTO Usuarios(Nickname, UserPassword, VideojuegosJugados, VideojuegosPlaneados, VideojuegosDropeados, VideojuegosEnPausa, VideojuegosJugando) VALUES('Prueba321', 'Constrasenya321', 0, 0, 0, 0, 0)
