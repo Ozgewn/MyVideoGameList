@@ -12,8 +12,4 @@
     <ProjectReference Include="..\MVGL_Entidades\MVGL_Entidades.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Listados\" />
-  </ItemGroup>
-
 </Project>
