@@ -121,16 +121,12 @@ GO
 CREATE OR ALTER TRIGGER Conteo_EstadosUsuarioInsertar ON ListaVideojuegos AFTER INSERT AS
 --TRIGGER PARA HACER EL CONTEO DE CUANTOS JUEGOS HAN JUGADO/PLANEAN JUGAR/ESTAN JUGANDO, SOLO CUANDO INSERTAN EL REGISTRO ETC.
 DECLARE @nuevoEstado int
-DECLARE @antiguoEstado int
 DECLARE @nuevoIdUsuario int
 DECLARE @conteo int
-DECLARE @antiguoConteo int
 
 SELECT @nuevoEstado = Estado from inserted
-SELECT @antiguoEstado = Estado from deleted
 SELECT @nuevoIdUsuario = IdUsuario from inserted
 SELECT @conteo = COUNT(Estado) from ListaVideojuegos WHERE Estado = @nuevoEstado
-SELECT @antiguoConteo = COUNT(Estado) from ListaVideojuegos WHERE Estado = @antiguoEstado
 
 UPDATE Usuarios SET
 	VideojuegosJugados = (case when @nuevoEstado = 1 then @conteo else VideojuegosJugados end),
@@ -163,23 +159,6 @@ UPDATE Usuarios SET
 	VideojuegosJugando = (case when @nuevoEstado = 5 then @conteo else @antiguoConteo end)
 WHERE Id = @nuevoIdUsuario
 GO
-
-/*INSERT INTO ListaVideojuegos(IdUsuario, IdVideojuego, FechaDeComienzo, FechaDeFinalizacion, Nota, Dificultad, Estado)
-	VALUES(1,1, '11/02/2022', '30/03/2022', 9, 5, 1)
-	INSERT INTO ListaVideojuegos(IdUsuario, IdVideojuego, FechaDeComienzo, FechaDeFinalizacion, Nota, Dificultad, Estado)
-	VALUES(1,2, '11/02/2022', '30/03/2022', 9, 5, 1)
-	INSERT INTO ListaVideojuegos(IdUsuario, IdVideojuego, FechaDeComienzo, FechaDeFinalizacion, Nota, Dificultad, Estado)
-	VALUES(1,3, '11/02/2022', '30/03/2022', 9, 5, 1)
-
-UPDATE ListaVideojuegos SET Estado = 3 WHERE IdUsuario = 1
-
-SELECT * FROM Usuarios
-
-DELETE FROM ListaVideojuegos WHERE IdUsuario = 1
-
-update Usuarios set VideojuegosJugados = 0, VideojuegosPlaneados = 0, VideojuegosDropeados = 0, VideojuegosEnPausa = 0, VideojuegosJugando =0
-
-SELECT * FROM ListaVideojuegos*/
 
 INSERT INTO Usuarios(Nickname, UserPassword, VideojuegosJugados, VideojuegosPlaneados, VideojuegosDropeados, VideojuegosEnPausa, VideojuegosJugando) VALUES('Prueba123', 'Constrasenya123', 0, 0, 0, 0, 0)
 INSERT INTO Usuarios(Nickname, UserPassword, VideojuegosJugados, VideojuegosPlaneados, VideojuegosDropeados, VideojuegosEnPausa, VideojuegosJugando) VALUES('Prueba321', 'Constrasenya321', 0, 0, 0, 0, 0)
