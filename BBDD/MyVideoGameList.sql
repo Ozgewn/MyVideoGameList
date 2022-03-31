@@ -7,7 +7,13 @@ CREATE TABLE Usuarios(
 	Id int IDENTITY(1,1) Not NULL CONSTRAINT PK_Usuarios PRIMARY KEY
 	,Nickname varChar(15) Not NULL
 	,UserPassword varChar(20) Not NULL
+	,VideojuegosJugados int Not NULL
+	,VideojuegosPlaneados int Not NULL
+	,VideojuegosDropeados int Not NULL
+	,VideojuegosEnPausa int Not NULL
+	,VideojuegosJugando int Not NULL
 )
+GO
 CREATE TABLE Videojuegos(
 	Id int IDENTITY(1,1) Not NULL CONSTRAINT PK_Videojuegos PRIMARY KEY
 	,Nombre varChar(70) Not NULL
@@ -20,6 +26,12 @@ CREATE TABLE Videojuegos(
 	,Generos varChar(50) Not NULL
 	,urlImagen varChar(200) Not NULL
 )
+GO
+CREATE TABLE EstadosVideojuego(
+	Id int Not NULL CONSTRAINT PK_EstadosVideojuego PRIMARY KEY
+	,NombreEstado varChar(20)
+)
+GO
 CREATE TABLE ListaVideojuegos(
 	IdUsuario int Not NULL CONSTRAINT FK_Usuarios FOREIGN KEY REFERENCES Usuarios(Id)
 	,IdVideojuego int Not NULL CONSTRAINT FK_Videojuegos FOREIGN KEY REFERENCES Videojuegos(Id)
@@ -27,10 +39,11 @@ CREATE TABLE ListaVideojuegos(
 	,FechaDeFinalizacion DateTime NULL
 	,Nota float NULL
 	,Dificultad float NULL
+	,Estado int Not NULL CONSTRAINT FK_EstadosVideojuego FOREIGN KEY REFERENCES EstadosVideojuego(Id)
 	,CONSTRAINT PK_ListaVideojuegos PRIMARY KEY (IdUsuario,IdVideojuego)
 )
 GO
-CREATE OR ALTER TRIGGER Calcular_NotaMedia ON ListaVideojuegos AFTER INSERT AS
+CREATE OR ALTER TRIGGER Calcular_NotaMedia ON ListaVideojuegos AFTER INSERT, UPDATE AS
 --TRIGGER PARA CALCULAR LA NOTA MEDIA CADA VEZ QUE SE INSERTE UN DATO EN LA LA TABLA DE LA LISTA DE VIDEOJUEGOS
 DECLARE @Media FLOAT
 DECLARE @NuevoIdVideojuego INT
@@ -67,7 +80,7 @@ IF @Count >= 1
 		SET NotaMedia = @Media
 			WHERE Id = @AntiguoIdVideojuego
 GO
-CREATE OR ALTER TRIGGER Calcular_DificultadMedia ON ListaVideojuegos AFTER INSERT AS
+CREATE OR ALTER TRIGGER Calcular_DificultadMedia ON ListaVideojuegos AFTER INSERT, UPDATE AS
 --TRIGGER PARA CALCULAR LA DIFICULTAD MEDIA CADA VEZ QUE SE INSERTE UN DATO EN LA LA TABLA DE LA LISTA DE VIDEOJUEGOS
 DECLARE @Media FLOAT
 DECLARE @NuevoIdVideojuego INT
@@ -87,7 +100,7 @@ DECLARE @Media FLOAT
 DECLARE @AntiguoIdVideojuego INT
 DECLARE @Count INT
 
-SELECT @AntiguoIdVideojuego = IdVideojuego FROM deleted
+SELECT @AntiguoIdVideojuego = IdVideojuego FROM inserted
 
 SET @Count = (SELECT COUNT(*) FROM ListaVideojuegos
 	WHERE IdVideojuego = @AntiguoIdVideojuego)
@@ -104,8 +117,47 @@ IF @Count >= 1
 		SET DificultadMedia = @Media
 			WHERE Id = @AntiguoIdVideojuego
 GO
-INSERT INTO Usuarios(Nickname, UserPassword) VALUES('Prueba123', 'Constrasenya123')
-INSERT INTO Usuarios(Nickname, UserPassword) VALUES('Prueba321', 'Constrasenya321')
+CREATE OR ALTER TRIGGER Conteo_EstadosUsuario ON ListaVideojuegos AFTER INSERT AS
+--TRIGGER PARA HACER EL CONTEO DE CUANTOS JUEGOS HAN JUGADO/PLANEAN JUGAR/ESTAN JUGANDO, ETC.
+DECLARE @prueba int
+DECLARE @antiguoIdUsuario int
+DECLARE @conteo int
+
+SELECT @prueba = Estado from inserted
+SELECT @antiguoIdUsuario = IdUsuario from inserted
+SELECT @conteo = COUNT(Estado) from inserted WHERE Estado = @prueba
+/*
+	Tengo una duda: Me funciona, pero al actualizar (porque antes el update tmbn usaba este trigger), 
+	el campo previo no se actualiza, esto se puede solucionar de 2 maneras:
+	1.- Haciendo un count del numero de videojuegosjugados, jugando, etc.
+	2.- De alguna manera, obteniendo los valores previos y restandole 1 al valor que se haya editado
+*/
+UPDATE Usuarios SET
+	VideojuegosJugados = (case when @prueba = 1 then @conteo else VideojuegosJugados end),
+	VideojuegosPlaneados = (case when @prueba = 2 then @conteo else VideojuegosPlaneados end),
+	VideojuegosDropeados = (case when @prueba = 3 then @conteo else VideojuegosDropeados end),
+	VideojuegosEnPausa = (case when @prueba = 4 then @conteo else VideojuegosEnPausa end),
+	VideojuegosJugando = (case when @prueba = 5 then @conteo else VideojuegosJugando end)
+WHERE Id = @antiguoIdUsuario
+GO
+
+INSERT INTO ListaVideojuegos(IdUsuario, IdVideojuego, FechaDeComienzo, FechaDeFinalizacion, Nota, Dificultad, Estado)
+	VALUES(1,1, '11/02/2022', '30/03/2022', 9, 5, 1)
+
+UPDATE ListaVideojuegos SET Estado = 2 WHERE IdUsuario = 1
+
+SELECT * FROM Usuarios
+
+SELECT * FROM ListaVideojuegos
+
+INSERT INTO Usuarios(Nickname, UserPassword, VideojuegosJugados, VideojuegosPlaneados, VideojuegosDropeados, VideojuegosEnPausa, VideojuegosJugando) VALUES('Prueba123', 'Constrasenya123', 0, 0, 0, 0, 0)
+INSERT INTO Usuarios(Nickname, UserPassword, VideojuegosJugados, VideojuegosPlaneados, VideojuegosDropeados, VideojuegosEnPausa, VideojuegosJugando) VALUES('Prueba321', 'Constrasenya321', 0, 0, 0, 0, 0)
+INSERT INTO EstadosVideojuego(Id, NombreEstado) VALUES
+	(1, 'Jugado'),
+	(2, 'Planeado'),
+	(3, 'Dropeado'),
+	(4, 'En pausa'),
+	(5, 'Jugando')
 
 INSERT INTO Videojuegos(Nombre, Desarrollador, Distribuidores, Plataformas, FechaDeLanzamiento, Generos, urlImagen) VALUES
 	('The Witcher 3', 'CD Projekt RED', 'Warner Bros, Namco Bandai Games', 'PC, XboxONE, Series X y Series Y, PS4, PS5, Nintendo Switch', '19-05-2015', 'ARPG', 'https://images.ctfassets.net/umhrp0op95v1/7rn68TUGN1lZuQRQz1zqSY/f3da676f0ce14f07653cfc5a97aad211/la-key-600.jpg'),
@@ -117,9 +169,3 @@ INSERT INTO Videojuegos(Nombre, Desarrollador, Distribuidores, Plataformas, Fech
 	('NieR: Automata', 'PlatinumGames', 'Square Enix', 'PS4, PC, Xbox One', '23-02-2017', 'Rol de Acción', 'https://cdn.cloudflare.steamstatic.com/steam/apps/524220/header.jpg?t=1624266255'),
 	('Undertale', 'Toby Fox', '8-4', 'PC, PS4, PSVita, Nintendo Switch, Xbox One, Series X y S', '15-09-2015', 'RPG, Puzzle', 'https://cdn.cloudflare.steamstatic.com/steam/apps/391540/header.jpg?t=1579096091'),
 	('Death Stranding', 'Kojima Productions', 'Sony Interactive Entertainment', 'PC, PS4, PS5', '08-11-2019', 'Accion y exploracion', 'https://cdn.cloudflare.steamstatic.com/steam/apps/1190460/header.jpg?t=1636451066')
-
-INSERT INTO ListaVideojuegos (IdUsuario, IdVideojuego, FechaDeComienzo, FechaDeFinalizacion, Nota, Dificultad) VALUES(1,1,CURRENT_TIMESTAMP, NULL, 9, 2)
-INSERT INTO ListaVideojuegos (IdUsuario, IdVideojuego, FechaDeComienzo, FechaDeFinalizacion, Nota, Dificultad) VALUES(2,1,CURRENT_TIMESTAMP, NULL, 4, 3)
-
-SELECT * FROM ListaVideojuegos
-SELECT * FROM Videojuegos

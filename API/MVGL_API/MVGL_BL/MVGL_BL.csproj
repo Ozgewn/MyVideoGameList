@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MVGL_DAL\MVGL_DAL.csproj" />
+    <ProjectReference Include="..\MVGL_Entidades\MVGL_Entidades.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,31 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "f2516574-acaf-46fa-bfde-c23aa92a5170": {
+      "ProjectGuid": "f2516574-acaf-46fa-bfde-c23aa92a5170",
+      "DisplayName": "MVGL_API",
+      "ColorIndex": 0
+    },
+    "3ecd00ad-9202-411d-afa5-9659c07b6154": {
+      "ProjectGuid": "3ecd00ad-9202-411d-afa5-9659c07b6154",
+      "DisplayName": "MVGL_Entidades",
+      "ColorIndex": 1
+    },
+    "71afcd7d-673a-4730-9bf6-34c46fb58ab0": {
+      "ProjectGuid": "71afcd7d-673a-4730-9bf6-34c46fb58ab0",
+      "DisplayName": "MVGL_DAL",
+      "ColorIndex": 2
+    },
+    "78938d06-e764-49a7-8110-a41bf2a2cb66": {
+      "ProjectGuid": "78938d06-e764-49a7-8110-a41bf2a2cb66",
+      "DisplayName": "Solution Items",
+      "ColorIndex": 3
+    },
+    "bd7acc74-b559-49b0-97d5-27e8861c2286": {
+      "ProjectGuid": "bd7acc74-b559-49b0-97d5-27e8861c2286",
+      "DisplayName": "MVGL_BL",
+      "ColorIndex": 4
+    }
+  },
+  "NextColorIndex": 5
+}
