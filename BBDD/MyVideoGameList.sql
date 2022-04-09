@@ -12,6 +12,7 @@ CREATE TABLE Usuarios(
 	,VideojuegosDropeados int Not NULL
 	,VideojuegosEnPausa int Not NULL
 	,VideojuegosJugando int Not NULL
+	,esListaPrivada bit Not NULL DEFAULT 0
 )
 GO
 CREATE TABLE Videojuegos(
@@ -126,7 +127,7 @@ DECLARE @conteo int
 
 SELECT @nuevoEstado = Estado from inserted
 SELECT @nuevoIdUsuario = IdUsuario from inserted
-SELECT @conteo = COUNT(Estado) from ListaVideojuegos WHERE Estado = @nuevoEstado
+SELECT @conteo = COUNT(Estado) from ListaVideojuegos WHERE Estado = @nuevoEstado AND IdUsuario = @nuevoIdUsuario
 
 UPDATE Usuarios SET
 	VideojuegosJugados = (case when @nuevoEstado = 1 then @conteo else VideojuegosJugados end),
@@ -137,31 +138,46 @@ UPDATE Usuarios SET
 WHERE Id = @nuevoIdUsuario
 GO
 
+CREATE OR ALTER FUNCTION FN_GetConteoEstado (@Estado AS int, @IdUsuario AS int)
+RETURNS int
+AS
+	BEGIN
+		DECLARE @antiguoConteo int
+		SELECT @antiguoConteo = COUNT(Estado) from ListaVideojuegos WHERE Estado = @Estado AND IdUsuario = @IdUsuario
+		RETURN @antiguoConteo
+	END
+GO
+
 CREATE OR ALTER TRIGGER Conteo_EstadosUsuarioActualizar ON ListaVideojuegos AFTER UPDATE AS
 --TRIGGER PARA HACER EL CONTEO DE CUANTOS JUEGOS HAN JUGADO/PLANEAN JUGAR/ESTAN JUGANDO, SOLO CUANDO ACTUALIZAN EL RE ETC.
 DECLARE @nuevoEstado int
 DECLARE @antiguoEstado int
 DECLARE @nuevoIdUsuario int
 DECLARE @conteo int
-DECLARE @antiguoConteo int
 
 SELECT @nuevoEstado = Estado from inserted
 SELECT @antiguoEstado = Estado from deleted
 SELECT @nuevoIdUsuario = IdUsuario from inserted
-SELECT @conteo = COUNT(Estado) from ListaVideojuegos WHERE Estado = @nuevoEstado
-SELECT @antiguoConteo = COUNT(Estado) from ListaVideojuegos WHERE Estado = @antiguoEstado
+SELECT @conteo = dbo.FN_GetConteoEstado(@nuevoEstado, @nuevoIdUsuario)
 
+/*
+Podria hacer que en el set de cada campo se llamase a la funcion FN_GetConteoEstado, pero lo hago de esa manera con los case when para
+que en vez de llamar a la base de datos comprobando cada campo cada vez que se actualice algo, se llame a la base de datos solo para saber el conteo
+del estado anterior a la actualizacion, para lograr una mayor eficiencia
+*/
 UPDATE Usuarios SET
-	VideojuegosJugados = (case when @nuevoEstado = 1 then @conteo else @antiguoConteo end),
-	VideojuegosPlaneados = (case when @nuevoEstado = 2 then @conteo else @antiguoConteo end),
-	VideojuegosDropeados = (case when @nuevoEstado = 3 then @conteo else @antiguoConteo end),
-	VideojuegosEnPausa = (case when @nuevoEstado = 4 then @conteo else @antiguoConteo end),
-	VideojuegosJugando = (case when @nuevoEstado = 5 then @conteo else @antiguoConteo end)
+	VideojuegosJugados = (case when @nuevoEstado = 1 then @conteo when @antiguoEstado = 1 then dbo.FN_GetConteoEstado(1, @nuevoIdUsuario) else VideojuegosJugados end),
+	VideojuegosPlaneados = (case when @nuevoEstado = 2 then @conteo when @antiguoEstado = 2 then dbo.FN_GetConteoEstado(2, @nuevoIdUsuario) else VideojuegosPlaneados end),
+	VideojuegosDropeados = (case when @nuevoEstado = 3 then @conteo when @antiguoEstado = 3 then dbo.FN_GetConteoEstado(3, @nuevoIdUsuario) else VideojuegosDropeados end),
+	VideojuegosEnPausa = (case when @nuevoEstado = 4 then @conteo when @antiguoEstado = 4 then dbo.FN_GetConteoEstado(4, @nuevoIdUsuario) else VideojuegosEnPausa end),
+	VideojuegosJugando = (case when @nuevoEstado = 5 then @conteo when @antiguoEstado = 5 then dbo.FN_GetConteoEstado(5, @nuevoIdUsuario) else VideojuegosJugando end)
 WHERE Id = @nuevoIdUsuario
 GO
 
+
+
 INSERT INTO Usuarios(Nickname, UserPassword, VideojuegosJugados, VideojuegosPlaneados, VideojuegosDropeados, VideojuegosEnPausa, VideojuegosJugando) VALUES('Prueba123', 'Constrasenya123', 0, 0, 0, 0, 0)
-INSERT INTO Usuarios(Nickname, UserPassword, VideojuegosJugados, VideojuegosPlaneados, VideojuegosDropeados, VideojuegosEnPausa, VideojuegosJugando) VALUES('Prueba321', 'Constrasenya321', 0, 0, 0, 0, 0)
+INSERT INTO Usuarios(Nickname, UserPassword, VideojuegosJugados, VideojuegosPlaneados, VideojuegosDropeados, VideojuegosEnPausa, VideojuegosJugando, esListaPrivada) VALUES('Prueba321', 'Constrasenya321', 0, 0, 0, 0, 0, 1)
 INSERT INTO EstadosVideojuego(Id, NombreEstado) VALUES
 	(1, 'Jugado'),
 	(2, 'Planeado'),
