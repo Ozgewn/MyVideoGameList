@@ -11,6 +11,7 @@ namespace MVGL_Entidades
         private int idUsuario, idVideojuego;
         private DateTime fechaDeComienzo, fechaDeFinalizacion;
         private double nota, dificultad;
+        private int estado;
 
         public clsListaVideojuego()
         {
@@ -18,7 +19,7 @@ namespace MVGL_Entidades
             this.idVideojuego = 0;
         }
 
-        public clsListaVideojuego(int idUsuario, int idVideojuego, DateTime fechaDeComienzo, DateTime fechaDeFinalizacion, double nota, double dificultad)
+        public clsListaVideojuego(int idUsuario, int idVideojuego, DateTime fechaDeComienzo, DateTime fechaDeFinalizacion, double nota, double dificultad, int estado)
         {
             this.idUsuario = idUsuario;
             this.idVideojuego = idVideojuego;
@@ -26,6 +27,7 @@ namespace MVGL_Entidades
             this.fechaDeFinalizacion = fechaDeFinalizacion;
             this.nota = nota;
             this.dificultad = dificultad;
+            this.estado = estado;
         }
 
         public int IdUsuario { get => idUsuario; set => idUsuario = value; }
@@ -34,5 +36,6 @@ namespace MVGL_Entidades
         public DateTime FechaDeFinalizacion { get => fechaDeFinalizacion; set => fechaDeFinalizacion = value; }
         public double Nota { get => nota; set => nota = value; }
         public double Dificultad { get => dificultad; set => dificultad = value; }
+        public int Estado { get => estado; set => estado = value; }
     }
 }

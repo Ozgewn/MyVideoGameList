@@ -17,12 +17,22 @@ namespace MVGL_DAL.Listados
         {
             conexionBase = new clsMyConnection();
         }
-        public List<clsUsuario> getUsuarioSegunId(int id)
+        /// <summary>
+        /// <b>Cabecera:</b> public clsUsuario getUsuarioSegunIdDAL(int id)<br />
+        /// <b>Descripción:</b> Este método se encarga de obtener toda la información del usuario de la BBDD que corresponda con el id pasado por parámetros<br />
+        /// <b>Precondiciones:</b> El usuario debe existir, el id del usuario debe ser válido<br />
+        /// <b>Postcondiciones:</b> Se devolverá la información relevante del usuario que corresponda con el id introducido por parámetros<br />
+        /// <b>Entrada:</b> String id. El id del usuario del cual se desea obtener la información<br />
+        /// <b>Salida:</b> clsUsuario oUsuario. El objeto usuario con toda su respectiva información obtenida de la BBDD<br />
+        /// </summary>
+        /// <param name="id"><b>id - String</b>. El id del usuario del cuál se desea obtener la información </param>
+        /// <returns><b>oUsuario - clsUsuario.</b> El usuario con toda la información</returns>
+        public clsUsuario getUsuarioSegunIdDAL(String id)
         {
             clsUsuario oUsuario = new clsUsuario();
             SqlCommand miComando = new SqlCommand();
             SqlDataReader miLector;
-            miComando.Parameters.Add("@id", System.Data.SqlDbType.Int).Value = id;
+            miComando.Parameters.Add("@id", System.Data.SqlDbType.VarChar).Value = id;
             miComando.CommandText = "SELECT * FROM Usuarios WHERE Id = @id";
             conexionEstablecida = conexionBase.getConnection();
             miComando.Connection = conexionEstablecida;
@@ -32,43 +42,14 @@ namespace MVGL_DAL.Listados
             {
                 if (miLector.HasRows)
                 {
-                    miLector.Read();
-                    if (miLector["IDPersona"] != System.DBNull.Value)
-                    {
-                        oPersona.Id = (int)miLector["IDPersona"];
-                    }
-                    if (miLector["nombrePersona"] != System.DBNull.Value)
-                    {
-                        oPersona.Nombre = (String)miLector["nombrePersona"];
-                    }
-                    if (miLector["apellidosPersona"] != System.DBNull.Value)
-                    {
-                        oPersona.Apellidos = (String)miLector["apellidosPersona"];
-                    }
-                    if (miLector["fechaNacimiento"] != System.DBNull.Value)
-                    {
-                        oPersona.FechaNacimiento = (DateTime)miLector["fechaNacimiento"];
-                    }
-                    if (miLector["direccion"] != System.DBNull.Value)
-                    {
-                        oPersona.Direccion = (String)miLector["direccion"];
-                    }
-                    if (miLector["telefono"] != System.DBNull.Value)
-                    {
-                        oPersona.Telefono = (String)miLector["telefono"];
-                    }
-                    if (miLector["Foto"] != System.DBNull.Value)
-                    {
-                        oPersona.UrlFoto = (String)miLector["Foto"];
-                    }
-                    else
-                    {
-                        oPersona.UrlFoto = FOTO_POR_DEFECTO;
-                    }
-                    if (miLector["IDDepartamento"] != System.DBNull.Value)
-                    {
-                        oPersona.IdDepartamento = (int)miLector["IDDepartamento"]; //realmente, aqui no hace falta controlar el nulo de iddepartamento ya que la vista no permite que este sea nulo, pero lo controlo por asi acaso
-                    }
+                    miLector.Read(); //solo un read porque la instruccion sql solo nos devolvera una fila
+                    oUsuario.Id = (String)miLector["Id"];
+                    oUsuario.VideojuegosJugados = (int)miLector["VideojuegosJugados"]; //no controlo nulos porque la BBDD no permite que aqui hayan nulos, y la BBDD lo controla poniendo 0 como valor por defecto
+                    oUsuario.VideojuegosJugados = (int)miLector["VideojuegosPlaneados"];
+                    oUsuario.VideojuegosJugados = (int)miLector["VideojuegosDropeados"];
+                    oUsuario.VideojuegosJugados = (int)miLector["VideojuegosEnPausa"];
+                    oUsuario.VideojuegosJugados = (int)miLector["VideojuegosJugando"];
+                    oUsuario.EsListaPrivada = (bool)miLector["esListaPrivada"];
                 }
                 miLector.Close();
                 conexionBase.closeConnection(ref conexionEstablecida);
@@ -77,7 +58,7 @@ namespace MVGL_DAL.Listados
             {
                 throw;
             }
-            return oPersona;
+            return oUsuario;
         }
     }
 }

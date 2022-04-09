@@ -8,25 +8,42 @@ namespace MVGL_Entidades
 {
     public class clsUsuario
     {
-        private int id;
-        private string nickname;
-        private string contrasenya;
+        private String id;
+        private int videojuegosJugados;
+        private int videojuegosPlaneados;
+        private int videojuegosDropeados;
+        private int videojuegosEnPausa;
+        private int videojuegosJugando;
+        private bool esListaPrivada;
 
         public clsUsuario()
         {
-            id = 0;
-            nickname = "Usuario anónimo";
-            contrasenya = "";
+            this.id = "";
+            this.videojuegosJugados = 0;
+            this.videojuegosPlaneados = 0;
+            this.videojuegosDropeados = 0;
+            this.videojuegosEnPausa = 0;
+            this.videojuegosJugando = 0;
+            esListaPrivada = false;
+
         }
-        public clsUsuario(int id, string nickname, string contrasenya)
+        public clsUsuario(String id, int videojuegosJugados, int videojuegosPlaneados, int videojuegosDropeados, int videojuegosEnPausa, int videojuegosJugando, bool esListaPrivada)
         {
             this.id = id;
-            this.nickname = nickname;
-            this.contrasenya = contrasenya;
+            this.videojuegosJugados = videojuegosJugados;
+            this.videojuegosPlaneados = videojuegosPlaneados;
+            this.videojuegosDropeados = videojuegosDropeados;
+            this.videojuegosEnPausa = videojuegosEnPausa;
+            this.videojuegosJugando = videojuegosJugando;
+            this.esListaPrivada = esListaPrivada;
         }
 
-        public int Id { get => id; set => id = value; }
-        public string Nickname { get => nickname; set => nickname = value; }
-        public string Contrasenya { get => contrasenya; set => contrasenya = value; }
+        public String Id { get => id; set => id = value; }
+        public int VideojuegosJugados { get => videojuegosJugados; set => videojuegosJugados = value; }
+        public int VideojuegosPlaneados { get => videojuegosPlaneados; set => videojuegosPlaneados = value; }
+        public int VideojuegosDropeados { get => videojuegosDropeados; set => videojuegosDropeados = value; }
+        public int VideojuegosEnPausa { get => videojuegosEnPausa; set => videojuegosEnPausa = value; }
+        public int VideojuegosJugando { get => videojuegosJugando; set => videojuegosJugando = value; }
+        public bool EsListaPrivada { get => esListaPrivada; set => esListaPrivada = value; }
     }
 }

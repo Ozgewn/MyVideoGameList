@@ -5,11 +5,11 @@ GO
 
 CREATE TABLE Usuarios(
 	Id varChar(28) Not NULL CONSTRAINT PK_Usuarios PRIMARY KEY
-	,VideojuegosJugados int Not NULL
-	,VideojuegosPlaneados int Not NULL
-	,VideojuegosDropeados int Not NULL
-	,VideojuegosEnPausa int Not NULL
-	,VideojuegosJugando int Not NULL
+	,VideojuegosJugados int Not NULL DEFAULT 0
+	,VideojuegosPlaneados int Not NULL DEFAULT 0
+	,VideojuegosDropeados int Not NULL DEFAULT 0
+	,VideojuegosEnPausa int Not NULL DEFAULT 0
+	,VideojuegosJugando int Not NULL DEFAULT 0
 	,esListaPrivada bit Not NULL DEFAULT 0
 )
 GO
@@ -38,7 +38,7 @@ CREATE TABLE ListaVideojuegos(
 	,FechaDeFinalizacion DateTime NULL
 	,Nota float NULL
 	,Dificultad float NULL
-	,Estado int Not NULL CONSTRAINT FK_EstadosVideojuego FOREIGN KEY REFERENCES EstadosVideojuego(Id)
+	,Estado int NULL CONSTRAINT FK_EstadosVideojuego FOREIGN KEY REFERENCES EstadosVideojuego(Id) DEFAULT NULL
 	,CONSTRAINT PK_ListaVideojuegos PRIMARY KEY (IdUsuario,IdVideojuego)
 )
 GO
