@@ -4,9 +4,7 @@ USE MyVideoGameList
 GO
 
 CREATE TABLE Usuarios(
-	Id int IDENTITY(1,1) Not NULL CONSTRAINT PK_Usuarios PRIMARY KEY
-	,Nickname varChar(15) Not NULL
-	,UserPassword varChar(20) Not NULL
+	Id varChar(28) Not NULL CONSTRAINT PK_Usuarios PRIMARY KEY
 	,VideojuegosJugados int Not NULL
 	,VideojuegosPlaneados int Not NULL
 	,VideojuegosDropeados int Not NULL
@@ -34,7 +32,7 @@ CREATE TABLE EstadosVideojuego(
 )
 GO
 CREATE TABLE ListaVideojuegos(
-	IdUsuario int Not NULL CONSTRAINT FK_Usuarios FOREIGN KEY REFERENCES Usuarios(Id)
+	IdUsuario varChar(28) Not NULL CONSTRAINT FK_Usuarios FOREIGN KEY REFERENCES Usuarios(Id)
 	,IdVideojuego int Not NULL CONSTRAINT FK_Videojuegos FOREIGN KEY REFERENCES Videojuegos(Id)
 	,FechaDeComienzo DateTime NULL
 	,FechaDeFinalizacion DateTime NULL
@@ -122,7 +120,7 @@ GO
 CREATE OR ALTER TRIGGER Conteo_EstadosUsuarioInsertar ON ListaVideojuegos AFTER INSERT AS
 --TRIGGER PARA HACER EL CONTEO DE CUANTOS JUEGOS HAN JUGADO/PLANEAN JUGAR/ESTAN JUGANDO, SOLO CUANDO INSERTAN EL REGISTRO ETC.
 DECLARE @nuevoEstado int
-DECLARE @nuevoIdUsuario int
+DECLARE @nuevoIdUsuario varChar(28)
 DECLARE @conteo int
 
 SELECT @nuevoEstado = Estado from inserted
@@ -138,7 +136,7 @@ UPDATE Usuarios SET
 WHERE Id = @nuevoIdUsuario
 GO
 
-CREATE OR ALTER FUNCTION FN_GetConteoEstado (@Estado AS int, @IdUsuario AS int)
+CREATE OR ALTER FUNCTION FN_GetConteoEstado (@Estado AS int, @IdUsuario AS varChar(28))
 RETURNS int
 AS
 	BEGIN
@@ -152,7 +150,7 @@ CREATE OR ALTER TRIGGER Conteo_EstadosUsuarioActualizar ON ListaVideojuegos AFTE
 --TRIGGER PARA HACER EL CONTEO DE CUANTOS JUEGOS HAN JUGADO/PLANEAN JUGAR/ESTAN JUGANDO, SOLO CUANDO ACTUALIZAN EL RE ETC.
 DECLARE @nuevoEstado int
 DECLARE @antiguoEstado int
-DECLARE @nuevoIdUsuario int
+DECLARE @nuevoIdUsuario varChar(28)
 DECLARE @conteo int
 
 SELECT @nuevoEstado = Estado from inserted
@@ -174,10 +172,6 @@ UPDATE Usuarios SET
 WHERE Id = @nuevoIdUsuario
 GO
 
-
-
-INSERT INTO Usuarios(Nickname, UserPassword, VideojuegosJugados, VideojuegosPlaneados, VideojuegosDropeados, VideojuegosEnPausa, VideojuegosJugando) VALUES('Prueba123', 'Constrasenya123', 0, 0, 0, 0, 0)
-INSERT INTO Usuarios(Nickname, UserPassword, VideojuegosJugados, VideojuegosPlaneados, VideojuegosDropeados, VideojuegosEnPausa, VideojuegosJugando, esListaPrivada) VALUES('Prueba321', 'Constrasenya321', 0, 0, 0, 0, 0, 1)
 INSERT INTO EstadosVideojuego(Id, NombreEstado) VALUES
 	(1, 'Jugado'),
 	(2, 'Planeado'),
