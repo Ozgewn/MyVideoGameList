@@ -99,7 +99,7 @@ DECLARE @Media FLOAT
 DECLARE @AntiguoIdVideojuego INT
 DECLARE @Count INT
 
-SELECT @AntiguoIdVideojuego = IdVideojuego FROM inserted
+SELECT @AntiguoIdVideojuego = IdVideojuego FROM deleted
 
 SET @Count = (SELECT COUNT(*) FROM ListaVideojuegos
 	WHERE IdVideojuego = @AntiguoIdVideojuego)
@@ -170,6 +170,24 @@ UPDATE Usuarios SET
 	VideojuegosEnPausa = (case when @nuevoEstado = 4 then @conteo when @antiguoEstado = 4 then dbo.FN_GetConteoEstado(4, @nuevoIdUsuario) else VideojuegosEnPausa end),
 	VideojuegosJugando = (case when @nuevoEstado = 5 then @conteo when @antiguoEstado = 5 then dbo.FN_GetConteoEstado(5, @nuevoIdUsuario) else VideojuegosJugando end)
 WHERE Id = @nuevoIdUsuario
+GO
+
+CREATE OR ALTER TRIGGER Conteo_EstadosUsuarioBorrado ON ListaVideojuegos AFTER DELETE AS
+--TRIGGER PARA HACER EL CONTEO DE CUANTOS JUEGOS HAN JUGADO/PLANEAN JUGAR/ESTAN JUGANDO, SOLO CUANDO INSERTAN EL REGISTRO ETC.
+DECLARE @antiguoEstado int
+DECLARE @idUsuario varChar(28)
+DECLARE @conteo int
+
+SELECT @antiguoEstado = Estado from deleted
+SELECT @idUsuario = IdUsuario from deleted
+
+UPDATE Usuarios SET
+	VideojuegosJugados = (case when @antiguoEstado = 1 then VideojuegosJugados-1 else VideojuegosJugados end),
+	VideojuegosPlaneados = (case when @antiguoEstado = 2 then VideojuegosPlaneados-1 else VideojuegosPlaneados end),
+	VideojuegosDropeados = (case when @antiguoEstado = 3 then VideojuegosDropeados-1 else VideojuegosDropeados end),
+	VideojuegosEnPausa = (case when @antiguoEstado = 4 then VideojuegosEnPausa-1 else VideojuegosEnPausa end),
+	VideojuegosJugando = (case when @antiguoEstado = 5 then VideojuegosJugando-1 else VideojuegosJugando end)
+WHERE Id = @idUsuario
 GO
 
 INSERT INTO EstadosVideojuego(Id, NombreEstado) VALUES
