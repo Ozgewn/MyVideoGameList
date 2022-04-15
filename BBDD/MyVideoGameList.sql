@@ -21,7 +21,7 @@ CREATE TABLE Videojuegos(
 	,Plataformas varChar(60) Not NULL
 	,NotaMedia float NULL
 	,DificultadMedia float NULL
-	,FechaDeLanzamiento DateTime Not NULL
+	,FechaDeLanzamiento smalldatetime Not NULL
 	,Generos varChar(50) Not NULL
 	,urlImagen varChar(200) Not NULL
 )
@@ -34,11 +34,11 @@ GO
 CREATE TABLE ListaVideojuegos(
 	IdUsuario varChar(28) Not NULL CONSTRAINT FK_Usuarios FOREIGN KEY REFERENCES Usuarios(Id)
 	,IdVideojuego int Not NULL CONSTRAINT FK_Videojuegos FOREIGN KEY REFERENCES Videojuegos(Id)
-	,FechaDeComienzo DateTime NULL
-	,FechaDeFinalizacion DateTime NULL
+	,FechaDeComienzo smalldatetime NULL
+	,FechaDeFinalizacion smalldatetime NULL
 	,Nota float NULL
 	,Dificultad float NULL
-	,Estado int NULL CONSTRAINT FK_EstadosVideojuego FOREIGN KEY REFERENCES EstadosVideojuego(Id) DEFAULT NULL
+	,Estado int Not NULL CONSTRAINT FK_EstadosVideojuego FOREIGN KEY REFERENCES EstadosVideojuego(Id) DEFAULT 5
 	,CONSTRAINT PK_ListaVideojuegos PRIMARY KEY (IdUsuario,IdVideojuego)
 )
 GO
@@ -207,3 +207,7 @@ INSERT INTO Videojuegos(Nombre, Desarrollador, Distribuidores, Plataformas, Fech
 	('NieR: Automata', 'PlatinumGames', 'Square Enix', 'PS4, PC, Xbox One', '23-02-2017', 'Rol de Acción', 'https://cdn.cloudflare.steamstatic.com/steam/apps/524220/header.jpg?t=1624266255'),
 	('Undertale', 'Toby Fox', '8-4', 'PC, PS4, PSVita, Nintendo Switch, Xbox One, Series X y S', '15-09-2015', 'RPG, Puzzle', 'https://cdn.cloudflare.steamstatic.com/steam/apps/391540/header.jpg?t=1579096091'),
 	('Death Stranding', 'Kojima Productions', 'Sony Interactive Entertainment', 'PC, PS4, PS5', '08-11-2019', 'Accion y exploracion', 'https://cdn.cloudflare.steamstatic.com/steam/apps/1190460/header.jpg?t=1636451066')
+
+	SELECT * FROM ListaVideojuegos WHERE IdUsuario = 'aa' AND IdVideojuego = 1
+	UPDATE ListaVideojuegos SET FechaDeComienzo = '14/04/2022', FechaDeFinalizacion = '15/04/2022', Nota = 8, Dificultad = 4, Estado = 3 WHERE IdUsuario = 'aa' AND IdVideojuego = 1
+	SELECT * FROM Videojuegos

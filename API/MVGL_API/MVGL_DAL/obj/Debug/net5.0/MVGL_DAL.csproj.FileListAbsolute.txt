@@ -1,0 +1,5 @@
+E:\GitKraken-Repos\MyVideoGameList\API\MVGL_API\MVGL_DAL\obj\Debug\net5.0\MVGL_DAL.csproj.AssemblyReference.cache
+E:\GitKraken-Repos\MyVideoGameList\API\MVGL_API\MVGL_DAL\obj\Debug\net5.0\MVGL_DAL.GeneratedMSBuildEditorConfig.editorconfig
+E:\GitKraken-Repos\MyVideoGameList\API\MVGL_API\MVGL_DAL\obj\Debug\net5.0\MVGL_DAL.AssemblyInfoInputs.cache
+E:\GitKraken-Repos\MyVideoGameList\API\MVGL_API\MVGL_DAL\obj\Debug\net5.0\MVGL_DAL.AssemblyInfo.cs
+E:\GitKraken-Repos\MyVideoGameList\API\MVGL_API\MVGL_DAL\obj\Debug\net5.0\MVGL_DAL.csproj.CoreCompileInputs.cache

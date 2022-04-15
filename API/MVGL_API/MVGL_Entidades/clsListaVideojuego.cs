@@ -8,18 +8,18 @@ namespace MVGL_Entidades
 {
     public class clsListaVideojuego
     {
-        private int idUsuario, idVideojuego;
-        private DateTime fechaDeComienzo, fechaDeFinalizacion;
-        private double nota, dificultad;
+        private int idVideojuego, nota, dificultad;
+        private DateTime? fechaDeComienzo, fechaDeFinalizacion;
         private int estado;
+        private String idUsuario;
 
         public clsListaVideojuego()
         {
-            this.idUsuario = 0;
+            this.idUsuario = "";
             this.idVideojuego = 0;
         }
 
-        public clsListaVideojuego(int idUsuario, int idVideojuego, DateTime fechaDeComienzo, DateTime fechaDeFinalizacion, double nota, double dificultad, int estado)
+        public clsListaVideojuego(String idUsuario, int idVideojuego, DateTime fechaDeComienzo, DateTime fechaDeFinalizacion, int nota, int dificultad, int estado)
         {
             this.idUsuario = idUsuario;
             this.idVideojuego = idVideojuego;
@@ -30,12 +30,12 @@ namespace MVGL_Entidades
             this.estado = estado;
         }
 
-        public int IdUsuario { get => idUsuario; set => idUsuario = value; }
+        public String IdUsuario { get => idUsuario; set => idUsuario = value; }
         public int IdVideojuego { get => idVideojuego; set => idVideojuego = value; }
-        public DateTime FechaDeComienzo { get => fechaDeComienzo; set => fechaDeComienzo = value; }
-        public DateTime FechaDeFinalizacion { get => fechaDeFinalizacion; set => fechaDeFinalizacion = value; }
-        public double Nota { get => nota; set => nota = value; }
-        public double Dificultad { get => dificultad; set => dificultad = value; }
+        public DateTime? FechaDeComienzo { get => fechaDeComienzo; set => fechaDeComienzo = value; }
+        public DateTime? FechaDeFinalizacion { get => fechaDeFinalizacion; set => fechaDeFinalizacion = value; }
+        public int Nota { get => nota; set => nota = value; }
+        public int Dificultad { get => dificultad; set => dificultad = value; }
         public int Estado { get => estado; set => estado = value; }
     }
 }
