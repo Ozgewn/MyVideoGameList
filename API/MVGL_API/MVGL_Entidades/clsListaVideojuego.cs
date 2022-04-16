@@ -17,9 +17,11 @@ namespace MVGL_Entidades
         {
             this.idUsuario = "";
             this.idVideojuego = 0;
+            fechaDeComienzo = null;
+            fechaDeFinalizacion = null;
         }
 
-        public clsListaVideojuego(String idUsuario, int idVideojuego, DateTime fechaDeComienzo, DateTime fechaDeFinalizacion, int nota, int dificultad, int estado)
+        public clsListaVideojuego(String idUsuario, int idVideojuego, DateTime? fechaDeComienzo, DateTime? fechaDeFinalizacion, int nota, int dificultad, int estado)
         {
             this.idUsuario = idUsuario;
             this.idVideojuego = idVideojuego;

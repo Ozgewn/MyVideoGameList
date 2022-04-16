@@ -12,7 +12,6 @@ namespace MVGL_DAL.Gestora
     public class clsGestoraListaVideojuegosDAL
     {
         private clsMyConnection conexionBase;
-        private SqlConnection conexionEstablecida;
 
         public clsGestoraListaVideojuegosDAL()
         {
@@ -69,10 +68,10 @@ namespace MVGL_DAL.Gestora
             miComando.Parameters.Add("@idVideojuego", System.Data.SqlDbType.Int).Value = oListaVideojuego.IdVideojuego;
             miComando.Parameters.Add("@estado", System.Data.SqlDbType.Int).Value = oListaVideojuego.Estado;
             if (oListaVideojuego.FechaDeComienzo == null)
-            { //en caso de que la fecha de comienzo sea nula
+            { 
                 miComando.Parameters.Add("@fechaDeComienzo", System.Data.SqlDbType.SmallDateTime).Value = System.DBNull.Value;
             }
-            else // en caso de que no sea nulo
+            else 
             {
                 miComando.Parameters.Add("@fechaDeComienzo", System.Data.SqlDbType.SmallDateTime).Value = oListaVideojuego.FechaDeComienzo;
             }
@@ -84,7 +83,7 @@ namespace MVGL_DAL.Gestora
             {
                 miComando.Parameters.Add("@nuevoApellidos", System.Data.SqlDbType.SmallDateTime).Value = oListaVideojuego.FechaDeFinalizacion;
             }
-            if (oListaVideojuego.Nota == 0)
+            if (oListaVideojuego.Nota == 0) //si la nota es 0 significa que el usuario no le ha puesto nota al juego, ya que la nota minima es 1, con lo cual, le pasamos el valor a nulo para que al hacer la media de la nota, la nota a nulo no cuente
             {
                 miComando.Parameters.Add("@nota", System.Data.SqlDbType.Int).Value = System.DBNull.Value;
             }
@@ -92,7 +91,7 @@ namespace MVGL_DAL.Gestora
             {
                 miComando.Parameters.Add("@nota", System.Data.SqlDbType.Int).Value = oListaVideojuego.Nota;
             }
-            if (oListaVideojuego.Dificultad == 0)
+            if (oListaVideojuego.Dificultad == 0) //esto sigue el mismo funcionamiento que con la nota, la ponemos a NULL ya que el valor minimo es 1
             {
                 miComando.Parameters.Add("@dificultad", System.Data.SqlDbType.Int).Value = System.DBNull.Value;
             }

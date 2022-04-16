@@ -68,7 +68,63 @@ namespace MVGL_DAL.Listados
             {
                 throw;
             }
-            return oUsuario;
+            return oVideojuego;
+        }
+        /// <summary>
+        ///<b>Cabecera:</b> public List<clsVideojuego> getListadoVideojuegosCompletoDAL() <br />
+        ///<b>Descripción:</b> Este metodo se encarga de obtener todos los videojuegos de la BBDD <br />
+        ///<b> Precondiciones:</b> Deben haber videojuegos en la BBDD <br />
+        ///<b> Postcondiciones:</b> Se devolvera la lista completa de los videojuegos en la BBDD <br />
+        ///<b>Entrada:</b> N/A <br />
+        ///<b>Salida:</b> List<clsVideojuego> listadoCompletoVideojuegos. El listado completo de videojuegos <br />
+        /// </summary>
+        /// <returns><b>listadoCompletoVideojuegos - List<clsVideojuego>. </b>El listado completo de videojuegos traido de la BBDD</returns>
+        public List<clsVideojuego> getListadoVideojuegosCompletoDAL()
+        {
+            List<clsVideojuego> listadoCompletoVideojuegos = new List<clsVideojuego>();
+            clsVideojuego oVideojuego;
+            SqlCommand miComando = new SqlCommand();
+            SqlDataReader miLector;
+            miComando.CommandText = "SELECT * FROM Videojuegos";
+            conexionEstablecida = conexionBase.getConnection();
+            miComando.Connection = conexionEstablecida;
+            miLector = miComando.ExecuteReader();
+
+            try
+            {
+                if (miLector.HasRows)
+                {
+                    while (miLector.Read())
+                    {
+                        oVideojuego = new clsVideojuego();
+                        oVideojuego.Id = (int)miLector["Id"]; //no controlo nulos, porque estos datos (los videojuegos) los inserta el administrador (yo), y además, de que no insertaré datos nulos donde no deba, la BBDD no lo permite
+                        oVideojuego.Nombre = (String)miLector["Nombre"];
+                        oVideojuego.Desarrollador = (String)miLector["Desarrollador"];
+                        oVideojuego.Distribuidores = (String)miLector["Distribuidores"];
+                        oVideojuego.Plataformas = (String)miLector["Plataformas"];
+                        if (miLector["NotaMedia"] != System.DBNull.Value)
+                        {
+                            oVideojuego.NotaMedia = (double)miLector["NotaMedia"];
+                        }
+                        if (miLector["DificultadMedia"] != System.DBNull.Value)
+                        {
+                            oVideojuego.DificultadMedia = (double)miLector["DificultadMedia"];
+                        }
+                        oVideojuego.FechaDeLanzamiento = (DateTime)miLector["FechaDeLanzamiento"];
+                        oVideojuego.Generos = (String)miLector["Generos"];
+                        oVideojuego.UrlImagen = (String)miLector["urlImagen"];
+                        listadoCompletoVideojuegos.Add(oVideojuego);
+                    }
+                }
+                miLector.Close();
+                conexionBase.closeConnection(ref conexionEstablecida);
+            }
+            catch (SqlException)
+            {
+                throw;
+            }
+
+            return listadoCompletoVideojuegos;
         }
     }
 }

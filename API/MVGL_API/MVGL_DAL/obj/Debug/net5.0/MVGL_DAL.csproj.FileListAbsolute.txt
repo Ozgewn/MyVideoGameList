@@ -3,3 +3,13 @@ E:\GitKraken-Repos\MyVideoGameList\API\MVGL_API\MVGL_DAL\obj\Debug\net5.0\MVGL_D
 E:\GitKraken-Repos\MyVideoGameList\API\MVGL_API\MVGL_DAL\obj\Debug\net5.0\MVGL_DAL.AssemblyInfoInputs.cache
 E:\GitKraken-Repos\MyVideoGameList\API\MVGL_API\MVGL_DAL\obj\Debug\net5.0\MVGL_DAL.AssemblyInfo.cs
 E:\GitKraken-Repos\MyVideoGameList\API\MVGL_API\MVGL_DAL\obj\Debug\net5.0\MVGL_DAL.csproj.CoreCompileInputs.cache
+E:\GitKraken-Repos\MyVideoGameList\API\MVGL_API\MVGL_DAL\bin\Debug\net5.0\MVGL_DAL.deps.json
+E:\GitKraken-Repos\MyVideoGameList\API\MVGL_API\MVGL_DAL\bin\Debug\net5.0\MVGL_DAL.dll
+E:\GitKraken-Repos\MyVideoGameList\API\MVGL_API\MVGL_DAL\bin\Debug\net5.0\ref\MVGL_DAL.dll
+E:\GitKraken-Repos\MyVideoGameList\API\MVGL_API\MVGL_DAL\bin\Debug\net5.0\MVGL_DAL.pdb
+E:\GitKraken-Repos\MyVideoGameList\API\MVGL_API\MVGL_DAL\bin\Debug\net5.0\MVGL_Entidades.dll
+E:\GitKraken-Repos\MyVideoGameList\API\MVGL_API\MVGL_DAL\bin\Debug\net5.0\MVGL_Entidades.pdb
+E:\GitKraken-Repos\MyVideoGameList\API\MVGL_API\MVGL_DAL\obj\Debug\net5.0\MVGL_DAL.csproj.CopyComplete
+E:\GitKraken-Repos\MyVideoGameList\API\MVGL_API\MVGL_DAL\obj\Debug\net5.0\MVGL_DAL.dll
+E:\GitKraken-Repos\MyVideoGameList\API\MVGL_API\MVGL_DAL\obj\Debug\net5.0\ref\MVGL_DAL.dll
+E:\GitKraken-Repos\MyVideoGameList\API\MVGL_API\MVGL_DAL\obj\Debug\net5.0\MVGL_DAL.pdb

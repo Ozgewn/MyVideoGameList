@@ -20,7 +20,7 @@ namespace MVGL_DAL.Listados
         }
 
         /// <summary>
-        /// <b>Cabecera:</b> public List<clsListaVideojuego> getListaVideojuegosDeUsuario(String idUsuario)<br />
+        /// <b>Cabecera:</b> public List<clsListaVideojuego> getListaVideojuegosDeUsuarioDAL(String idUsuario)<br />
         /// <b>Descripción:</b> Este metodo se encarga de devolver la lista de videojuegos del usuario introducido por parametros<br />
         /// <b>Precondiciones:</b> El usuario debe tener al menos 1 juego en su lista, el idusuario debe ser válido<br />
         /// <b>Postcondiciones:</b> Se devolverá la lista de videojuegos del usuario introducido por parametros<br />
@@ -29,13 +29,14 @@ namespace MVGL_DAL.Listados
         /// </summary>
         /// <param name="idUsuario"><b>idUsuario - int. <b/>El id del usuario del cual se desea obtener la lista de videojuegos</param>
         /// <returns><b>listadoVideojuegosDeUsuario - List<clsListaVideojuego>.</b> La lista de videojuegos completa traida de la BBDD que corresponde al id del usuario introducido por parametros</returns>
-        public List<clsListaVideojuego> getListaVideojuegosDeUsuario(String idUsuario)
+        public List<clsListaVideojuego> getListaVideojuegosDeUsuarioDAL(String idUsuario)
         {
             List<clsListaVideojuego> listadoVideojuegosDeUsuario = new List<clsListaVideojuego>();
             clsListaVideojuego oListaVideojuego;
             SqlCommand miComando = new SqlCommand();
             SqlDataReader miLector;
-            miComando.CommandText = "SELECT * FROM ListaVideojuegos";
+            miComando.Parameters.Add("@idUsuario", System.Data.SqlDbType.VarChar).Value = idUsuario;
+            miComando.CommandText = "SELECT * FROM ListaVideojuegos WHERE IdUsuario = @idUsuario";
             conexionEstablecida = conexionBase.getConnection();
             miComando.Connection = conexionEstablecida;
             miLector = miComando.ExecuteReader();

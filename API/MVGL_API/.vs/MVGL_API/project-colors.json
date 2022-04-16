@@ -25,7 +25,27 @@
       "ProjectGuid": "bd7acc74-b559-49b0-97d5-27e8861c2286",
       "DisplayName": "MVGL_BL",
       "ColorIndex": 4
+    },
+    "9ed2dbcd-26fb-44c6-8305-a341b7f8c802": {
+      "ProjectGuid": "9ed2dbcd-26fb-44c6-8305-a341b7f8c802",
+      "DisplayName": "MVGL_API",
+      "ColorIndex": 5
+    },
+    "e5daa1e1-4880-4db4-a606-6a8b991730d9": {
+      "ProjectGuid": "e5daa1e1-4880-4db4-a606-6a8b991730d9",
+      "DisplayName": "MVGL_API",
+      "ColorIndex": 6
+    },
+    "b5efabba-3e49-41c7-973c-9f0121e2ee65": {
+      "ProjectGuid": "b5efabba-3e49-41c7-973c-9f0121e2ee65",
+      "DisplayName": "MVGL_API",
+      "ColorIndex": 7
+    },
+    "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3": {
+      "ProjectGuid": "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3",
+      "DisplayName": "Archivos varios",
+      "ColorIndex": -1
     }
   },
-  "NextColorIndex": 5
+  "NextColorIndex": 8
 }
