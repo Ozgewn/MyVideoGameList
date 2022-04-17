@@ -15,7 +15,7 @@ namespace MVGL_Entidades
 
         public clsListaVideojuego()
         {
-            this.idUsuario = "";
+            this.idUsuario = null;
             this.idVideojuego = 0;
             fechaDeComienzo = null;
             fechaDeFinalizacion = null;

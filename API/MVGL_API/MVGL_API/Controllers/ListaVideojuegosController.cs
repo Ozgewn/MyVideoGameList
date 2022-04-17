@@ -13,50 +13,33 @@ namespace MVGL_API.Controllers
     [ApiController]
     public class ListaVideojuegosController : ControllerBase
     {
-        // GET: api/<ListaVideojuegosController>
-        [HttpGet]
-        public List<clsListaVideojuego> Get()
+        // GET api/<ListaVideojuegosController>/5
+        [HttpGet("{id}")]
+        public List<clsListaConInfoDeVideojuego> Get(string id)
         {
             List<clsVideojuego> listaVideojuegosCompleto = new clsListadoVideojuegosBL().getListadoVideojuegosCompletoBL();
-            List<clsListaVideojuego> listadoDeListaVideojuegos = new clsListadoListaVideojuegosBL().getListaVideojuegosDeUsuarioBL("aa");
+            List<clsListaVideojuego> listadoDeListaVideojuegos = new clsListadoListaVideojuegosBL().getListaVideojuegosDeUsuarioBL(id);
             List<clsListaConInfoDeVideojuego> listadoDeVideojuegosConInfo = new List<clsListaConInfoDeVideojuego>();
 
             List<clsVideojuego> listaVideojuegosQueEstanEnLista = new List<clsVideojuego>();
             List<clsVideojuego> listaVideojuegosQueNoEstanEnLista = new List<clsVideojuego>();
             foreach (clsListaVideojuego oLista in listadoDeListaVideojuegos)
             {
-                listaVideojuegosQueEstanEnLista.AddRange(new List<clsVideojuego>(from videojuego in listaVideojuegosCompleto
-                                                                                              where videojuego.Id == oLista.IdVideojuego
-                                                                                              select videojuego));
+                listaVideojuegosQueEstanEnLista.Add((from videojuego in listaVideojuegosCompleto
+                                                     where videojuego.Id == oLista.IdVideojuego && oLista.IdUsuario.Equals(id)
+                                                     select videojuego).FirstOrDefault()); //Este linq va añadiendo a la lista los videojuegos que esten en la lista
+
+                listadoDeVideojuegosConInfo.Add(new clsListaConInfoDeVideojuego(oLista, (from videojuego in listaVideojuegosCompleto
+                                                                                         where videojuego.Id == oLista.IdVideojuego && oLista.IdUsuario.Equals(id)
+                                                                                         select videojuego).FirstOrDefault())); //Este linq va añadiendo a la lista los videojuegos que esten en la lista de videojuegos del usuario y la info de los propios juegos
             }
             listaVideojuegosQueNoEstanEnLista.AddRange(listaVideojuegosCompleto);
             listaVideojuegosQueNoEstanEnLista = listaVideojuegosQueNoEstanEnLista.Except(listaVideojuegosQueEstanEnLista).ToList();
-            return new clsListadoListaVideojuegosBL().getListaVideojuegosDeUsuarioBL("aa");
-        }
-
-        // GET api/<ListaVideojuegosController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        // POST api/<ListaVideojuegosController>
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
-        }
-
-        // PUT api/<ListaVideojuegosController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/<ListaVideojuegosController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+            foreach(clsVideojuego oVideojuego in listaVideojuegosQueNoEstanEnLista)
+            {
+                listadoDeVideojuegosConInfo.Add(new clsListaConInfoDeVideojuego(oVideojuego)); //añado los videojuegos sin su info, esto significa que no estan en la lista del usuario
+            }
+            return listadoDeVideojuegosConInfo;
         }
     }
 }
