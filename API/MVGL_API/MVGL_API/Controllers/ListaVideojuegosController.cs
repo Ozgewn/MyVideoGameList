@@ -7,8 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace MVGL_API.Controllers
 {
     [Route("api/[controller]")]
@@ -29,11 +27,11 @@ namespace MVGL_API.Controllers
         {
             ObjectResult result = new ObjectResult(new { });
             result.Value = null;
-            List<clsListaConInfoDeVideojuego> listadoDeVideojuegosConInfo = new List<clsListaConInfoDeVideojuego>();
             try
             {
                 List<clsVideojuego> listaVideojuegosCompleto = new clsListadoVideojuegosBL().getListadoVideojuegosCompletoBL();
                 List<clsListaVideojuego> listadoDeListaVideojuegos = new clsListadoListaVideojuegosBL().getListaVideojuegosDeUsuarioBL(id);
+                List<clsListaConInfoDeVideojuego> listadoDeVideojuegosConInfo = new List<clsListaConInfoDeVideojuego>();
 
                 List<clsVideojuego> listaVideojuegosQueEstanEnLista = new List<clsVideojuego>();
                 List<clsVideojuego> listaVideojuegosQueNoEstanEnLista = new List<clsVideojuego>();
