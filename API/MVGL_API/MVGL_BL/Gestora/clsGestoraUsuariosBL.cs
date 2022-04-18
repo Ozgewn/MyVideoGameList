@@ -1,4 +1,5 @@
 ﻿using MVGL_DAL.Gestora;
+using MVGL_Entidades;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,6 +23,36 @@ namespace MVGL_BL.Gestora
         public int insertarUsuarioBL(String id)
         {
             return new clsGestoraUsuariosDAL().insertarUsuarioDAL(id);
+        }
+        /// <summary>
+        /// <b>Cabecera:</b> public int editarUsuarioBL(clsUsuario oUsuario) <br />
+        /// <b>Descripción:</b> Este metodo se encarga de llamar a la capa DAL y que esta edite la informacion del usuario, mas concretamente, <br />
+        /// si la lista es privada o no, solo modifica este valor ya que los demas campos se actualizaran automaticamente al añadir/borrar/editar un juego <br />
+        /// de la lista del usuario <br />
+        /// <b>Precondiciones:</b> El usuario debe existir <br />
+        /// <b>Postcondiciones:</b> Los datos del usuario se modificaran <br />
+        /// <b>Entrada:</b> clsUsuario oUsuario. El usuario a modificar con sus datos ya modificados para su proxima insercion <br />
+        /// <b>Salida:</b> int resultado. El numero de filas afectadas por la edicion. El resultado esperado es 1, otro resultado podria significar error <br />
+        /// </summary>
+        /// <param name="oUsuario"><b>oUsuario - clsUsuario. </b> El usuario a modificar en la BBDD con sus datos ya modificados para su posterior edicion </param>
+        /// <returns><b>resultado - int. </b> El número de filas afectadas por la instruccion de edicion, el resultado esperado es 1, cualquier otro resultado podria significar error </returns>
+        public int editarUsuarioBL(clsUsuario oUsuario)
+        {
+            return new clsGestoraUsuariosDAL().editarUsuarioDAL(oUsuario);
+        }
+        /// <summary>
+        /// <b>Cabecera:</b> public int borrarUsuarioBL(String id) <br />
+        /// <b>Descripción:</b> Este metodo se encarga de llamar a la capa DAL y que esta borre de la BBDD al usuario cuya id coincida con la introducida por parametros <br />
+        /// <b>Precondiciones:</b> El usuario debe existir <br />
+        /// <b>Postcondiciones:</b> El usuario sera borrado <br />
+        /// <b>Entrada:</b> String id. El id del usuario a borrar <br />
+        /// <b>Salida:</b> int resultado. El numero de filas borradas. Deberia ser 1, cualquier otro valor podria significar error <br />
+        /// </summary>
+        /// <param name="id"><b>id - String. </b>El id del usuario a borrar</param>
+        /// <returns><b>resultado - int. </b>El numero de filas afectadas por la instruccion de borrado. El resultado esperado es 1, cualquier otro resultado podria significara error</returns>
+        public int borrarUsuarioBL(String id)
+        {
+            return new clsGestoraUsuariosDAL().borrarUsuarioDAL(id);
         }
     }
 }

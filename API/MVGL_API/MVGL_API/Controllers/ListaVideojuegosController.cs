@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MVGL_API.Models;
+using MVGL_BL.Gestora;
 using MVGL_BL.Listados;
 using MVGL_Entidades;
 using System;
@@ -62,6 +63,91 @@ namespace MVGL_API.Controllers
             {
                 result.StatusCode = (int)HttpStatusCode.InternalServerError;
             }
+            return result;
+        }
+        // POST api/<ListaVideojuegosController>
+        [HttpPost]
+        public ObjectResult Post([FromBody] clsListaVideojuego value)
+        {
+            ObjectResult result = new ObjectResult(new { });
+            result.Value = 0;
+
+            try
+            {
+                result.Value = new clsGestoraListaVideojuegosBL().insertarVideojuegoEnListaBL(value);
+                if (!result.Value.ToString().Equals("4"))
+                {
+                    result.StatusCode = (int)HttpStatusCode.NotFound; //no controlamos que sea mas de 1 ya que no podra insertar mas de 1 fila con la instruccion
+                }
+                else //en cambio, si inserta 4 fila significa que todo ha ido bien
+                {
+                    result.StatusCode = (int)HttpStatusCode.OK;
+                }
+            }
+            catch (Exception)
+            {
+                result.StatusCode = (int)HttpStatusCode.InternalServerError;
+            }
+
+            return result;
+        }
+        // PUT api/<ListaVideojuegosController>
+        [HttpPut]
+        public ObjectResult Put([FromBody] clsListaVideojuego value)
+        {
+            ObjectResult result = new ObjectResult(new { });
+            result.Value = 0;
+
+            try
+            {
+                result.Value = new clsGestoraListaVideojuegosBL().editarVideojuegoDeListaBL(value);
+                if (!result.Value.ToString().Equals("4"))
+                {
+                    result.StatusCode = (int)HttpStatusCode.NotFound; //no controlamos que sea mas de 1 ya que no podra insertar mas de 1 fila con la instruccion
+                }
+                else //en cambio, si edita 4 fila significa que todo ha ido bien
+                {
+                    result.StatusCode = (int)HttpStatusCode.OK;
+                }
+            }
+            catch (Exception)
+            {
+                result.StatusCode = (int)HttpStatusCode.InternalServerError;
+            }
+
+            return result;
+        }
+        // DELETE api/<ListaVideojuegosController>/idUsuario/5/idVideojuego/5
+        [HttpDelete("Usuario/{idUsuario}/Videojuego/{idVideojuego}")]
+        /*
+         * Este metodo intentara borrar a un usuario, al intentar borrarlo, en la BBDD se desencadenara un trigger el cual,
+         * primero borrara todos los juegos en la lista del usuario, actualizara la nota media y dificultad media de los juegos que
+         * se han visto involucrados en el borrado de los juegos de la lista del usuario, y acto seguido, borrara al usuario propiamente dicho
+         */
+        public ObjectResult Delete(string idUsuario, int idVideojuego)
+        {
+            ObjectResult result = new ObjectResult(new { });
+            result.Value = 0;
+
+            try
+            {
+                result.Value = new clsGestoraListaVideojuegosBL().borrarVideojuegoDeListaBL(idUsuario, idVideojuego);
+                if (!result.Value.ToString().Equals("1") || !result.Value.ToString().Equals("0"))
+                {
+                    result.StatusCode = (int)HttpStatusCode.NotFound; //esta instruccion deberia modificar mas 1 fila
+                }
+                else //si modifica mas de 1 fila, es que parece que todo ha ido correcto, ya que no se sabra cuantas filas necesita modificar,
+                //ya que este metodo borrara al usuario de la BBDD lo que desencadenara un trigger, el cual, borrara a su vez todos los juegos que esten
+                //en la lista del usuario a borrar, por lo cual, no sabremos cuantas filas va a borrar, solo sabemos que borrara mas de 1
+                {
+                    result.StatusCode = (int)HttpStatusCode.OK;
+                }
+            }
+            catch (Exception)
+            {
+                result.StatusCode = (int)HttpStatusCode.InternalServerError;
+            }
+
             return result;
         }
     }

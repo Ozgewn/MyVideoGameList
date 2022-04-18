@@ -166,7 +166,6 @@ UPDATE Usuarios SET
 	VideojuegosJugando = (case when @nuevoEstado = 5 then @conteo when @antiguoEstado = 5 then dbo.FN_GetConteoEstado(5, @nuevoIdUsuario) else VideojuegosJugando end)
 WHERE Id = @nuevoIdUsuario
 GO
-
 CREATE OR ALTER TRIGGER Conteo_EstadosUsuarioBorrado ON ListaVideojuegos AFTER DELETE AS
 --TRIGGER PARA HACER EL CONTEO DE CUANTOS JUEGOS HAN JUGADO/PLANEAN JUGAR/ESTAN JUGANDO, SOLO CUANDO INSERTAN EL REGISTRO ETC.
 DECLARE @antiguoEstado int
@@ -183,6 +182,47 @@ UPDATE Usuarios SET
 	VideojuegosEnPausa = (case when @antiguoEstado = 4 then VideojuegosEnPausa-1 else VideojuegosEnPausa end),
 	VideojuegosJugando = (case when @antiguoEstado = 5 then VideojuegosJugando-1 else VideojuegosJugando end)
 WHERE Id = @idUsuario
+GO
+CREATE OR ALTER TRIGGER BorrarJuegosUsuario ON Usuarios INSTEAD OF DELETE AS
+--TRIGGER PARA BORRAR LOS JUEGOS DE LA LISTA ANTES DE BORRAR AL USUARIO EN SI
+Declare @idUsuario varChar(28)
+Select @idUsuario = Id from deleted
+IF(@idUsuario is not null) --si no es nulo, significa que el usuario existe
+BEGIN
+	/*
+	Primero, pongo los valores de ese usuario a null, para que en el siguiente update
+	no se tengan en cuenta para hacer la media.
+	No lo borro directamente y primero pongo esto a null, para que en el siguiente update
+	pueda usar el idusuario en el where, permitiendome asi, modificar solo los videojuegos
+	que estaban en la lista del usuario a borrar
+	*/
+	UPDATE ListaVideojuegos
+		SET Dificultad = null, Nota = null
+		WHERE IdUsuario = @idUsuario
+	/*
+	Este update con avg a continuacion modifica la dificultad media y la nota media
+	de todos los videojuegos que el usuario tenia en la lista, haciendo la media de 
+	todos estos datos de nuevo
+	*/
+	UPDATE V
+		SET NotaMedia = (SELECT AVG(Nota) 
+								FROM ListaVideojuegos AS LV 
+								WHERE LV.IdVideojuego = V.Id),
+			DificultadMedia = (SELECT AVG(Dificultad) 
+								FROM ListaVideojuegos AS LV 
+								WHERE LV.IdVideojuego = V.Id)
+	FROM Videojuegos AS V
+	INNER JOIN ListaVideojuegos AS LV
+		ON V.Id = LV.IdVideojuego
+	WHERE LV.IdUsuario = @idUsuario
+
+	--Ahora que ya hemos actualizado los datos de los videojuegos borramos la lista del usuario
+	DELETE FROM ListaVideojuegos
+		WHERE IdUsuario = @idUsuario
+	--Borramos al usuario en si, necesitamos hacer el delete porque este TRIGGER es un INSTEAD OF
+	DELETE FROM Usuarios
+		WHERE Id = @idUsuario
+END
 GO
 
 INSERT INTO EstadosVideojuego(Id, NombreEstado) VALUES
