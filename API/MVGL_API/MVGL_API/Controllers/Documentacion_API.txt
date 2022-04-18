@@ -1,0 +1,86 @@
+﻿Controlador de ListaVideojuegos
+----------------------------------------------
+Este Controlador es el que se encargará de manejar y gestionar las listas de videojuegos de los usuarios
+
+Verbos GET:
+
+GET /api/ListaVideojuegos/idDelUsuarioAqui -> Obtiene un listado completo de videojuegos, listado el cual incluye la
+información de los propios juegos, y, además, la información de la lista del usuario (siendo el usuario "aa2634" en este caso),
+es decir: El nombre del juego, la imagen, la nota media, la nota (la nota aparecera siempre y cuando el usuario
+tenga el juego agregado a su lista y le tenga puesta nota).
+La diferenciación para saber qué juego se encuentra en la lista del usuario o no es el idUsuario, en caso de que el juego no
+se encuentre en la lista del usuario (porque el usuario no lo ha añadido), el idUsuario será null.
+	Dependiendo del resultado obtenido de dicha llamada, recibiremos los siguientes códigos de estado:
+		-200 (OK) -> Se devolverá el código 200 siempre que la lista que se devuelva no sea nula, y contenga algún dato
+		-404 (Not Found) -> Se devolverá el código 404 cuando la lista es nula o no contiene ningún dato
+		-500 (InternalServerError) -> Se devolverá el código 500 cuando ha ocurrido un error en el codigo, por ejemplo, un error de BBDD
+
+Verbos POST:
+
+POST /api/ListaVideojuegos -> En el cuerpo (body) de la llamada estará el objeto clsListaVideojuego, es decir,
+el videojuego con id 5 (por ejemplo), en la lista del usuario con id "16325FF" (y otros muchos datos de interés, como la nota puesta por el usuario, dificultad, etc.).
+Se insertará en la BBDD el juego designado en la lista del usuario designado, con datos como la nota, fecha de comienzo, 
+rellenos o no, dependiendo de lo que haya hecho el usuario.
+	Dependiendo del resultado obtenido de dicha llamada, recibiremos los siguientes códigos de estado:
+		-200 (OK) -> Se devolverá el código 200 siempre que se inserten 4 filas (se insertan 4 filas en total debido a los triggers en la BBDD)
+		-404 (Not Found) -> Se devolverá el código 404 siempre que se inserte un número distinto a 4 filas
+		-500 (InternalServerError) -> Se devolverá el código 500 cuando ha ocurrido un error en el codigo, por ejemplo, un error de BBDD
+
+Verbos PUT:
+
+PUT /api/ListaVideojuegos -> En el cuerpo (body) de la llamada estará el objeto clsListaVideojuego, es decir,
+el videojuego con id 5 (por ejemplo), en la lista del usuario con id "16325FF" (y otros muchos datos de interés, como la nota puesta por el usuario, dificultad, etc.).
+Se editará en la BBDD el juego designado en la lista del usuario designado, y todos los demás datos, pero para hacer posible esta edición,
+el juego ya debe existir en la lista del usuario previamente.
+	Dependiendo del resultado obtenido de dicha llamada, recibiremos los siguientes códigos de estado:
+		-200 (OK) -> Se devolverá el código 200 siempre que se editen 4 filas (se editan 4 filas en total debido a los triggers en la BBDD)
+		-404 (Not Found) -> Se devolverá el código 404 siempre que se edite un número distinto a 4 filas
+		-500 (InternalServerError) -> Se devolverá el código 500 cuando ha ocurrido un error en el codigo, por ejemplo, un error de BBDD
+
+Verbos DELETE:
+
+DELETE /api/ListaVideojuegos/Usuario/5/Videojuego/5 -> En este caso, se borrará el juego con id 5 de la lista del usuario con id 5
+	Dependiendo del resultado obtenido de dicha llamada, recibiremos los siguientes códigos de estado:
+		-200 (OK) -> Se devolverá el código 200 siempre que se elimina 1 fila
+		-404 (Not Found) -> Se devolverá el código 404 siempre que se elimine un número distinto a 1 fila
+		-500 (InternalServerError) -> Se devolverá el código 500 cuando ha ocurrido un error en el codigo, por ejemplo, un error de BBDD
+
+Controlador de Usuarios:
+----------------------------------------------
+Este controlador es el que se encargará de manejar y gestionar los usuarios
+
+Verbos GET:
+
+GET /api/Usuario/1234 -> Obtendremos la información del usuario con id "1234", sus videojuegos jugados, sus videojuegos planeados,
+sus videojuegos dropeados, sus videojuegos jugando, sus videojuegos en pausa, si su lista es privada o no
+	Dependiendo del resultado obtenido de dicha llamada, recibiremos los siguientes códigos de estado:
+		-200 (OK) -> Se devolverá el código 200 siempre que el objeto que recibamos no sea nulo, ni su id sea igual a "" (vacio), es decir, cuando hemos recibido el usuario satisfactoriamente
+		-404 (Not Found) -> Se devolverá el código 404 siempre que el objeto que recibamos sea nulo, o su id sea igual a ""
+		-500 (InternalServerError) -> Se devolverá el código 500 cuando ha ocurrido un error en el codigo, por ejemplo, un error de BBDD
+
+Verbos POST:
+
+POST /api/Usuario/ae321 -> Se insertará al usuario "ae321" en la BBDD, con todos los datos a 0 (menos el idUsuario)
+	Dependiendo del resultado obtenido de dicha llamada, recibiremos los siguientes códigos de estado:
+		-200 (OK) -> Se devolverá el código 200 siempre que el resultado de la llamada sea 1
+		-404 (Not Found) -> Se devolverá el código 404 siempre que el resultado de llamada sea un número distinto a 1
+		-500 (InternalServerError) -> Se devolverá el código 500 cuando ha ocurrido un error en el codigo, por ejemplo, un error de BBDD
+
+Verbos PUT:
+
+PUT /api/Usuario -> En el cuerpo (body) vendrá el objeto clsUsuario con los datos modificados, debera coincidir con un idUsuario ya
+existente en la BBDD.
+	Dependiendo del resultado obtenido de dicha llamada, recibiremos los siguientes códigos de estado:
+		-200 (OK) -> Se devolverá el código 200 siempre que el resultado de filas afectadas sea 1
+		-404 (Not Found) -> Se devolverá el código 404 siempre que el resultado de filas afectadas sea un número distinto de 1
+		-500 (InternalServerError) -> Se devolverá el código 500 cuando ha ocurrido un error en el codigo, por ejemplo, un error de BBDD
+
+Verbos DELETE:
+
+DELETE /api/Usuario/1234 -> Se borrará al usuario que coincida con el id "1234" (en este caso), y su lista de videojuegos.
+	Dependiendo del resultado obtenido de dicha llamada, recibiremos los siguientes códigos de estado:
+		-200 (OK) -> Se devolverá el código 200 siempre que sea un número mayor a 1, no podemos definir un número fijo ya que cuando un usuario borra su cuenta,
+		también borra toda su lista de videojuegos, lo cual lleva a su vez, a que todos los juegos de su lista vean afectada su nota/dificultad media, esto significa
+		que no sabremos con exactitud cuantas filas se veran afectadas de esta eliminación de usuario, pero si podemos asegurar que será un número mayor a 1
+		-404 (Not Found) -> Se devolverá el código 404 siempre que el número de filas afectadas sea igual a 0 o a 1
+		-500 (InternalServerError) -> Se devolverá el código 500 cuando ha ocurrido un error en el codigo, por ejemplo, un error de BBDD

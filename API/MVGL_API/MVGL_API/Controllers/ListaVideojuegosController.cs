@@ -117,7 +117,7 @@ namespace MVGL_API.Controllers
 
             return result;
         }
-        // DELETE api/<ListaVideojuegosController>/idUsuario/5/idVideojuego/5
+        // DELETE api/<ListaVideojuegosController>/Usuario/5/Videojuego/5
         [HttpDelete("Usuario/{idUsuario}/Videojuego/{idVideojuego}")]
         /*
          * Este metodo intentara borrar a un usuario, al intentar borrarlo, en la BBDD se desencadenara un trigger el cual,
@@ -132,13 +132,11 @@ namespace MVGL_API.Controllers
             try
             {
                 result.Value = new clsGestoraListaVideojuegosBL().borrarVideojuegoDeListaBL(idUsuario, idVideojuego);
-                if (!result.Value.ToString().Equals("1") || !result.Value.ToString().Equals("0"))
+                if (!result.Value.ToString().Equals("1"))
                 {
-                    result.StatusCode = (int)HttpStatusCode.NotFound; //esta instruccion deberia modificar mas 1 fila
+                    result.StatusCode = (int)HttpStatusCode.NotFound; //no controlamos que sea mas de 1 ya que no podra insertar mas de 1 fila con la instruccion
                 }
-                else //si modifica mas de 1 fila, es que parece que todo ha ido correcto, ya que no se sabra cuantas filas necesita modificar,
-                //ya que este metodo borrara al usuario de la BBDD lo que desencadenara un trigger, el cual, borrara a su vez todos los juegos que esten
-                //en la lista del usuario a borrar, por lo cual, no sabremos cuantas filas va a borrar, solo sabemos que borrara mas de 1
+                else //en cambio, si borra 1 fila significa que todo ha ido bien
                 {
                     result.StatusCode = (int)HttpStatusCode.OK;
                 }
