@@ -84,3 +84,17 @@ DELETE /api/Usuario/1234 -> Se borrará al usuario que coincida con el id "1234"
 		que no sabremos con exactitud cuantas filas se veran afectadas de esta eliminación de usuario, pero si podemos asegurar que será un número mayor a 1
 		-404 (Not Found) -> Se devolverá el código 404 siempre que el número de filas afectadas sea igual a 0 o a 1
 		-500 (InternalServerError) -> Se devolverá el código 500 cuando ha ocurrido un error en el codigo, por ejemplo, un error de BBDD
+
+Controlador de Estados:
+----------------------------------------------
+Este controlador se encargará de devolver una lista con todos los posibles estados de un videojuego dentro de 
+una lista de videojuegos de un usuario
+
+Verbos GET:
+
+GET /api/Estados -> Se obtendrá un listado de todos los posibles estados de un videojuego dentro de una lista
+de videojuegos de un usuario.
+	Dependiendo del resultado obtenido de dicha llamada, recibiremos los siguientes códigos de estado:
+		-200 (OK) -> Se devolverá el código 200 siempre que la lista no sea nula, y que contenga algun dato dentro de ella
+		-404 (Not Found) -> Se devolverá el código 404 siempre la lista sea nula, o contenga 0 datos dentro de ella
+		-500 (InternalServerError) -> Se devolverá el código 500 cuando ha ocurrido un error en el codigo, por ejemplo, un error de BBDD

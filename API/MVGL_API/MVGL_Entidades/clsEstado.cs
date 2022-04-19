@@ -22,7 +22,7 @@ namespace MVGL_Entidades
             this.nombreEstado=nombreEstado;
         }
         
-        public int Int { get => id; set => id = value; }
+        public int Id { get => id; set => id = value; }
         public String NombreEstado { get => nombreEstado; set => nombreEstado = value;}
     }
 }

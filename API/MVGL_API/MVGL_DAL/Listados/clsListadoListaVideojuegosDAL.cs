@@ -64,7 +64,7 @@ namespace MVGL_DAL.Listados
                         }
                         else
                         {
-                            oListaVideojuego.FechaDeFinalizacion= null;
+                            oListaVideojuego.FechaDeFinalizacion = null;
                         }
                         if (miLector["Nota"] != System.DBNull.Value)
                         {
