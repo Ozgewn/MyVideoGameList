@@ -1,7 +1,6 @@
-USE MyVideoGameList
-INSERT INTO Usuarios(Id) VALUES
-	('aa'),
-	('bb')
+INSERT INTO Usuarios(Id, NombreUsuario) VALUES
+	('aa', 'peter'),
+	('bb', 'joselito')
 
 INSERT INTO ListaVideojuegos(IdUsuario, IdVideojuego, FechaDeComienzo, FechaDeFinalizacion, Nota, Dificultad, Estado) VALUES
 	('aa',1,'11/01/2022', '27/03/2022', 7, 5, 1)
