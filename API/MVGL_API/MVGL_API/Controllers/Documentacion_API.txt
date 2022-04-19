@@ -60,11 +60,12 @@ sus videojuegos dropeados, sus videojuegos jugando, sus videojuegos en pausa, si
 
 Verbos POST:
 
-POST /api/Usuario/ae321 -> Se insertará al usuario "ae321" en la BBDD, con todos los datos a 0 (menos el idUsuario)
+POST /api/Usuario -> En el cuerpo (body) se encontrarán todos los datos del usuario que se va a insertar en la BBDD, con todos los datos a 0 (menos el idUsuario, y el nombre de usuario)
 	Dependiendo del resultado obtenido de dicha llamada, recibiremos los siguientes códigos de estado:
 		-200 (OK) -> Se devolverá el código 200 siempre que el resultado de la llamada sea 1
 		-404 (Not Found) -> Se devolverá el código 404 siempre que el resultado de llamada sea un número distinto a 1
-		-500 (InternalServerError) -> Se devolverá el código 500 cuando ha ocurrido un error en el codigo, por ejemplo, un error de BBDD
+		-500 (InternalServerError) -> Se devolverá el código 500 cuando ha ocurrido un error en el codigo, por ejemplo, un error de BBDD, o cuando ese idUsuario ya existe, o cuando
+		el nombre de usuario ya existe
 
 Verbos PUT:
 

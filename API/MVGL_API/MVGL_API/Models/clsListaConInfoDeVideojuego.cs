@@ -8,7 +8,7 @@ namespace MVGL_API.Models
         //de la propia informacion del registro de la lista, pero solo cogemos cierta informacion del videojuego, esto con el objetivo de mostrarlo en una lista, la cual tendra la siguiente info:
         //La nota que le tienes tu, la nota media, la imagen, el nombre, la dificultad que le tienes puesta tú en tu lista, la dificultad media, etc.
 
-        private string urlImagenVideojuego, nombreVideojuego;
+        private string urlImagenVideojuego, nombreVideojuego, generos;
         private double notaMediaVideojuego, dificultadMediaVideojuego;
 
         public clsListaConInfoDeVideojuego(): base()
@@ -22,6 +22,7 @@ namespace MVGL_API.Models
             nombreVideojuego = oVideojuegoEnRegistro.Nombre;
             notaMediaVideojuego = oVideojuegoEnRegistro.NotaMedia;
             dificultadMediaVideojuego = oVideojuegoEnRegistro.DificultadMedia;
+            generos = oVideojuegoEnRegistro.Generos;
         }
 
         public clsListaConInfoDeVideojuego(clsVideojuego oVideojuegoEnRegistro) : base()
@@ -31,11 +32,13 @@ namespace MVGL_API.Models
             nombreVideojuego = oVideojuegoEnRegistro.Nombre;
             notaMediaVideojuego = oVideojuegoEnRegistro.NotaMedia;
             dificultadMediaVideojuego = oVideojuegoEnRegistro.DificultadMedia;
+            generos = oVideojuegoEnRegistro.Generos;
         }
 
         public string UrlImagenVideojuego { get => urlImagenVideojuego; set => urlImagenVideojuego = value; }
         public string NombreVideojuego { get => nombreVideojuego; set => nombreVideojuego= value; }
         public double NotaMediaVideojuego { get => notaMediaVideojuego; set => notaMediaVideojuego = value;}
         public double DificultadMediaVideojuego { get => dificultadMediaVideojuego; set => dificultadMediaVideojuego = value; }
+        public string Generos { get => generos; set => generos = value; }
     }
 }

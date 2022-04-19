@@ -32,16 +32,16 @@ namespace MVGL_API.Controllers
             }
             return result;
         }
-        // POST api/<UsuarioController>/342562362
-        [HttpPost("{id}")]
-        public ObjectResult Post(string id)
+        // POST api/<UsuarioController>
+        [HttpPost]
+        public ObjectResult Post([FromBody] clsUsuario value)
         {
             ObjectResult result = new ObjectResult(new { });
             result.Value = 0;
 
             try
             {
-                result.Value = new clsGestoraUsuariosBL().insertarUsuarioBL(id);
+                result.Value = new clsGestoraUsuariosBL().insertarUsuarioBL(value);
                 if (!result.Value.ToString().Equals("1"))
                 {
                     result.StatusCode = (int)HttpStatusCode.NotFound; //no controlamos que sea mas de 1 ya que no podra insertar mas de 1 fila con la instruccion

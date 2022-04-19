@@ -44,6 +44,7 @@ namespace MVGL_DAL.Listados
                 {
                     miLector.Read(); //solo un read porque la instruccion sql solo nos devolvera una fila
                     oUsuario.Id = (String)miLector["Id"];
+                    oUsuario.NombreUsuario = (String)miLector["NombreUsuario"];
                     oUsuario.VideojuegosJugados = (int)miLector["VideojuegosJugados"]; //no controlo nulos porque la BBDD no permite que aqui hayan nulos, y la BBDD lo controla poniendo 0 como valor por defecto
                     oUsuario.VideojuegosPlaneados = (int)miLector["VideojuegosPlaneados"];
                     oUsuario.VideojuegosDropeados = (int)miLector["VideojuegosDropeados"];

@@ -19,25 +19,33 @@ namespace MVGL_DAL.Gestora
             conexionBase = new clsMyConnection();
         }
         /// <summary>
-        /// <b>Cabecera:</b>public int insertarUsuarioDAL(String id)<br />
-        /// <b>Descripción:</b>Este método se encarga de insertar un usuario con el id correspondiente a la BBDD, con todos los datos con valores por defecto (0 todos)<br />
-        /// <b>Precondiciones:</b>El id debe ser valido, y no exceder los 28 caracteres<br />
+        /// <b>Cabecera:</b>public int insertarUsuarioBL(String id)<br />
+        /// <b>Descripción:</b>Este método se encarga insertar un usuario, con todos los datos con valores por defecto (0 todos), menos el id y el nombre de usuario<br />
+        /// <b>Precondiciones:</b>El id debe ser valido, y no exceder los 28 caracteres, el nombre de usuario no puede estar repetido<br />
         /// <b>Postcondiciones:</b>El usuario se creera en la BBDD con su correspondiente id<br />
-        /// <b>Entrada:</b>String id. El id del usuario a crear<br />
+        /// <b>Entrada:</b>clsUsuario oUsuario. El usuario a crear con su id (que debe coincidir con el id de Firebase) y el nombre de usuario (que no puede estar repetido)<br />
         /// <b>Salida:</b>int resultado. El número de filas afectadas, si es 1 significa que se ha insertado exitosamente, si es distinto de 1, habrá ocurrido algún fallo<br />
         /// </summary>
-        /// <param name="id"><b>id - String. El id del usuario a crear en la BBDD</b> </param>
+        /// <param name="oUsuario"></param>
         /// <returns><b>resultado - int.El número de filas afectadas por la instrucción de inserción en la BBDD</b> </returns>
-        public int insertarUsuarioDAL(String id)
+        public int insertarUsuarioDAL(clsUsuario oUsuario)
         {
             int resultado = 0;
             SqlCommand miComando = new SqlCommand();
-            miComando.Parameters.Add("@id", System.Data.SqlDbType.VarChar).Value = id;
-            miComando.CommandText = "INSERT INTO Usuarios(Id) VALUES(@id)";
+            miComando.Parameters.Add("@id", System.Data.SqlDbType.VarChar).Value = oUsuario.Id;
+            miComando.Parameters.Add("@nombreUsuario", System.Data.SqlDbType.VarChar).Value = oUsuario.NombreUsuario;
+            miComando.CommandText = "INSERT INTO Usuarios(Id, NombreUsuario) VALUES(@id, @nombreUsuario)";
             conexionEstablecida = conexionBase.getConnection();
             miComando.Connection = conexionEstablecida;
-            resultado = miComando.ExecuteNonQuery();
+            try
+            {
+                resultado = miComando.ExecuteNonQuery();
 
+            }
+            catch (Exception)
+            {
+                throw; //hago throw porque esto ya lo manejara la API
+            }
             conexionBase.closeConnection(ref conexionEstablecida);
 
             return resultado;
@@ -68,7 +76,15 @@ namespace MVGL_DAL.Gestora
             conexionEstablecida = conexionBase.getConnection(); //pongo esto aqui para tener la conexion abierta el menor tiempo posible
             miComando.Connection = conexionEstablecida;
 
-            resultado = miComando.ExecuteNonQuery();
+            try
+            {
+                resultado = miComando.ExecuteNonQuery();
+
+            }
+            catch (Exception)
+            {
+                throw; //hago throw porque esto ya lo manejara la API
+            }
 
             conexionBase.closeConnection(ref conexionEstablecida);
 
@@ -97,7 +113,15 @@ namespace MVGL_DAL.Gestora
             conexionEstablecida = conexionBase.getConnection(); //pongo esto aqui para tener la conexion abierta el menor tiempo posible
             miComando.Connection = conexionEstablecida;
 
-            resultado = miComando.ExecuteNonQuery();
+            try
+            {
+                resultado = miComando.ExecuteNonQuery();
+
+            }
+            catch (Exception)
+            {
+                throw; //hago throw porque esto ya lo manejara la API
+            }
 
             conexionBase.closeConnection(ref conexionEstablecida);
 

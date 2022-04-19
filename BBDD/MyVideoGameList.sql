@@ -1,5 +1,6 @@
 CREATE TABLE Usuarios(
 	Id varChar(28) Not NULL CONSTRAINT PK_Usuarios PRIMARY KEY
+	,NombreUsuario varChar(30) Not NULL CONSTRAINT UQ_NombreUsuario UNIQUE
 	,VideojuegosJugados int Not NULL DEFAULT 0
 	,VideojuegosPlaneados int Not NULL DEFAULT 0
 	,VideojuegosDropeados int Not NULL DEFAULT 0

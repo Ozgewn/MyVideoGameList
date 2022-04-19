@@ -9,6 +9,7 @@ namespace MVGL_Entidades
     public class clsUsuario
     {
         private String id;
+        private String nombreUsuario;
         private int videojuegosJugados;
         private int videojuegosPlaneados;
         private int videojuegosDropeados;
@@ -19,6 +20,7 @@ namespace MVGL_Entidades
         public clsUsuario()
         {
             this.id = "";
+            this.nombreUsuario = "";
             this.videojuegosJugados = 0;
             this.videojuegosPlaneados = 0;
             this.videojuegosDropeados = 0;
@@ -27,9 +29,10 @@ namespace MVGL_Entidades
             esListaPrivada = false;
 
         }
-        public clsUsuario(String id, int videojuegosJugados, int videojuegosPlaneados, int videojuegosDropeados, int videojuegosEnPausa, int videojuegosJugando, bool esListaPrivada)
+        public clsUsuario(String id, String nombreUsuario, int videojuegosJugados, int videojuegosPlaneados, int videojuegosDropeados, int videojuegosEnPausa, int videojuegosJugando, bool esListaPrivada)
         {
             this.id = id;
+            this.nombreUsuario = nombreUsuario;
             this.videojuegosJugados = videojuegosJugados;
             this.videojuegosPlaneados = videojuegosPlaneados;
             this.videojuegosDropeados = videojuegosDropeados;
@@ -39,6 +42,7 @@ namespace MVGL_Entidades
         }
 
         public String Id { get => id; set => id = value; }
+        public String NombreUsuario { get => nombreUsuario; set => nombreUsuario = value;}
         public int VideojuegosJugados { get => videojuegosJugados; set => videojuegosJugados = value; }
         public int VideojuegosPlaneados { get => videojuegosPlaneados; set => videojuegosPlaneados = value; }
         public int VideojuegosDropeados { get => videojuegosDropeados; set => videojuegosDropeados = value; }
