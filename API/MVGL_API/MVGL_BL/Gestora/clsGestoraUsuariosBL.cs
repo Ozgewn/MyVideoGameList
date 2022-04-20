@@ -13,7 +13,7 @@ namespace MVGL_BL.Gestora
         /// <summary>
         /// <b>Cabecera:</b>public int insertarUsuarioBL(String id)<br />
         /// <b>Descripción:</b>Este método se encarga de llamar a la capa DAL y que esta inserte un usuario, con todos los datos con valores por defecto (0 todos), menos el id y el nombre de usuario<br />
-        /// <b>Precondiciones:</b>El id debe ser valido, y no exceder los 28 caracteres, el nombre de usuario no puede estar repetido<br />
+        /// <b>Precondiciones:</b>El id debe ser valido, y no exceder los 28 caracteres, el nombre de usuario no puede estar repetido, ni exceder los 30 caracteres<br />
         /// <b>Postcondiciones:</b>El usuario se creera en la BBDD con su correspondiente id<br />
         /// <b>Entrada:</b>clsUsuario oUsuario. El usuario a crear con su id (que debe coincidir con el id de Firebase) y el nombre de usuario (que no puede estar repetido)<br />
         /// <b>Salida:</b>int resultado. El número de filas afectadas, si es 1 significa que se ha insertado exitosamente, si es distinto de 1, habrá ocurrido algún fallo<br />

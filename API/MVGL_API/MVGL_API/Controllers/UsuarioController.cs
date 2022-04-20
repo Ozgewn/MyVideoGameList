@@ -12,8 +12,8 @@ namespace MVGL_API.Controllers
     [ApiController]
     public class UsuarioController : ControllerBase
     {
-        // GET api/<UsuarioController>/5
-        [HttpGet("{id}")]
+        // GET api/<UsuarioController>/id/5
+        [HttpGet("id/{id}")]
         public ObjectResult Get(string id)
         {
             ObjectResult result = new ObjectResult(new { });
@@ -21,10 +21,50 @@ namespace MVGL_API.Controllers
             try
             {
                 result.Value = new clsListadoUsuariosBL().getUsuarioSegunIdBL(id);
+                result.StatusCode = (int)HttpStatusCode.OK;
                 if ((result.Value as clsUsuario) == null || (result.Value as clsUsuario).Id.Equals("")) //si tiene el id vacio significa que no ha encontrado al usuario especificado en la BBDD
                 {
                     result.StatusCode = (int)HttpStatusCode.NotFound;
                 }
+            }
+            catch (Exception)
+            {
+                result.StatusCode = (int)HttpStatusCode.InternalServerError;
+            }
+            return result;
+        }
+        // GET api/<UsuarioController>/nombre/username123
+        [HttpGet("nombre/{nombreUsuario}")]
+        public ObjectResult GetListadoUsuariosQueContenganNombreUsuario(string nombreUsuario)
+        {
+            ObjectResult result = new ObjectResult(new { });
+            result.Value = null;
+            try
+            {
+                result.Value = new clsListadoUsuariosBL().getListadoUsuariosQueContenganNombreUsuarioBL(nombreUsuario);
+                result.StatusCode = (int)HttpStatusCode.OK;
+                if ((result.Value as List<clsUsuario>) == null || (result.Value as List<clsUsuario>).Count == 0) //si tiene el id vacio significa que no ha encontrado al usuario especificado en la BBDD
+                {
+                    result.StatusCode = (int)HttpStatusCode.NotFound;
+                }
+            }
+            catch (Exception)
+            {
+                result.StatusCode = (int)HttpStatusCode.InternalServerError;
+            }
+            return result;
+        }
+        // GET api/<UsuarioController>/comprobarExistencia/username123
+        [HttpGet("comprobarExistencia/{nombreUsuario}")]
+        public ObjectResult GetExistenciaNombreUsuario(string nombreUsuario)
+        {
+            ObjectResult result = new ObjectResult(new { });
+            result.Value = null;
+            try
+            {
+                result.Value = new clsListadoUsuariosBL().isNombreUsuarioExistenteBL(nombreUsuario);
+                result.StatusCode = (int)HttpStatusCode.OK;
+                //No pongo que devuelva 404 ya que el bool siempre va a devolver true/false, y que devuelva false no significa que sea un error
             }
             catch (Exception)
             {
