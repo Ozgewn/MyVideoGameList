@@ -20,7 +20,7 @@ namespace MVGL_BL.Listados
         /// </summary>
         /// <param name="id"><b>id - String. </b>El id del videojuego del cual se desea obtener la informacion de la BBDD</param>
         /// <returns><b>oVideojuego - clsVideojuego. </b>El videojuego traido de la BBDD que corresponde con el id que se ha introducido por parametros</returns>
-        public clsVideojuego getVideojuegoSegunIdBL(String id)
+        public clsVideojuego getVideojuegoSegunIdBL(int id)
         {
             return new clsListadoVideojuegosDAL().getVideojuegoSegunIdDAL(id);
         }

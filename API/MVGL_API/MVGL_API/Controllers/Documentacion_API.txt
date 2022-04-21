@@ -99,3 +99,16 @@ de videojuegos de un usuario.
 		-200 (OK) -> Se devolverá el código 200 siempre que la lista no sea nula, y que contenga algun dato dentro de ella
 		-404 (Not Found) -> Se devolverá el código 404 siempre la lista sea nula, o contenga 0 datos dentro de ella
 		-500 (InternalServerError) -> Se devolverá el código 500 cuando ha ocurrido un error en el codigo, por ejemplo, un error de BBDD
+
+Controlador de Videojuego:
+----------------------------------------------
+Este controlador se encarga de devolver la información más detallada de un vídeojuego en específico.
+
+Verbos GET:
+
+GET /api/Videojuego/5 -> Se obtendrá la información específica del juego según su idVideojuego, en este caso, se obtendría
+la información del videojuego con id "5"
+	Dependiendo del resultado obtenido de dicha llamada, recibiremos los siguientes códigos de estado:
+		-200 (OK) -> Se devolverá el código 200 siempre que se encuentre un videojuego válido
+		-404 (Not Found) -> Se devolverá el código 404 siempre el videojuego devuelto sea nulo, o su idVideojuego sea 0
+		-500 (InternalServerError) -> Se devolverá el código 500 cuando ha ocurrido un error en el codigo, por ejemplo, un error de BBDD

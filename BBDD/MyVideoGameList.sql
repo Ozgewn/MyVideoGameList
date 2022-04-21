@@ -45,7 +45,7 @@ DECLARE @NuevoIdVideojuego INT
 
 SELECT @NuevoIdVideojuego = IdVideojuego FROM inserted
 
-SELECT @Media = AVG(Nota) FROM ListaVideojuegos
+SELECT @Media = AVG(CAST(Nota AS FLOAT)) FROM ListaVideojuegos
 	WHERE IdVideojuego = @NuevoIdVideojuego
 
 	UPDATE Videojuegos
@@ -67,7 +67,7 @@ SET @Media = 0
 
 IF @Count >= 1
 	BEGIN
-		SELECT @Media = ISNULL(AVG(Nota),NULL) FROM ListaVideojuegos
+		SELECT @Media = ISNULL(AVG(CAST(Nota AS FLOAT)),NULL) FROM ListaVideojuegos
 			WHERE IdVideojuego = @AntiguoIdVideojuego
 	END
 
@@ -82,7 +82,7 @@ DECLARE @NuevoIdVideojuego INT
 
 SELECT @NuevoIdVideojuego = IdVideojuego FROM inserted
 
-SELECT @Media = AVG(Dificultad) FROM ListaVideojuegos
+SELECT @Media = AVG(CAST(Dificultad AS FLOAT)) FROM ListaVideojuegos
 	WHERE IdVideojuego = @NuevoIdVideojuego
 
 	UPDATE Videojuegos
@@ -104,7 +104,7 @@ SET @Media = 0
 
 IF @Count >= 1
 	BEGIN
-		SELECT @Media = ISNULL(AVG(Dificultad),NULL) FROM ListaVideojuegos
+		SELECT @Media = ISNULL(AVG(CAST(Dificultad AS FLOAT)),NULL) FROM ListaVideojuegos
 			WHERE IdVideojuego = @AntiguoIdVideojuego
 	END
 

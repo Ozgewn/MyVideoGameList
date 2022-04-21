@@ -28,12 +28,12 @@ namespace MVGL_DAL.Listados
         /// </summary>
         /// <param name="id"><b>id - String. </b>El id del videojuego del cual se desea obtener la informacion de la BBDD</param>
         /// <returns><b>oVideojuego - clsVideojuego. </b>El videojuego traido de la BBDD que corresponde con el id que se ha introducido por parametros</returns>
-        public clsVideojuego getVideojuegoSegunIdDAL(String id)
+        public clsVideojuego getVideojuegoSegunIdDAL(int id)
         {
             clsVideojuego oVideojuego = new clsVideojuego();
             SqlCommand miComando = new SqlCommand();
             SqlDataReader miLector;
-            miComando.Parameters.Add("@id", System.Data.SqlDbType.VarChar).Value = id;
+            miComando.Parameters.Add("@id", System.Data.SqlDbType.Int).Value = id;
             miComando.CommandText = "SELECT * FROM Videojuegos WHERE Id = @id";
             conexionEstablecida = conexionBase.getConnection();
             miComando.Connection = conexionEstablecida;
