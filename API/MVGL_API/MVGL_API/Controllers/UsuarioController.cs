@@ -128,6 +128,11 @@ namespace MVGL_API.Controllers
 
         // DELETE api/<UsuarioController>/5
         [HttpDelete("{id}")]
+        /*
+         * Este metodo intentara borrar a un usuario, al intentar borrarlo, en la BBDD se desencadenara un trigger el cual,
+         * primero borrara todos los juegos en la lista del usuario, actualizara la nota media y dificultad media de los juegos que
+         * se han visto involucrados en el borrado de los juegos de la lista del usuario, y acto seguido, borrara al usuario propiamente dicho
+         */
         public ObjectResult Delete(string id)
         {
             ObjectResult result = new ObjectResult(new { });
