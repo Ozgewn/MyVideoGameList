@@ -1,0 +1,17 @@
+E:\GitKraken-Repos\MyVideoGameList\API\MVGL_API\MVGL_BL\bin\Release\net5.0\MVGL_BL.deps.json
+E:\GitKraken-Repos\MyVideoGameList\API\MVGL_API\MVGL_BL\bin\Release\net5.0\MVGL_BL.dll
+E:\GitKraken-Repos\MyVideoGameList\API\MVGL_API\MVGL_BL\bin\Release\net5.0\ref\MVGL_BL.dll
+E:\GitKraken-Repos\MyVideoGameList\API\MVGL_API\MVGL_BL\bin\Release\net5.0\MVGL_BL.pdb
+E:\GitKraken-Repos\MyVideoGameList\API\MVGL_API\MVGL_BL\bin\Release\net5.0\MVGL_DAL.dll
+E:\GitKraken-Repos\MyVideoGameList\API\MVGL_API\MVGL_BL\bin\Release\net5.0\MVGL_Entidades.dll
+E:\GitKraken-Repos\MyVideoGameList\API\MVGL_API\MVGL_BL\bin\Release\net5.0\MVGL_DAL.pdb
+E:\GitKraken-Repos\MyVideoGameList\API\MVGL_API\MVGL_BL\bin\Release\net5.0\MVGL_Entidades.pdb
+E:\GitKraken-Repos\MyVideoGameList\API\MVGL_API\MVGL_BL\obj\Release\net5.0\MVGL_BL.csproj.AssemblyReference.cache
+E:\GitKraken-Repos\MyVideoGameList\API\MVGL_API\MVGL_BL\obj\Release\net5.0\MVGL_BL.GeneratedMSBuildEditorConfig.editorconfig
+E:\GitKraken-Repos\MyVideoGameList\API\MVGL_API\MVGL_BL\obj\Release\net5.0\MVGL_BL.AssemblyInfoInputs.cache
+E:\GitKraken-Repos\MyVideoGameList\API\MVGL_API\MVGL_BL\obj\Release\net5.0\MVGL_BL.AssemblyInfo.cs
+E:\GitKraken-Repos\MyVideoGameList\API\MVGL_API\MVGL_BL\obj\Release\net5.0\MVGL_BL.csproj.CoreCompileInputs.cache
+E:\GitKraken-Repos\MyVideoGameList\API\MVGL_API\MVGL_BL\obj\Release\net5.0\MVGL_BL.csproj.CopyComplete
+E:\GitKraken-Repos\MyVideoGameList\API\MVGL_API\MVGL_BL\obj\Release\net5.0\MVGL_BL.dll
+E:\GitKraken-Repos\MyVideoGameList\API\MVGL_API\MVGL_BL\obj\Release\net5.0\ref\MVGL_BL.dll
+E:\GitKraken-Repos\MyVideoGameList\API\MVGL_API\MVGL_BL\obj\Release\net5.0\MVGL_BL.pdb

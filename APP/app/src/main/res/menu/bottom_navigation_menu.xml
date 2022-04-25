@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/page_ranking"
+        android:enabled="true"
+        android:icon="@drawable/ic_ranking"
+        android:title="Ranking"/>
+    <item
+        android:id="@+id/page_comunidad"
+        android:enabled="true"
+        android:icon="@drawable/ic_people"
+        android:title="Comunidad"/>
+    <item
+        android:id="@+id/page_mi_lista"
+        android:enabled="true"
+        android:icon="@drawable/ic_my_list"
+        android:title="Mi Lista"/>
+</menu>
