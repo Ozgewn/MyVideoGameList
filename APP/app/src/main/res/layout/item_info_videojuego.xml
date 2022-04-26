@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/iVImagenVideojuego"
+        android:layout_width="200dp"
+        android:layout_height="125dp"
+        android:layout_marginLeft="14dp"
+        android:scaleType="center"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:background="@color/lightBlack"
+        app:layout_constraintBottom_toBottomOf="@id/iVImagenVideojuego"
+        app:layout_constraintLeft_toLeftOf="@id/iVImagenVideojuego">
+
+        <TextView
+            android:id="@+id/tVNotaMediaVideojuego"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="8.71" />
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginLeft="5dp"
+            android:src="@drawable/ic_white_star"
+            app:layout_constraintLeft_toRightOf="@id/tVNotaMediaVideojuego"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tVNotaPersonalVideojuego"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tVNotaMediaVideojuego"
+            tools:text="6" />
+
+        <!--        <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_nota_personal"
+                    app:layout_constraintLeft_toRightOf="@id/tVNotaPersonalVideojuego"
+                    app:layout_constraintTop_toBottomOf="@id/tVNotaMediaVideojuego"
+                    app:tint="@color/white"
+                    android:layout_marginLeft="5dp"/>-->
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/tVNombreVideojuego"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/black"
+        android:textSize="17sp"
+        app:layout_constraintLeft_toLeftOf="@id/iVImagenVideojuego"
+        app:layout_constraintTop_toBottomOf="@id/iVImagenVideojuego"
+        tools:text="The Witcher 3" />
+
+    <TextView
+        android:id="@+id/tVGenerosVideojuego"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:textColor="@color/teal_700"
+        android:textSize="14sp"
+        app:layout_constraintLeft_toLeftOf="@id/tVNombreVideojuego"
+        app:layout_constraintTop_toBottomOf="@id/tVNombreVideojuego"
+        tools:text="MMORPG" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

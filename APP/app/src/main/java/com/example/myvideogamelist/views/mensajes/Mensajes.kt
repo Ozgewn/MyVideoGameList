@@ -10,5 +10,6 @@ class Mensajes {
         const val PASSWORD_MASDE6CHARS = "La contraseña debe de tener más de 6 caracteres"
         const val SIGNUP_PASSWORD_NO_COINCIDEN = "La contraseña introducida no coincide"
         const val SIGNUP_USERNAME_VACIO = "El nombre de usuario no puede estar vacío"
+        const val CONEXION_INTERNET_FALLIDA = "Ha ocurrido un error desconocido, compruebe su conexión a Internet e intentelo de nuevo más tarde"
     }
 }

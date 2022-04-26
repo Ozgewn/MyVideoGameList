@@ -12,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.myvideogamelist.views.mensajes.Mensajes
 import com.example.myvideogamelist.R
 import com.example.myvideogamelist.databinding.FragmentLoginBinding
+import com.example.myvideogamelist.views.sharedData.SharedData
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -89,6 +90,7 @@ class LoginFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         if(auth.currentUser != null){
+            SharedData.idUsuario = auth.currentUser!!.uid //Lo pongo en la SharedData para no estar pasando Firebase en todos los fragments
             navController.navigate(R.id.action_loginFragment_to_mainContentFragment)
         }
     }
@@ -97,6 +99,7 @@ class LoginFragment : Fragment() {
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener(activity!!) { task ->
                 if (task.isSuccessful) {
+                    SharedData.idUsuario = task.result.user!!.uid
                     navController.navigate(R.id.action_loginFragment_to_mainContentFragment)
                 } else {
                     Toast.makeText(

@@ -1,7 +1,8 @@
 package com.example.myvideogamelist.api.conexion
 
 object Conexion{
-    const val baseUrl = "https://myvideogamelist.azurewebsites.net/api/"
-    const val obtenerUsuarioPorId = "Usuario/id/"
-    const val postUsuario = "Usuario"
+    const val BASE_URL = "https://myvideogamelist.azurewebsites.net/api/"
+    const val OBTENER_USUARIO_POR_ID = "Usuario/id/"
+    const val POST_USUARIO = "Usuario"
+    const val GET_LISTA_VIDEOJUEGOS_POR_USUARIO = "listavideojuegos/"
 }

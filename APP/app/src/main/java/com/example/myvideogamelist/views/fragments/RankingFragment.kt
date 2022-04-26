@@ -5,29 +5,56 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.fragment.app.activityViewModels
+import androidx.navigation.NavController
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myvideogamelist.R
+import com.example.myvideogamelist.databinding.FragmentRankingBinding
+import com.example.myvideogamelist.models.clsListaConInfoDeVideojuego
+import com.example.myvideogamelist.viewmodels.clsListaConInfoDeVideojuegoViewModel
+import com.example.myvideogamelist.views.adapters.ListaConInfoDeVideojuegoAdapter
+import com.example.myvideogamelist.views.mensajes.Mensajes
+import com.example.myvideogamelist.views.sharedData.SharedData
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.lang.Exception
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [RankingFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class RankingFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+
+    private var _binding: FragmentRankingBinding? = null
+    private val binding get() = _binding!!
+    private lateinit var adapter: ListaConInfoDeVideojuegoAdapter
+    private var listaVideojuegosConInfoFiltrada = mutableListOf<clsListaConInfoDeVideojuego>()
+    private val listaVideojuegosConInfoViewModel: clsListaConInfoDeVideojuegoViewModel by activityViewModels()
+    private lateinit var navController: NavController
+    private var listaVideojuegosConInfoCompleta: List<clsListaConInfoDeVideojuego> = emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+        try{
+            CoroutineScope(Dispatchers.IO).launch { //iniciamos la corrutina
+                listaVideojuegosConInfoViewModel.onCreate(SharedData.idUsuario) //el onCreate le asigna el valor a listaConInfoDeVideojuegosModel de lo que devuelva la API
+                listaVideojuegosConInfoCompleta = listaVideojuegosConInfoViewModel.listaConInfoDeVideojuegosModel //le asignamos valor a la lista completa
+                activity?.runOnUiThread{
+                    listaVideojuegosConInfoFiltrada.removeAll(listaVideojuegosConInfoFiltrada)
+                    listaVideojuegosConInfoFiltrada.addAll(listaVideojuegosConInfoCompleta) //añadimos lo de la lista completa a la lista que vamos a ofrecer
+                    binding.pBIndeterminada.visibility = View.GONE //quitamos el progress bar(el circulo que indica que esta cargando)
+                    adapter.notifyDataSetChanged() //avisamos el adapter que hemos modificado la lista
+                }
+            }
+        }catch (e: Exception) {
+            Toast.makeText(
+                requireContext(),
+                Mensajes.errores.CONEXION_INTERNET_FALLIDA,
+                Toast.LENGTH_SHORT
+            ).show()
         }
+
     }
 
     override fun onCreateView(
@@ -35,26 +62,28 @@ class RankingFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_ranking, container, false)
+        _binding = FragmentRankingBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment RankingFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            RankingFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.pBIndeterminada.visibility = View.VISIBLE
+        initRecyclerView()
     }
+
+    fun initRecyclerView() {
+        adapter = ListaConInfoDeVideojuegoAdapter(listaVideojuegosConInfoFiltrada) {
+            onVideojuegoSeleccionado(it)
+        }
+        var manager: GridLayoutManager = GridLayoutManager(requireContext(), 2)
+        binding.rVListaConInfoDeVideojuego.layoutManager = manager //LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        binding.rVListaConInfoDeVideojuego.adapter = adapter
+    }
+
+    fun onVideojuegoSeleccionado(oVideojuego: clsListaConInfoDeVideojuego) {
+        //TODO: NAVEGAR A FRAGMENT DE DETALLES
+        Toast.makeText(requireContext(), oVideojuego.nombreVideojuego, Toast.LENGTH_SHORT).show()
+    }
+
 }
