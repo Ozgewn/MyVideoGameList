@@ -32,13 +32,13 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:text="8.71" />
 
-        <ImageView
+        <!--<ImageView
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_marginLeft="5dp"
             android:src="@drawable/ic_white_star"
             app:layout_constraintLeft_toRightOf="@id/tVNotaMediaVideojuego"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent" />-->
 
         <TextView
             android:id="@+id/tVNotaPersonalVideojuego"
