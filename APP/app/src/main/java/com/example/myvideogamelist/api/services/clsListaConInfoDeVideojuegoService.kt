@@ -13,7 +13,7 @@ class clsListaConInfoDeVideojuegoService {
 
     suspend fun getListaVideojuegosPorUsuario(idUsuario: String):List<clsListaConInfoDeVideojuego>{
         return withContext(Dispatchers.IO){
-            val response = retrofit.create(clsListaConInfoDeVideojuegoProvider::class.java).getListaVideojuegosPorUsuario(Conexion.GET_LISTA_VIDEOJUEGOS_POR_USUARIO+idUsuario)
+            val response = retrofit.create(clsListaConInfoDeVideojuegoProvider::class.java).getListaVideojuegosPorUsuario(Conexion.GET_POST_PUT_LISTA_VIDEOJUEGOS_POR_USUARIO+idUsuario)
             response.body() ?: emptyList()
         } //esta corrutina devolvera una lista de videojuegos completa, si ocurre un fallo, y la respuesta a la llamada de la API es null, devolvera una lista vacia (aunque, gracias a la API, nunca nos
     // llegara nada a nulo, pero hago esta comprobacion por si acaso )

@@ -11,5 +11,5 @@ interface clsUsuarioProvider {
 
     @Headers("Content-Type: application/json")
     @POST(Conexion.POST_USUARIO)
-    fun insertarUsuario(@Body clsUsuario: clsUsuario): Call<clsUsuario>
+    fun insertarUsuario(@Body clsUsuario: clsUsuario): Call<clsUsuario> //TODO: cambiar a Call<Int>
 }

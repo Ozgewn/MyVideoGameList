@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".views.fragments.AnyadirOEditarFragment">
+
+    <com.google.android.material.textfield.TextInputLayout
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_width="wrap_content"
+        android:layout_height="75dp"
+        android:id="@+id/tFMenuDesplegable"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:hint="Estado">
+
+        <AutoCompleteTextView
+            android:id="@+id/atVEstados"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="none"
+            android:hint="Estado"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <ProgressBar
+        android:id="@+id/pBIndeterminada"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        app:layout_constraintLeft_toRightOf="@id/tFMenuDesplegable"
+        app:layout_constraintTop_toTopOf="@id/tFMenuDesplegable" />
+
+    <TextView
+        app:layout_constraintTop_toBottomOf="@id/tFMenuDesplegable"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:id="@+id/tVNota"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Nota" />
+
+    <com.wefika.horizontalpicker.HorizontalPicker
+        app:layout_constraintTop_toBottomOf="@id/tVNota"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:id="@+id/hPickerNota"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/black"
+        android:textSize="15dp"
+        android:ellipsize="middle"
+        android:marqueeRepeatLimit="-1" />
+
+    <View
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/rectangle"
+        app:layout_constraintLeft_toLeftOf="@id/hPickerNota"
+        app:layout_constraintRight_toRightOf="@id/hPickerNota"
+        app:layout_constraintTop_toTopOf="@id/hPickerNota"
+        app:layout_constraintBottom_toBottomOf="@id/hPickerNota"/>
+
+    <TextView
+        android:layout_marginTop="20dp"
+        app:layout_constraintTop_toBottomOf="@id/hPickerNota"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:id="@+id/tVDificultad"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Dificultad" />
+
+    <com.wefika.horizontalpicker.HorizontalPicker
+        app:layout_constraintTop_toBottomOf="@id/tVDificultad"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:id="@+id/hPickerDificultad"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/black"
+        android:textSize="15dp"
+        android:ellipsize="middle"
+        android:marqueeRepeatLimit="-1" />
+
+    <View
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/rectangle"
+        app:layout_constraintLeft_toLeftOf="@id/hPickerDificultad"
+        app:layout_constraintRight_toRightOf="@id/hPickerDificultad"
+        app:layout_constraintTop_toTopOf="@id/hPickerDificultad"
+        app:layout_constraintBottom_toBottomOf="@id/hPickerDificultad"/>
+
+    <Button
+        android:id="@+id/btnTest"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Test"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

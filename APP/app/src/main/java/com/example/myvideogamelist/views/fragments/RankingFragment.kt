@@ -1,5 +1,6 @@
 package com.example.myvideogamelist.views.fragments
 
+import android.opengl.Visibility
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -10,18 +11,16 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myvideogamelist.R
 import com.example.myvideogamelist.databinding.FragmentRankingBinding
 import com.example.myvideogamelist.models.clsListaConInfoDeVideojuego
-import com.example.myvideogamelist.viewmodels.clsListaConInfoDeVideojuegoViewModel
+import com.example.myvideogamelist.viewmodels.VideojuegoViewModel
 import com.example.myvideogamelist.views.adapters.ListaConInfoDeVideojuegoAdapter
 import com.example.myvideogamelist.views.mensajes.Mensajes
 import com.example.myvideogamelist.views.sharedData.SharedData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.lang.Exception
 
 class RankingFragment : Fragment() {
@@ -30,7 +29,7 @@ class RankingFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var adapter: ListaConInfoDeVideojuegoAdapter
     private var listaVideojuegosConInfoFiltrada = mutableListOf<clsListaConInfoDeVideojuego>()
-    private val listaVideojuegosConInfoViewModel: clsListaConInfoDeVideojuegoViewModel by activityViewModels()
+    private val videojuegoViewModel: VideojuegoViewModel by activityViewModels()
     private lateinit var navController: NavController
     private var listaVideojuegosConInfoCompleta: List<clsListaConInfoDeVideojuego> = emptyList()
 
@@ -38,8 +37,8 @@ class RankingFragment : Fragment() {
         super.onCreate(savedInstanceState)
         try{
             CoroutineScope(Dispatchers.IO).launch { //iniciamos la corrutina
-                listaVideojuegosConInfoViewModel.onCreate(SharedData.idUsuario) //el onCreate le asigna el valor a listaConInfoDeVideojuegosModel de lo que devuelva la API
-                listaVideojuegosConInfoCompleta = listaVideojuegosConInfoViewModel.listaConInfoDeVideojuegosModel //le asignamos valor a la lista completa
+                videojuegoViewModel.onCreate(SharedData.idUsuario) //el onCreate le asigna el valor a listaConInfoDeVideojuegosModel de lo que devuelva la API
+                listaVideojuegosConInfoCompleta = videojuegoViewModel.listaConInfoDeVideojuegosModel //le asignamos valor a la lista completa
                 activity?.runOnUiThread{
                     listaVideojuegosConInfoFiltrada.removeAll(listaVideojuegosConInfoFiltrada)
                     listaVideojuegosConInfoFiltrada.addAll(listaVideojuegosConInfoCompleta) //añadimos lo de la lista completa a la lista que vamos a ofrecer
@@ -68,22 +67,31 @@ class RankingFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        navController = findNavController()
         binding.pBIndeterminada.visibility = View.VISIBLE
         initRecyclerView()
     }
 
-    fun initRecyclerView() {
-        adapter = ListaConInfoDeVideojuegoAdapter(listaVideojuegosConInfoFiltrada) {
-            onVideojuegoSeleccionado(it)
-        }
-        var manager: GridLayoutManager = GridLayoutManager(requireContext(), 2)
+    override fun onStart() {
+        super.onStart()
+        binding.pBIndeterminada.visibility = View.GONE
+    }
+
+    private fun initRecyclerView() {
+        adapter = ListaConInfoDeVideojuegoAdapter(listaVideojuegosConInfoFiltrada, {onVideojuegoSeleccionado(it)}, {onVideojuegoAnyadidoOEditado(it)})
+        val manager = GridLayoutManager(requireContext(), 2)
         binding.rVListaConInfoDeVideojuego.layoutManager = manager //LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         binding.rVListaConInfoDeVideojuego.adapter = adapter
     }
 
-    fun onVideojuegoSeleccionado(oVideojuego: clsListaConInfoDeVideojuego) {
-        //TODO: NAVEGAR A FRAGMENT DE DETALLES
-        Toast.makeText(requireContext(), oVideojuego.nombreVideojuego, Toast.LENGTH_SHORT).show()
+    private fun onVideojuegoSeleccionado(oVideojuego: clsListaConInfoDeVideojuego) {
+        videojuegoViewModel.videojuegoSeleccionado.postValue(oVideojuego)
+        navController.navigate(R.id.detallesFragment)
+    }
+
+    private fun onVideojuegoAnyadidoOEditado(oVideojuego: clsListaConInfoDeVideojuego){
+        videojuegoViewModel.videojuegoSeleccionado.postValue(oVideojuego)
+        navController.navigate(R.id.anyadirOEditarFragment)
     }
 
 }

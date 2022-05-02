@@ -1,10 +1,12 @@
 package com.example.myvideogamelist.views.fragments
 
+import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
 import androidx.navigation.NavController
@@ -101,7 +103,14 @@ class SignUpFragment : Fragment() {
 
             if(datosSignUpValidos){
                 register(email, password)
+            }else{
+                Toast.makeText(requireContext(), Mensajes.errores.LOGIN_SIGNUP_FALTAN_DATOS, Toast.LENGTH_SHORT).show()
+                //TODO: Mejorar mensaje de error con snackbar
             }
+        }
+
+        binding.signUpGoLoginButton.setOnClickListener {
+            navController.navigate(R.id.action_signUpFragment_to_loginFragment) //pasamos al login
         }
     }
 
@@ -111,10 +120,19 @@ class SignUpFragment : Fragment() {
                 if(task.isSuccessful){
                     var oUsuario = clsUsuario(id = task.result.user!!.uid, nombreUsuario = binding.signUpUsername.editText!!.text!!.toString()) //creamos el usuario para su posterior insercion en la BBDD
                     clsUsuarioRepository().insertarUsuario(oUsuario) //insertamos al usuario en la BBDD
+                    hideKeyboard()
                     navController.navigate(R.id.action_signUpFragment_to_loginFragment) //pasamos al login
                 }else{
                     Toast.makeText(requireContext(), Mensajes.errores.SIGNUP_FALLIDO, Toast.LENGTH_LONG).show()
                 }
             }
+    }
+
+    /**
+     * Oculta el teclado
+     */
+    private fun hideKeyboard(){
+        val imm = requireActivity().getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
     }
 }

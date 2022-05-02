@@ -11,5 +11,6 @@ class Mensajes {
         const val SIGNUP_PASSWORD_NO_COINCIDEN = "La contraseña introducida no coincide"
         const val SIGNUP_USERNAME_VACIO = "El nombre de usuario no puede estar vacío"
         const val CONEXION_INTERNET_FALLIDA = "Ha ocurrido un error desconocido, compruebe su conexión a Internet e intentelo de nuevo más tarde"
+        const val LOGIN_SIGNUP_FALTAN_DATOS = "Faltan errores por solucionar o información por rellenar en los campos de textos"
     }
 }

@@ -1,10 +1,12 @@
 package com.example.myvideogamelist.views.fragments
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
 import androidx.navigation.NavController
@@ -78,6 +80,9 @@ class LoginFragment : Fragment() {
 
             if(datosLoginValidos){
                 login(email, password)
+            }else{
+                Toast.makeText(requireContext(), Mensajes.errores.LOGIN_SIGNUP_FALTAN_DATOS, Toast.LENGTH_SHORT).show()
+                //TODO: Mejorar mensaje de error con snackbar
             }
         }
         binding.loginGoRegisterButton.setOnClickListener {
@@ -100,6 +105,7 @@ class LoginFragment : Fragment() {
             .addOnCompleteListener(activity!!) { task ->
                 if (task.isSuccessful) {
                     SharedData.idUsuario = task.result.user!!.uid
+                    hideKeyboard()
                     navController.navigate(R.id.action_loginFragment_to_mainContentFragment)
                 } else {
                     Toast.makeText(
@@ -109,5 +115,12 @@ class LoginFragment : Fragment() {
                     ).show()
                 }
             }
+    }
+    /**
+     * Oculta el teclado
+     */
+    private fun hideKeyboard(){
+        val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
     }
 }

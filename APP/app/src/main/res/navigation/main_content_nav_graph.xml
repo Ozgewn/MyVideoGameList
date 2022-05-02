@@ -20,4 +20,14 @@
         android:name="com.example.myvideogamelist.views.fragments.MiListaFragment"
         android:label="fragment_mi_lista"
         tools:layout="@layout/fragment_mi_lista" />
+    <fragment
+        android:id="@+id/detallesFragment"
+        android:name="com.example.myvideogamelist.views.fragments.DetallesFragment"
+        android:label="fragment_detalles"
+        tools:layout="@layout/fragment_detalles" />
+    <fragment
+        android:id="@+id/anyadirOEditarFragment"
+        android:name="com.example.myvideogamelist.views.fragments.AnyadirOEditarFragment"
+        android:label="fragment_anyadir_o_editar"
+        tools:layout="@layout/fragment_anyadir_o_editar" />
 </navigation>
