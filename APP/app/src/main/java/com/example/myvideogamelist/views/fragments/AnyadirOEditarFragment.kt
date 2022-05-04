@@ -1,6 +1,7 @@
 package com.example.myvideogamelist.views.fragments
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -17,6 +18,7 @@ import com.example.myvideogamelist.viewmodels.VideojuegoViewModel
 import com.example.myvideogamelist.views.adapters.ListaEstadosAdapter
 import com.example.myvideogamelist.views.mensajes.Mensajes
 import com.example.myvideogamelist.views.sharedData.SharedData
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -85,6 +87,9 @@ class AnyadirOEditarFragment : Fragment() {
         binding.atVEstados.setOnItemClickListener { _, _, position, _ ->
             oVideojuegoAInsertarOEditar.estado = position+1
         }
+        /*
+        TODO: mejorar esto
+         */
         binding.hPickerNota.values = listOf("-", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10").toTypedArray()
         binding.hPickerNota.sideItems = 4
         binding.hPickerNota.scrollBarSize = 4
@@ -111,16 +116,59 @@ class AnyadirOEditarFragment : Fragment() {
             //el valor del estado esta arriba, en el onCreate -> activity?.runOnUiThread (hay un comentario explicando el por que esta ahi)
         }
 
-        binding.btnTest.setOnClickListener {
+        binding.btnAnyadirOEditar.setOnClickListener {
+            if(binding.atVEstados.text.isNullOrEmpty()){
+                binding.tFMenuDesplegable.error = "Elija un estado, por favor"
+            }else{
+                binding.tFMenuDesplegable.error = null
+                try{
+                    if(editar){
+                        var filasEditadas = 0
+                        CoroutineScope(Dispatchers.IO).launch{
+                            filasEditadas = clsListaVideojuegoRepository().editarVideojuegoEnLista(oVideojuegoAInsertarOEditar)
+                            /*
+                            Tengo que hacer esto aqui, porque si no, siempre llegara la variable de filasEditadas a 0 (porque se hace antes el Snackbar que la asignacion del valor de la variable con la API)
+                             */
+                            if(filasEditadas == 4){
+                                Snackbar.make(requireView(), "Se ha modificado "+oVideojuegoSeleccionado.nombreVideojuego+" satisfactoriamente", Snackbar.LENGTH_SHORT).show()
+                            }else{
+                                Snackbar.make(requireView(), "Ha ocurrido un problema mientras se intentaba editar "+oVideojuegoSeleccionado.nombreVideojuego+", intentelo de nuevo mas tarde", Snackbar.LENGTH_SHORT).show()
+                            }
+                        }
+                    }else{
+                        var filasInsertadas = 0
+                        CoroutineScope(Dispatchers.IO).launch{
+                            filasInsertadas = clsListaVideojuegoRepository().insertarVideojuegoEnLista(oVideojuegoAInsertarOEditar)
+                            /*
+                            Tengo que hacer esto aqui, porque si no, siempre llegara la variable de filasInsertadas a 0 (porque se hace antes el Snackbar que la asignacion del valor de la variable con la API)
+                             */
+                            if(filasInsertadas == 4){
+                                Snackbar.make(requireView(), "Se ha añadido "+oVideojuegoSeleccionado.nombreVideojuego+" a la lista satisfactoriamente", Snackbar.LENGTH_SHORT).show()
+                                //este editar = true para que si el usuario le da 2 veces al boton, la 1º vez inserte y la 2º inserte, evitando asi, un error
+                                editar = true
+                            }else{
+                                Snackbar.make(requireView(), "Ha ocurrido un problema mientras se intentaba añadir "+oVideojuegoSeleccionado.nombreVideojuego+" a la lista, intentelo de nuevo mas tarde", Snackbar.LENGTH_SHORT).show()
+                            }
+                        }
+                    }
+                }catch (e: Exception){
+                    Snackbar.make(requireView(), Mensajes.errores.CONEXION_INTERNET_FALLIDA, Snackbar.LENGTH_SHORT).show()
+                }
+            }
+        }
+        binding.btnBorrar.setOnClickListener {
             try{
-                if(editar){
-                    Toast.makeText(requireContext(),clsListaVideojuegoRepository().editarVideojuegoEnLista(oVideojuegoAInsertarOEditar).toString(), Toast.LENGTH_SHORT).show()
-//                    clsListaVideojuegoRepository().editarVideojuegoEnLista(oVideojuegoAInsertarOEditar)
-                }else{
-                    Toast.makeText(requireContext(),clsListaVideojuegoRepository().insertarVideojuegoEnLista(oVideojuegoAInsertarOEditar).toString(), Toast.LENGTH_SHORT).show()
+                CoroutineScope(Dispatchers.IO).launch {
+                    val filasEliminadas = clsListaVideojuegoRepository().eliminarVideojuegoEnLista(SharedData.idUsuario, oVideojuegoAInsertarOEditar.idVideojuego)
+
+                    if(filasEliminadas == 4){
+                        Snackbar.make(requireView(), "Se ha eliminado "+oVideojuegoSeleccionado.nombreVideojuego+" de la lista", Snackbar.LENGTH_SHORT).show()
+                    }else{
+                        Snackbar.make(requireView(), "Ha ocurrido un problema mientras se intentaba eliminar "+oVideojuegoSeleccionado.nombreVideojuego+" de la lista, intentelo de nuevo mas tarde", Snackbar.LENGTH_SHORT).show()
+                    }
                 }
             }catch (e: Exception){
-                Toast.makeText(requireContext(), Mensajes.errores.CONEXION_INTERNET_FALLIDA, Toast.LENGTH_SHORT).show()
+                Snackbar.make(requireView(), Mensajes.errores.CONEXION_INTERNET_FALLIDA, Snackbar.LENGTH_SHORT).show()
             }
         }
 

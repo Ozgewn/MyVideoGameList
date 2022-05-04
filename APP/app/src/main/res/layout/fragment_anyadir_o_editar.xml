@@ -10,10 +10,11 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_width="wrap_content"
-        android:layout_height="75dp"
+        android:layout_height="wrap_content"
         android:id="@+id/tFMenuDesplegable"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-        android:hint="Estado">
+        android:hint="Estado"
+        app:errorEnabled="true">
 
         <AutoCompleteTextView
             android:id="@+id/atVEstados"
@@ -37,6 +38,7 @@
         android:id="@+id/tVNota"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
         android:text="Nota" />
 
     <com.wefika.horizontalpicker.HorizontalPicker
@@ -89,10 +91,19 @@
         app:layout_constraintBottom_toBottomOf="@id/hPickerDificultad"/>
 
     <Button
-        android:id="@+id/btnTest"
+        android:id="@+id/btnAnyadirOEditar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Test"
         app:layout_constraintBottom_toBottomOf="parent" />
+
+    <Button
+        android:id="@+id/btnBorrar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:text="BORRAR"
+        android:textColor="@color/lightBlack" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

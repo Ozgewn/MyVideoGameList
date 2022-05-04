@@ -7,12 +7,16 @@ class clsListaVideojuegoRepository {
 
     private val api = clsListaVideojuegoService()
 
-    fun insertarVideojuegoEnLista(oVideojuegoEnLista: clsListaVideojuego): Int?{
+    suspend fun insertarVideojuegoEnLista(oVideojuegoEnLista: clsListaVideojuego): Int{
         return api.insertarVideojuego(oVideojuegoEnLista)
     }
 
-    fun editarVideojuegoEnLista(oVideojuegoEnLista: clsListaVideojuego): Int?{
+    suspend fun editarVideojuegoEnLista(oVideojuegoEnLista: clsListaVideojuego): Int{
         return api.editarVideojuego(oVideojuegoEnLista)
+    }
+
+    suspend fun eliminarVideojuegoEnLista(idUsuario: String, idVideojuego: Int): Int{
+        return api.eliminarVideojuego(idUsuario, idVideojuego)
     }
 
 }

@@ -128,11 +128,11 @@ namespace MVGL_API.Controllers
             try
             {
                 result.Value = new clsGestoraListaVideojuegosBL().borrarVideojuegoDeListaBL(idUsuario, idVideojuego);
-                if (!result.Value.ToString().Equals("1"))
+                if (!result.Value.ToString().Equals("4"))
                 {
-                    result.StatusCode = (int)HttpStatusCode.NotFound; //no controlamos que sea mas de 1 ya que no podra insertar mas de 1 fila con la instruccion
+                    result.StatusCode = (int)HttpStatusCode.NotFound;
                 }
-                else //en cambio, si borra 1 fila significa que todo ha ido bien
+                else
                 {
                     result.StatusCode = (int)HttpStatusCode.OK;
                 }

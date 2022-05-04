@@ -72,9 +72,17 @@ class RankingFragment : Fragment() {
         initRecyclerView()
     }
 
-    override fun onStart() {
-        super.onStart()
-        binding.pBIndeterminada.visibility = View.GONE
+    override fun onResume() {
+        super.onResume()
+        if(!listaVideojuegosConInfoFiltrada.isNullOrEmpty()){
+            binding.pBIndeterminada.visibility = View.GONE
+            /*
+            esto lo hago porque si nosotros entramos en la pantalla de editar, y luego le damos a atras y entramos en el fragment de ranking (este), la barra de progreso
+            se quedara visible dando vueltas sin que desaparezca, esto ocurre porque no entraremos de nuevo al onCreate, el cual se encargaria de hacer que la barra de
+            progreso desaparezca. La barra de progreso se quedaria en la pantalla dando vueltas ya que en nuestro layout lo tenemos puesto como que sea visible (que es el
+            valor por defecto)
+             */
+        }
     }
 
     private fun initRecyclerView() {

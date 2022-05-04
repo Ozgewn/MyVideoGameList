@@ -6,4 +6,6 @@ object Conexion{
     const val POST_USUARIO = "Usuario"
     const val GET_POST_PUT_LISTA_VIDEOJUEGOS_POR_USUARIO = "listavideojuegos/"
     const val GET_LISTA_ESTADOS="estados"
+    const val DELETE_LISTAVIDEOJUEGOS_USUARIO="listavideojuegos/Usuario/"
+    const val DELETE_LISTAVIDEOJUEGOS_VIDEOJUEGO="Videojuego/"
 }
