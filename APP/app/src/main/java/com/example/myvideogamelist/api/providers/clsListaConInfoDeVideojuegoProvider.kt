@@ -7,5 +7,5 @@ import retrofit2.http.Url
 
 interface clsListaConInfoDeVideojuegoProvider {
     @GET
-    suspend fun getListaVideojuegosPorUsuario(@Url idUsuario: String): Response<List<clsListaConInfoDeVideojuego>>
+    suspend fun getListaVideojuegosPorUsuario(@Url idUsuario: String): List<clsListaConInfoDeVideojuego>
 }

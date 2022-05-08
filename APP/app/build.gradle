@@ -81,4 +81,7 @@ dependencies {
 
     //Horizontal picker https://github.com/blazsolar/HorizontalPicker
     implementation 'com.wefika:horizontal-picker:1.1.1'
+
+    //SwipeRefreshLayour - para que salga el icono de recargar
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
 }

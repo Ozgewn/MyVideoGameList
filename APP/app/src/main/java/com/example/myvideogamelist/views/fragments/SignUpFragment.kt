@@ -16,9 +16,14 @@ import com.example.myvideogamelist.R
 import com.example.myvideogamelist.api.repositories.clsUsuarioRepository
 import com.example.myvideogamelist.databinding.FragmentSignUpBinding
 import com.example.myvideogamelist.models.clsUsuario
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class SignUpFragment : Fragment() {
 
@@ -119,11 +124,22 @@ class SignUpFragment : Fragment() {
             .addOnCompleteListener(activity!!) { task ->
                 if(task.isSuccessful){
                     var oUsuario = clsUsuario(id = task.result.user!!.uid, nombreUsuario = binding.signUpUsername.editText!!.text!!.toString()) //creamos el usuario para su posterior insercion en la BBDD
-                    clsUsuarioRepository().insertarUsuario(oUsuario) //insertamos al usuario en la BBDD
+                    CoroutineScope(Dispatchers.IO).launch {
+                        clsUsuarioRepository().insertarUsuario(oUsuario) //insertamos al usuario en la BBDD
+                    }
                     hideKeyboard()
                     navController.navigate(R.id.action_signUpFragment_to_loginFragment) //pasamos al login
+                    //TODO: mensaje de se ha creado el usuario
                 }else{
-                    Toast.makeText(requireContext(), Mensajes.errores.SIGNUP_FALLIDO, Toast.LENGTH_LONG).show()
+                    /*
+                    A continuacion vamos a manejar la excepcion de cuando se crea un usuario que ya tiene cuenta, si ponemos un try-catch capturando esa excepcion, no saltara al catch,
+                    asi que lo tenemos que hacer con un if
+                     */
+                    if(task.exception!!::class.java == FirebaseAuthUserCollisionException::class.java){
+                        binding.signUpEmail.error = Mensajes.errores.SIGNUP_EMAIL_REPETIDO
+                    }else{
+                        Snackbar.make(requireView(), Mensajes.errores.SIGNUP_FALLIDO, Snackbar.LENGTH_LONG).show()
+                    }
                 }
             }
     }

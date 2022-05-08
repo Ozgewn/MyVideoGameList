@@ -15,7 +15,8 @@
         android:theme="@style/Theme.MyVideoGameList">
         <activity
             android:name="com.example.myvideogamelist.views.actividades.MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

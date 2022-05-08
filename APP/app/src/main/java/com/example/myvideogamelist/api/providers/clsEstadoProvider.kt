@@ -7,5 +7,5 @@ import retrofit2.http.GET
 
 interface clsEstadoProvider {
     @GET(Conexion.GET_LISTA_ESTADOS)
-    suspend fun getListaEstados(): Response<List<clsEstado>>
+    suspend fun getListaEstados(): List<clsEstado>
 }

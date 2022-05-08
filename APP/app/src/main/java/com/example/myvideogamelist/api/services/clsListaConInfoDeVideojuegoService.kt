@@ -6,17 +6,18 @@ import com.example.myvideogamelist.api.providers.clsListaConInfoDeVideojuegoProv
 import com.example.myvideogamelist.models.clsListaConInfoDeVideojuego
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import retrofit2.create
 
 class clsListaConInfoDeVideojuegoService {
 
     private val retrofit = RetrofitHelper.getRetrofit()
 
-    suspend fun getListaVideojuegosPorUsuario(idUsuario: String):List<clsListaConInfoDeVideojuego>{
-        return withContext(Dispatchers.IO){
-            val response = retrofit.create(clsListaConInfoDeVideojuegoProvider::class.java).getListaVideojuegosPorUsuario(Conexion.GET_POST_PUT_LISTA_VIDEOJUEGOS_POR_USUARIO+idUsuario)
-            response.body() ?: emptyList()
-        } //esta corrutina devolvera una lista de videojuegos completa, si ocurre un fallo, y la respuesta a la llamada de la API es null, devolvera una lista vacia (aunque, gracias a la API, nunca nos
-    // llegara nada a nulo, pero hago esta comprobacion por si acaso )
-    }
+    /*
+    Esto se hace asi ahora ya que en la version retrofit 2.6.0+ retrofit hace la conversion de manera automatica, antiguamente seria devolviendo un Response<List<clsListaConInfoDeVideojuego>>,
+    pero con esta nueva manera, no hace falta, ponemos que devuelva una List<clsListaConInfoDeVideojuego> y ya hace la conversion de manera automatica
+     */
 
+    suspend fun getListaVideojuegosPorUsuario(idUsuario: String): List<clsListaConInfoDeVideojuego> =
+        retrofit.create(clsListaConInfoDeVideojuegoProvider::class.java)
+            .getListaVideojuegosPorUsuario(Conexion.GET_POST_PUT_LISTA_VIDEOJUEGOS_POR_USUARIO + idUsuario)
 }

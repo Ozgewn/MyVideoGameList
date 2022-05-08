@@ -11,11 +11,6 @@ class clsEstadoService {
 
     private val retrofit = RetrofitHelper.getRetrofit()
 
-    suspend fun getListaEstados(): List<clsEstado>{
-        return withContext(Dispatchers.IO){
-            val response = retrofit.create(clsEstadoProvider::class.java).getListaEstados()
-            response.body() ?: emptyList()
-        }
-    }
+    suspend fun getListaEstados(): List<clsEstado> = retrofit.create(clsEstadoProvider::class.java).getListaEstados()
 
 }

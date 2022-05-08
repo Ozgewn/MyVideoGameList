@@ -15,6 +15,15 @@ se encuentre en la lista del usuario (porque el usuario no lo ha añadido), el i
 		-404 (Not Found) -> Se devolverá el código 404 cuando la lista es nula o no contiene ningún dato
 		-500 (InternalServerError) -> Se devolverá el código 500 cuando ha ocurrido un error en el codigo, por ejemplo, un error de BBDD
 
+GET /api/ListaVideojuegos/soloEnLista/idDelUsuarioAqui -> Obtiene un listado de videojuegos que estén solo en la lista del usuario, listado el cual incluye la
+información de los propios juegos, y, además, la información de la lista del usuario (siendo el usuario "aa2634" en este caso),
+es decir: El nombre del juego, la imagen, la nota media, la nota (la nota aparecera siempre y cuando el usuario
+tenga el juego agregado a su lista y le tenga puesta nota).
+	Dependiendo del resultado obtenido de dicha llamada, recibiremos los siguientes códigos de estado:
+		-200 (OK) -> Se devolverá el código 200 siempre que la lista que se devuelva no sea nula, y contenga algún dato
+		-404 (Not Found) -> Se devolverá el código 404 cuando la lista es nula o no contiene ningún dato
+		-500 (InternalServerError) -> Se devolverá el código 500 cuando ha ocurrido un error en el codigo, por ejemplo, un error de BBDD
+
 Verbos POST:
 
 POST /api/ListaVideojuegos -> En el cuerpo (body) de la llamada estará el objeto clsListaVideojuego, es decir,

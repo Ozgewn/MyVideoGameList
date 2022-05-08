@@ -1,5 +1,6 @@
 package com.example.myvideogamelist.api.services
 
+import com.example.myvideogamelist.api.conexion.Conexion
 import com.example.myvideogamelist.api.core.RetrofitHelper
 import com.example.myvideogamelist.api.providers.clsUsuarioProvider
 import com.example.myvideogamelist.models.clsUsuario
@@ -9,26 +10,16 @@ import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import retrofit2.create
 
 class clsUsuarioService {
 
     private val retrofit = RetrofitHelper.getRetrofit()
 
-    fun insertarPersona(oUsuario: clsUsuario):clsUsuario?{
-        var oUsuarioInsertado : clsUsuario? = null
-        val response = retrofit.create(clsUsuarioProvider::class.java).insertarUsuario(oUsuario).enqueue(
-            object : Callback<clsUsuario>{
-                override fun onFailure(call: Call<clsUsuario>, t: Throwable) {
-                }
-                override fun onResponse(
-                    call: Call<clsUsuario>,
-                    response: Response<clsUsuario>
-                ) {
-                    oUsuarioInsertado = response.body()
-                }
-            }
-        )
-        return oUsuarioInsertado
-    }
+    suspend fun insertarPersona(oUsuario: clsUsuario):Int = retrofit.create(clsUsuarioProvider::class.java).insertarUsuario(oUsuario)
+
+    suspend fun getUsuario(idUsuario: String): clsUsuario =
+        retrofit.create(clsUsuarioProvider::class.java)
+            .getUsuario(Conexion.GET_USUARIO_POR_ID+idUsuario)
 
 }

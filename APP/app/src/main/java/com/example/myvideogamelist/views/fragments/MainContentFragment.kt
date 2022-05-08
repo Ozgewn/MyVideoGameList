@@ -10,6 +10,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
@@ -17,6 +18,8 @@ import androidx.navigation.fragment.findNavController
 import com.example.myvideogamelist.R
 import com.example.myvideogamelist.databinding.FragmentMainContentBinding
 import com.example.myvideogamelist.databinding.HeaderNavigationDrawerBinding
+import com.example.myvideogamelist.views.sharedData.SharedData
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -75,8 +78,26 @@ class MainContentFragment : Fragment() {
             }
         }
         binding.bottomNavigation.setOnItemReselectedListener {
-            //nada, ya que si el usuario clicka "Ranking" muchas veces, no queremos que vuelva a cargar muchas veces, simplemente que ignore el click del usuario, por eso,
-            //no hacemos nada
+            /*
+            Para entender este if, hay que entender el problema:
+            Si un usuario esta en "Ranking", y mientras esta en Ranking, le da muchas veces a Ranking en el menu de abajo, cargara muchas veces la lista, sobrecargando asi
+            la API.
+            Ademas, cuando por ejemplo estemos en Ranking y vayamos a editar un juego, la opcion de "Ranking" se quedara seleccionada porque todavia estamos en Ranking realmente, y si
+            hacemos que el si el usuario reselecciona (que es lo que ocurriria en la situacion de ejemplo que acabo de exponer), no nos navegaria otra vez a Ranking.
+
+            Para evitar esos 2 problemas que he planteado, hacemos este if.
+            Este if comprueba si el fragment en el que se encuentra actualmente el navHost es el de Ranking o es otro, si es otro, permitira navegar al fragment de ranking,
+            y como no hay else, en caso de que estemos en Ranking y le volvamos a dar a Ranking, no pasara nada
+             */
+            if(!(navHostFragment.childFragmentManager.fragments.any {  it.javaClass == RankingFragment().javaClass && it.isVisible }) && it.itemId == R.id.page_ranking){
+                navControllerMainContent.navigate(R.id.rankingFragment)
+            }
+            if(!(navHostFragment.childFragmentManager.fragments.any {  it.javaClass == ComunidadFragment().javaClass && it.isVisible }) && it.itemId == R.id.page_comunidad){
+                navControllerMainContent.navigate(R.id.comunidadFragment)
+            }
+            if(!(navHostFragment.childFragmentManager.fragments.any {  it.javaClass == MiListaFragment().javaClass && it.isVisible }) && it.itemId == R.id.page_mi_lista){
+                navControllerMainContent.navigate(R.id.miListaFragment)
+            }
         }
         binding.topAppBar.setNavigationOnClickListener {
             binding.drawerLayout.open()
@@ -85,7 +106,7 @@ class MainContentFragment : Fragment() {
             //Vamos a manejar los items seleccionados
             menuItem.isChecked = false
             binding.drawerLayout.close()
-            //TODO: Navegar al fragment de detalles
+            //TODO: Navegar al fragment de ajustes
             true
         }
         binding.logout.setOnClickListener {
@@ -98,7 +119,9 @@ class MainContentFragment : Fragment() {
             //TODO: HACER ESTO
         }
         val bindingHeader: HeaderNavigationDrawerBinding = HeaderNavigationDrawerBinding.bind(headerView)
-        bindingHeader.tVNombreUsuario.text="asgewsphpowsa" //TODO: poner nombre usuario aqui
+        SharedData.nombreUsuario.observe(this, Observer { //observo el nombre de usuario ya que este se rellenara cada vez que el usuario inicie sesion/abra la aplicacion, y se rellenara mediante una llamada a la API
+            bindingHeader.tVNombreUsuario.text = it
+        })
     }
 
 }

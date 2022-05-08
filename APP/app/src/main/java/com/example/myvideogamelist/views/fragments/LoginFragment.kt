@@ -13,11 +13,16 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.example.myvideogamelist.views.mensajes.Mensajes
 import com.example.myvideogamelist.R
+import com.example.myvideogamelist.api.repositories.clsUsuarioRepository
 import com.example.myvideogamelist.databinding.FragmentLoginBinding
 import com.example.myvideogamelist.views.sharedData.SharedData
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class LoginFragment : Fragment() {
 
@@ -81,8 +86,10 @@ class LoginFragment : Fragment() {
             if(datosLoginValidos){
                 login(email, password)
             }else{
-                Toast.makeText(requireContext(), Mensajes.errores.LOGIN_SIGNUP_FALTAN_DATOS, Toast.LENGTH_SHORT).show()
-                //TODO: Mejorar mensaje de error con snackbar
+                binding.loginPassword.clearFocus()
+                binding.loginEmail.clearFocus()
+                hideKeyboard()
+                Snackbar.make(requireView(), Mensajes.errores.LOGIN_SIGNUP_FALTAN_DATOS, Snackbar.LENGTH_LONG).show()
             }
         }
         binding.loginGoRegisterButton.setOnClickListener {
@@ -96,6 +103,7 @@ class LoginFragment : Fragment() {
         super.onStart()
         if(auth.currentUser != null){
             SharedData.idUsuario = auth.currentUser!!.uid //Lo pongo en la SharedData para no estar pasando Firebase en todos los fragments
+            actualizarNombreEnSharedData()
             navController.navigate(R.id.action_loginFragment_to_mainContentFragment)
         }
     }
@@ -105,17 +113,28 @@ class LoginFragment : Fragment() {
             .addOnCompleteListener(activity!!) { task ->
                 if (task.isSuccessful) {
                     SharedData.idUsuario = task.result.user!!.uid
+                    actualizarNombreEnSharedData()
                     hideKeyboard()
                     navController.navigate(R.id.action_loginFragment_to_mainContentFragment)
                 } else {
-                    Toast.makeText(
-                        requireContext(),
+                    Snackbar.make(
+                        requireView(),
                         Mensajes.errores.LOGIN_FALLIDO,
-                        Toast.LENGTH_LONG
+                        Snackbar.LENGTH_LONG
                     ).show()
                 }
             }
     }
+
+    /**
+     * Actualiza el nombre de usuario en la clase estatica SharedData haciendo uso del idUsuario
+     */
+    private fun actualizarNombreEnSharedData(){
+        CoroutineScope(Dispatchers.IO).launch {
+            SharedData.nombreUsuario.postValue(clsUsuarioRepository().getUsuario(SharedData.idUsuario).nombreUsuario)
+        }
+    }
+
     /**
      * Oculta el teclado
      */

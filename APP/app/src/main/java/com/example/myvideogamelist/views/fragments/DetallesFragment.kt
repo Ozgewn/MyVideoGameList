@@ -5,29 +5,32 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
 import com.example.myvideogamelist.R
+import com.example.myvideogamelist.api.repositories.clsVideojuegoRepository
+import com.example.myvideogamelist.databinding.FragmentDetallesBinding
+import com.example.myvideogamelist.models.clsListaConInfoDeVideojuego
+import com.example.myvideogamelist.models.clsVideojuego
+import com.example.myvideogamelist.viewmodels.VideojuegoViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [DetallesFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class DetallesFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+
+    private var _binding: FragmentDetallesBinding? = null
+    private val binding get() = _binding!!
+    private val videojuegoViewModel: VideojuegoViewModel by activityViewModels()
+    private val infoCompletaVideojuego = MutableLiveData<clsVideojuego>()
+    private var infoDeVideojuegoEnLista : clsListaConInfoDeVideojuego? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
+        cargarInfoVideojuego()
     }
 
     override fun onCreateView(
@@ -35,26 +38,63 @@ class DetallesFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_detalles, container, false)
+        _binding = FragmentDetallesBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment DetallesFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            DetallesFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        infoCompletaVideojuego.observe(this, Observer {
+            with(binding){
+                pBIndeterminada.visibility = View.GONE
+                tVNombreVideojuegoValue.text = it.nombre
+                Glide.with(requireContext()).load(infoCompletaVideojuego.value!!.urlImagen).into(binding.iVImagenVideojuego)
+
+                if(infoDeVideojuegoEnLista!!.idUsuario.isNullOrEmpty()){ //si el usuario NO tiene el juego en su lista...
+                    btnAnyadirOEditar.setIconResource(R.drawable.ic_add) //ponemos un icono de un +
+                }else{ //en cambio, si el usuario SI tiene el juego en su lista...
+                    btnAnyadirOEditar.setIconResource(R.drawable.ic_edit) //ponemos un icono de editar
+                }
+                /*
+                Controlamos para que en vez de poner como nota 0, ponemos "-" porque si la nota es 0, es que nadie le ha puesto nota a ese juego, de igual manera con la dificultad
+                 */
+                if(infoCompletaVideojuego.value!!.notaMedia > 0){
+                    tVNotaMediaVideojuegoValue.text = it.notaMedia.toString()
+                }else{
+                    tVNotaMediaVideojuegoValue.text = "-"
+                }
+                if(infoCompletaVideojuego.value!!.dificultadMedia > 0){
+                    tVDificultadMediaVideojuegoValue.text = it.dificultadMedia.toString()
+                }else{
+                    tVDificultadMediaVideojuegoValue.text = "-"
+                }
+                if(infoDeVideojuegoEnLista!!.notaPersonal > 0){
+                    tVNotaPersonalVideojuegoValue.text = infoDeVideojuegoEnLista!!.notaPersonal.toString()
+                }else{
+                    tVNotaPersonalVideojuegoValue.text = "-"
+                }
+                if(infoDeVideojuegoEnLista!!.dificultadPersonal > 0){
+                    tVDificultadPersonalVideojuegoValue.text = infoDeVideojuegoEnLista!!.dificultadPersonal.toString()
+                }else{
+                    tVDificultadPersonalVideojuegoValue.text = "-"
+                }
+                btnAnyadirOEditar.setOnClickListener {
+                    findNavController().navigate(R.id.anyadirOEditarFragment)
                 }
             }
+        })
+        binding.swipeRefresh.setOnRefreshListener {
+            cargarInfoVideojuego()
+            binding.swipeRefresh.isRefreshing = false
+        }
     }
+
+    private fun cargarInfoVideojuego() {
+        infoDeVideojuegoEnLista = videojuegoViewModel.videojuegoSeleccionado.value!!
+        CoroutineScope(Dispatchers.IO).launch {
+            val respuestaInfoVideojuego =  clsVideojuegoRepository().getVideojuego(infoDeVideojuegoEnLista!!.idVideojuego) //obtenemos info del videojuego a partir de la id del videojuego seleccionado
+            infoCompletaVideojuego.postValue(respuestaInfoVideojuego)
+        }
+    }
+
 }

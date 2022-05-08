@@ -35,26 +35,10 @@ class RankingFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        try{
-            CoroutineScope(Dispatchers.IO).launch { //iniciamos la corrutina
-                videojuegoViewModel.onCreate(SharedData.idUsuario) //el onCreate le asigna el valor a listaConInfoDeVideojuegosModel de lo que devuelva la API
-                listaVideojuegosConInfoCompleta = videojuegoViewModel.listaConInfoDeVideojuegosModel //le asignamos valor a la lista completa
-                activity?.runOnUiThread{
-                    listaVideojuegosConInfoFiltrada.removeAll(listaVideojuegosConInfoFiltrada)
-                    listaVideojuegosConInfoFiltrada.addAll(listaVideojuegosConInfoCompleta) //añadimos lo de la lista completa a la lista que vamos a ofrecer
-                    binding.pBIndeterminada.visibility = View.GONE //quitamos el progress bar(el circulo que indica que esta cargando)
-                    adapter.notifyDataSetChanged() //avisamos el adapter que hemos modificado la lista
-                }
-            }
-        }catch (e: Exception) {
-            Toast.makeText(
-                requireContext(),
-                Mensajes.errores.CONEXION_INTERNET_FALLIDA,
-                Toast.LENGTH_SHORT
-            ).show()
-        }
-
+        cargarRanking()
     }
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -70,6 +54,10 @@ class RankingFragment : Fragment() {
         navController = findNavController()
         binding.pBIndeterminada.visibility = View.VISIBLE
         initRecyclerView()
+        binding.swipeRefresh.setOnRefreshListener {
+            cargarRanking()
+            binding.swipeRefresh.isRefreshing = false
+        }
     }
 
     override fun onResume() {
@@ -100,6 +88,27 @@ class RankingFragment : Fragment() {
     private fun onVideojuegoAnyadidoOEditado(oVideojuego: clsListaConInfoDeVideojuego){
         videojuegoViewModel.videojuegoSeleccionado.postValue(oVideojuego)
         navController.navigate(R.id.anyadirOEditarFragment)
+    }
+
+    private fun cargarRanking() {
+        try{
+            CoroutineScope(Dispatchers.IO).launch { //iniciamos la corrutina
+                videojuegoViewModel.onCreate(SharedData.idUsuario) //el onCreate le asigna el valor a listaConInfoDeVideojuegosModel de lo que devuelva la API
+                listaVideojuegosConInfoCompleta = videojuegoViewModel.listaConInfoDeVideojuegosModel //le asignamos valor a la lista completa
+                activity?.runOnUiThread{
+                    listaVideojuegosConInfoFiltrada.removeAll(listaVideojuegosConInfoFiltrada)
+                    listaVideojuegosConInfoFiltrada.addAll(listaVideojuegosConInfoCompleta) //añadimos lo de la lista completa a la lista que vamos a ofrecer
+                    binding.pBIndeterminada.visibility = View.GONE //quitamos el progress bar(el circulo que indica que esta cargando)
+                    adapter.notifyDataSetChanged() //avisamos el adapter que hemos modificado la lista
+                }
+            }
+        }catch (e: Exception) {
+            Toast.makeText(
+                requireContext(),
+                Mensajes.errores.CONEXION_INTERNET_FALLIDA,
+                Toast.LENGTH_SHORT
+            ).show()
+        }
     }
 
 }

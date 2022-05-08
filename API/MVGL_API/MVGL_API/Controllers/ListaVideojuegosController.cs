@@ -66,6 +66,45 @@ namespace MVGL_API.Controllers
             }
             return result;
         }
+
+        // GET api/<ListaVideojuegosController>/5
+        [HttpGet("soloEnLista/{id}")]
+        public ObjectResult GetSoloVideojuegosQueEstenEnLista(string id)
+        {
+            ObjectResult result = new ObjectResult(new { });
+            result.Value = null;
+            try
+            {
+                List<clsVideojuego> listaVideojuegosCompleto = new clsListadoVideojuegosBL().getListadoVideojuegosCompletoBL();
+                List<clsListaVideojuego> listadoDeListaVideojuegos = new clsListadoListaVideojuegosBL().getListaVideojuegosDeUsuarioBL(id);
+                List<clsListaConInfoDeVideojuego> listadoDeVideojuegosConInfo = new List<clsListaConInfoDeVideojuego>();
+
+                List<clsVideojuego> listaVideojuegosQueEstanEnLista = new List<clsVideojuego>();
+                clsVideojuego oVideojuegoEnLista;
+                foreach (clsListaVideojuego oLista in listadoDeListaVideojuegos)
+                {
+                    oVideojuegoEnLista = (from videojuego in listaVideojuegosCompleto
+                                          where videojuego.Id == oLista.IdVideojuego && oLista.IdUsuario.Equals(id)
+                                          select videojuego).FirstOrDefault(); //Este linq va obteniendo los videojuegos que esten en la lista
+
+                    listaVideojuegosQueEstanEnLista.Add(oVideojuegoEnLista);
+
+                    listadoDeVideojuegosConInfo.Add(new clsListaConInfoDeVideojuego(oLista, oVideojuegoEnLista)); //Este linq va añadiendo a la lista los videojuegos que esten en la lista de videojuegos del usuario y la info de los propios juegos
+                }
+                result.Value = listadoDeVideojuegosConInfo;
+                result.StatusCode = (int)HttpStatusCode.OK;
+                if ((result.Value as List<clsListaConInfoDeVideojuego>) == null || (result.Value as List<clsListaConInfoDeVideojuego>).Count == 0)
+                {
+                    result.StatusCode = (int)HttpStatusCode.NotFound;
+                }
+            }
+            catch (Exception)
+            {
+                result.StatusCode = (int)HttpStatusCode.InternalServerError;
+            }
+            return result;
+        }
+
         // POST api/<ListaVideojuegosController>
         [HttpPost]
         public ObjectResult Post([FromBody] clsListaVideojuego value)

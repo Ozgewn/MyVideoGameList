@@ -34,7 +34,8 @@ class AnyadirOEditarFragment : Fragment() {
     private lateinit var adapter: ListaEstadosAdapter
     private lateinit var oVideojuegoAInsertarOEditar: clsListaVideojuego
     private lateinit var oVideojuegoSeleccionado: clsListaConInfoDeVideojuego
-    private var editar = false
+    private var isEditable = false
+    private var isBorrable = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,7 +56,7 @@ class AnyadirOEditarFragment : Fragment() {
                     Una vez que sabemos como funciona, sabemos que editar estara a true si el idUsuario no es nulo ni vacio, como bien vemos al final del metodo onViewCreated.
                     Tuve que poner esto aqui porque como bien he explicado antes, se ejecuta antes el onViewCreated que este bloque del codigo
                      */
-                    if(editar){
+                    if(isEditable){
                         binding.atVEstados.setText(listaEstados[oVideojuegoSeleccionado.estado-1].toString(), false)
                         oVideojuegoAInsertarOEditar.estado = listaEstados[oVideojuegoSeleccionado.estado-1].id
                     }
@@ -108,7 +109,8 @@ class AnyadirOEditarFragment : Fragment() {
         Sabremos si el usuario tiene el juego en la lista o no, si el objeto de clsListaConInfoDeVideojuego tiene su idUsuario con algun valor
         */
         if(!oVideojuegoSeleccionado.idUsuario.isNullOrEmpty()){
-            editar = true
+            isEditable = true
+            isBorrable = true
             oVideojuegoAInsertarOEditar.nota = oVideojuegoSeleccionado.notaPersonal
             oVideojuegoAInsertarOEditar.dificultad = oVideojuegoSeleccionado.dificultadPersonal
             binding.hPickerNota.selectedItem = oVideojuegoAInsertarOEditar.nota
@@ -122,9 +124,10 @@ class AnyadirOEditarFragment : Fragment() {
             }else{
                 binding.tFMenuDesplegable.error = null
                 try{
-                    if(editar){
+                    if(isEditable){
                         var filasEditadas = 0
                         CoroutineScope(Dispatchers.IO).launch{
+                            Log.d("_INFO", oVideojuegoAInsertarOEditar.toString())
                             filasEditadas = clsListaVideojuegoRepository().editarVideojuegoEnLista(oVideojuegoAInsertarOEditar)
                             /*
                             Tengo que hacer esto aqui, porque si no, siempre llegara la variable de filasEditadas a 0 (porque se hace antes el Snackbar que la asignacion del valor de la variable con la API)
@@ -145,11 +148,23 @@ class AnyadirOEditarFragment : Fragment() {
                             if(filasInsertadas == 4){
                                 Snackbar.make(requireView(), "Se ha añadido "+oVideojuegoSeleccionado.nombreVideojuego+" a la lista satisfactoriamente", Snackbar.LENGTH_SHORT).show()
                                 //este editar = true para que si el usuario le da 2 veces al boton, la 1º vez inserte y la 2º inserte, evitando asi, un error
-                                editar = true
+                                isEditable = true
+                                isBorrable = true
                             }else{
                                 Snackbar.make(requireView(), "Ha ocurrido un problema mientras se intentaba añadir "+oVideojuegoSeleccionado.nombreVideojuego+" a la lista, intentelo de nuevo mas tarde", Snackbar.LENGTH_SHORT).show()
                             }
                         }
+                    }
+                    /*
+                    Esto de aqui es para cambiar el valor del videojuegoSeleccionado del viewmodel, ya que si el usuario va a detalles de un videojuego, y luego le a añadir o editar,
+                    cuando acabe de añadir o editar, y le de hacia atras, los cambios no se veran reflejados por mucho que recargue, con esto que hacemos aqui abajo, actualizamos la informacion
+                    del videojuego seleccionado en el viewmodel, que es lo que se usa en el fragment de detalles para visualizar la informacion
+                     */
+                    with(videojuegoViewModel.videojuegoSeleccionado.value!!){
+                        notaPersonal = oVideojuegoAInsertarOEditar.nota
+                        dificultadPersonal = oVideojuegoAInsertarOEditar.dificultad
+                        idUsuario = oVideojuegoAInsertarOEditar.idUsuario
+                        estado = oVideojuegoAInsertarOEditar.estado
                     }
                 }catch (e: Exception){
                     Snackbar.make(requireView(), Mensajes.errores.CONEXION_INTERNET_FALLIDA, Snackbar.LENGTH_SHORT).show()
@@ -157,18 +172,33 @@ class AnyadirOEditarFragment : Fragment() {
             }
         }
         binding.btnBorrar.setOnClickListener {
-            try{
-                CoroutineScope(Dispatchers.IO).launch {
-                    val filasEliminadas = clsListaVideojuegoRepository().eliminarVideojuegoEnLista(SharedData.idUsuario, oVideojuegoAInsertarOEditar.idVideojuego)
+            if(isBorrable){
+                try{
+                    CoroutineScope(Dispatchers.IO).launch {
+                        val filasEliminadas = clsListaVideojuegoRepository().eliminarVideojuegoEnLista(SharedData.idUsuario, oVideojuegoAInsertarOEditar.idVideojuego)
 
-                    if(filasEliminadas == 4){
-                        Snackbar.make(requireView(), "Se ha eliminado "+oVideojuegoSeleccionado.nombreVideojuego+" de la lista", Snackbar.LENGTH_SHORT).show()
-                    }else{
-                        Snackbar.make(requireView(), "Ha ocurrido un problema mientras se intentaba eliminar "+oVideojuegoSeleccionado.nombreVideojuego+" de la lista, intentelo de nuevo mas tarde", Snackbar.LENGTH_SHORT).show()
+                        if(filasEliminadas == 4){
+                            isBorrable = false
+                            isEditable = false
+                            activity?.runOnUiThread {
+                                binding.atVEstados.text = null
+                            }
+                            Snackbar.make(requireView(), "Se ha eliminado "+oVideojuegoSeleccionado.nombreVideojuego+" de la lista", Snackbar.LENGTH_SHORT).show()
+                        }else{
+                            Snackbar.make(requireView(), "Ha ocurrido un problema mientras se intentaba eliminar "+oVideojuegoSeleccionado.nombreVideojuego+" de la lista, intentelo de nuevo mas tarde", Snackbar.LENGTH_SHORT).show()
+                        }
                     }
+                }catch (e: Exception){
+                    Snackbar.make(requireView(), Mensajes.errores.CONEXION_INTERNET_FALLIDA, Snackbar.LENGTH_SHORT).show()
                 }
-            }catch (e: Exception){
-                Snackbar.make(requireView(), Mensajes.errores.CONEXION_INTERNET_FALLIDA, Snackbar.LENGTH_SHORT).show()
+                with(videojuegoViewModel.videojuegoSeleccionado.value!!){
+                    notaPersonal = 0
+                    dificultadPersonal = 0
+                    idUsuario = null
+                    estado = 0
+                }
+            }else{
+                Snackbar.make(requireView(), Mensajes.errores.BORRAR_VIDEOJUEGO_QUE_NO_ESTA_EN_LISTA, Snackbar.LENGTH_SHORT).show()
             }
         }
 
