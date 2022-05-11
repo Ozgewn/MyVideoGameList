@@ -11,4 +11,8 @@ class clsListaConInfoDeVideojuegoRepository {
         return api.getListaVideojuegosPorUsuario(idUsuario)
     }
 
+    suspend fun getSoloVideojuegosEnListaDeUsuario(idUsuario: String): List<clsListaConInfoDeVideojuego>{
+        return api.getSoloVideojuegosEnListaDeUsuario(idUsuario)
+    }
+
 }

@@ -30,4 +30,9 @@
         android:name="com.example.myvideogamelist.views.fragments.AnyadirOEditarFragment"
         android:label="fragment_anyadir_o_editar"
         tools:layout="@layout/fragment_anyadir_o_editar" />
+    <fragment
+        android:id="@+id/perfilFragment"
+        android:name="com.example.myvideogamelist.views.fragments.PerfilFragment"
+        android:label="fragment_perfil"
+        tools:layout="@layout/fragment_perfil" />
 </navigation>

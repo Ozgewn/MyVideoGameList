@@ -1,6 +1,5 @@
 package com.example.myvideogamelist.views.fragments
 
-import android.opengl.Visibility
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -37,8 +36,6 @@ class RankingFragment : Fragment() {
         super.onCreate(savedInstanceState)
         cargarRanking()
     }
-
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -93,7 +90,7 @@ class RankingFragment : Fragment() {
     private fun cargarRanking() {
         try{
             CoroutineScope(Dispatchers.IO).launch { //iniciamos la corrutina
-                videojuegoViewModel.onCreate(SharedData.idUsuario) //el onCreate le asigna el valor a listaConInfoDeVideojuegosModel de lo que devuelva la API
+                videojuegoViewModel.cargarListaConInfoDeVideojuego(SharedData.idUsuario) //el onCreate le asigna el valor a listaConInfoDeVideojuegosModel de lo que devuelva la API
                 listaVideojuegosConInfoCompleta = videojuegoViewModel.listaConInfoDeVideojuegosModel //le asignamos valor a la lista completa
                 activity?.runOnUiThread{
                     listaVideojuegosConInfoFiltrada.removeAll(listaVideojuegosConInfoFiltrada)

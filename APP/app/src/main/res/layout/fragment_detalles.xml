@@ -114,6 +114,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
+                android:layout_marginTop="12dp"
                 android:background="#c0c0c0" />
 
             <LinearLayout
@@ -171,7 +172,14 @@
 
         </LinearLayout>
 
-
+        <View
+            android:layout_width="0dp"
+            android:layout_height="2dp"
+            android:layout_marginTop="12dp"
+            android:background="#c0c0c0"
+            app:layout_constraintBottom_toBottomOf="@id/iVImagenVideojuego"
+            app:layout_constraintLeft_toRightOf="@id/iVImagenVideojuego"
+            app:layout_constraintRight_toRightOf="parent"/>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnAnyadirOEditar"

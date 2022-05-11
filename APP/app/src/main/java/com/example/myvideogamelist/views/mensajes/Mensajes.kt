@@ -15,4 +15,7 @@ class Mensajes {
         const val LOGIN_SIGNUP_FALTAN_DATOS = "Faltan errores por solucionar o información por rellenar en los campos de textos"
         const val BORRAR_VIDEOJUEGO_QUE_NO_ESTA_EN_LISTA = "No puedes eliminar un videojuego que todavía no está en tu lista"
     }
+    object informacion{
+        const val LA_LISTA_ES_PRIVADA = "La lista del usuario es privada"
+    }
 }

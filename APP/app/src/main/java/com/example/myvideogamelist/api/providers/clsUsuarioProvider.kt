@@ -14,4 +14,7 @@ interface clsUsuarioProvider {
     @GET
     suspend fun getUsuario(@Url url: String): clsUsuario
 
+    @GET
+    suspend fun getUsuariosPorNombre(@Url url: String): List<clsUsuario>
+
 }

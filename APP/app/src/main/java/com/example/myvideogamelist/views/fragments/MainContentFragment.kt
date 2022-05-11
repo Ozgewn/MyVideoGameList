@@ -10,6 +10,8 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
@@ -18,6 +20,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.myvideogamelist.R
 import com.example.myvideogamelist.databinding.FragmentMainContentBinding
 import com.example.myvideogamelist.databinding.HeaderNavigationDrawerBinding
+import com.example.myvideogamelist.viewmodels.UsuarioViewModel
 import com.example.myvideogamelist.views.sharedData.SharedData
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
@@ -29,6 +32,7 @@ class MainContentFragment : Fragment() {
     private var _binding: FragmentMainContentBinding? = null
     private val binding get() = _binding!!
     private lateinit var auth: FirebaseAuth
+    private val usuarioViewModel: UsuarioViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,6 +73,7 @@ class MainContentFragment : Fragment() {
                     true
                 }
                 R.id.page_mi_lista -> {
+                    usuarioViewModel.usuarioSeleccionado.postValue(null) //aqui le estamos diciendo al viewmodel que el usuario seleccionado es el usuario que tiene iniciada la sesion
                     navControllerMainContent.popBackStack(R.id.comunidadFragment, true)
                     navControllerMainContent.popBackStack(R.id.rankingFragment, true)
                     navControllerMainContent.navigate(R.id.miListaFragment)
@@ -115,8 +120,9 @@ class MainContentFragment : Fragment() {
         }
         val headerView: View = binding.navigationView.getHeaderView(0)
         headerView.setOnClickListener {
-            Toast.makeText(requireContext(), "Esto te llevaria al perfil...", Toast.LENGTH_SHORT).show()
-            //TODO: HACER ESTO
+            usuarioViewModel.usuarioSeleccionado.postValue(null)
+            navControllerMainContent.navigate(R.id.perfilFragment)
+            binding.drawerLayout.close()
         }
         val bindingHeader: HeaderNavigationDrawerBinding = HeaderNavigationDrawerBinding.bind(headerView)
         SharedData.nombreUsuario.observe(this, Observer { //observo el nombre de usuario ya que este se rellenara cada vez que el usuario inicie sesion/abra la aplicacion, y se rellenara mediante una llamada a la API

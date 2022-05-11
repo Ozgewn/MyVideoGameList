@@ -60,11 +60,24 @@ Este controlador es el que se encargará de manejar y gestionar los usuarios
 
 Verbos GET:
 
-GET /api/Usuario/1234 -> Obtendremos la información del usuario con id "1234", sus videojuegos jugados, sus videojuegos planeados,
+GET /api/Usuario/id/1234 -> Obtendremos la información del usuario con id "1234", sus videojuegos jugados, sus videojuegos planeados,
 sus videojuegos dropeados, sus videojuegos jugando, sus videojuegos en pausa, si su lista es privada o no
 	Dependiendo del resultado obtenido de dicha llamada, recibiremos los siguientes códigos de estado:
 		-200 (OK) -> Se devolverá el código 200 siempre que el objeto que recibamos no sea nulo, ni su id sea igual a "" (vacio), es decir, cuando hemos recibido el usuario satisfactoriamente
 		-404 (Not Found) -> Se devolverá el código 404 siempre que el objeto que recibamos sea nulo, o su id sea igual a ""
+		-500 (InternalServerError) -> Se devolverá el código 500 cuando ha ocurrido un error en el codigo, por ejemplo, un error de BBDD
+
+GET /api/Usuario/nombre/juanito -> Obtendremos una lista con todos los usuarios cuyo nombre contenga las palabras "juanito" (en este caso), y toda su informacion relacionada.
+	Dependiendo del resultado obtenido de dicha llamada, recibiremos los siguientes códigos de estado:
+		-200 (OK) -> Se devolverá el código 200 siempre que la lista que recibimos contenga 1 o mas datos, y no sea nula
+		-404 (Not Found) -> Se devolverá el código 404 siempre que la lista contenga 0 datos, o sea nula
+		-500 (InternalServerError) -> Se devolverá el código 500 cuando ha ocurrido un error en el codigo, por ejemplo, un error de BBDD
+
+GET /api/Usuario/comprobarExistencia/juanito -> Obtendremos un booleano true/false dependiendo de si el usuario existe o no.
+	True -> si existe
+	False -> si no existe
+	Dependiendo del resultado obtenido de dicha llamada, recibiremos los siguientes códigos de estado:
+		-200 (OK) -> Se devolverá el código 200 siempre, independientemente de si el booleando es true o false
 		-500 (InternalServerError) -> Se devolverá el código 500 cuando ha ocurrido un error en el codigo, por ejemplo, un error de BBDD
 
 Verbos POST:

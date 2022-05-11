@@ -41,7 +41,7 @@ class AnyadirOEditarFragment : Fragment() {
         super.onCreate(savedInstanceState)
         try {
             CoroutineScope(Dispatchers.IO).launch {
-                videojuegoViewModel.onCreateEstados()
+                videojuegoViewModel.cargarListaEstados()
                 activity?.runOnUiThread {
                     listaEstados.addAll(videojuegoViewModel.listaEstados)
                     binding.pBIndeterminada.visibility = View.GONE
@@ -128,7 +128,7 @@ class AnyadirOEditarFragment : Fragment() {
                         var filasEditadas = 0
                         CoroutineScope(Dispatchers.IO).launch{
                             Log.d("_INFO", oVideojuegoAInsertarOEditar.toString())
-                            filasEditadas = clsListaVideojuegoRepository().editarVideojuegoEnLista(oVideojuegoAInsertarOEditar)
+                            filasEditadas = videojuegoViewModel.editarVideojuegoEnLista(oVideojuegoAInsertarOEditar)
                             /*
                             Tengo que hacer esto aqui, porque si no, siempre llegara la variable de filasEditadas a 0 (porque se hace antes el Snackbar que la asignacion del valor de la variable con la API)
                              */
@@ -141,7 +141,7 @@ class AnyadirOEditarFragment : Fragment() {
                     }else{
                         var filasInsertadas = 0
                         CoroutineScope(Dispatchers.IO).launch{
-                            filasInsertadas = clsListaVideojuegoRepository().insertarVideojuegoEnLista(oVideojuegoAInsertarOEditar)
+                            filasInsertadas = videojuegoViewModel.insertarVideojuegoEnLista(oVideojuegoAInsertarOEditar)
                             /*
                             Tengo que hacer esto aqui, porque si no, siempre llegara la variable de filasInsertadas a 0 (porque se hace antes el Snackbar que la asignacion del valor de la variable con la API)
                              */
@@ -175,7 +175,7 @@ class AnyadirOEditarFragment : Fragment() {
             if(isBorrable){
                 try{
                     CoroutineScope(Dispatchers.IO).launch {
-                        val filasEliminadas = clsListaVideojuegoRepository().eliminarVideojuegoEnLista(SharedData.idUsuario, oVideojuegoAInsertarOEditar.idVideojuego)
+                        val filasEliminadas = videojuegoViewModel.eliminarVideojuegoEnLista(SharedData.idUsuario, oVideojuegoAInsertarOEditar.idVideojuego)
 
                         if(filasEliminadas == 4){
                             isBorrable = false
@@ -202,6 +202,11 @@ class AnyadirOEditarFragment : Fragment() {
             }
         }
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.pBIndeterminada.visibility = View.GONE
     }
 
     private fun initRecyclerView() {

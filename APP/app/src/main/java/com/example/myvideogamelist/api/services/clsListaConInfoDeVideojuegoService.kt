@@ -20,4 +20,8 @@ class clsListaConInfoDeVideojuegoService {
     suspend fun getListaVideojuegosPorUsuario(idUsuario: String): List<clsListaConInfoDeVideojuego> =
         retrofit.create(clsListaConInfoDeVideojuegoProvider::class.java)
             .getListaVideojuegosPorUsuario(Conexion.GET_POST_PUT_LISTA_VIDEOJUEGOS_POR_USUARIO + idUsuario)
+
+    suspend fun getSoloVideojuegosEnListaDeUsuario(idUsuario: String): List<clsListaConInfoDeVideojuego> =
+        retrofit.create(clsListaConInfoDeVideojuegoProvider::class.java)
+            .getSoloVideojuegosEnListaDeUsuario(Conexion.GET_SOLO_VIDEOJUEGOS_EN_LISTA + idUsuario)
 }
