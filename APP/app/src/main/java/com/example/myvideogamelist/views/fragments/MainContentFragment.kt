@@ -1,28 +1,24 @@
 package com.example.myvideogamelist.views.fragments
 
+import android.content.SharedPreferences
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
-import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.navigation.NavController
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import com.example.myvideogamelist.R
 import com.example.myvideogamelist.databinding.FragmentMainContentBinding
 import com.example.myvideogamelist.databinding.HeaderNavigationDrawerBinding
+import com.example.myvideogamelist.utils.SharedPreferencesManager
 import com.example.myvideogamelist.viewmodels.UsuarioViewModel
 import com.example.myvideogamelist.views.sharedData.SharedData
-import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -33,8 +29,13 @@ class MainContentFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var auth: FirebaseAuth
     private val usuarioViewModel: UsuarioViewModel by activityViewModels()
+    private lateinit var sharedPref: SharedPreferencesManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        sharedPref = SharedPreferencesManager(context!!)
+        if(sharedPref.getModoNoche()){
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        }
         super.onCreate(savedInstanceState)
         auth = Firebase.auth
     }
@@ -107,12 +108,16 @@ class MainContentFragment : Fragment() {
         binding.topAppBar.setNavigationOnClickListener {
             binding.drawerLayout.open()
         }
+        binding.navigationView.menu.getItem(0).isChecked = false //pongo esto para evitar que se seleccione el primer elemento
         binding.navigationView.setNavigationItemSelectedListener { menuItem ->
             //Vamos a manejar los items seleccionados
-            menuItem.isChecked = false
             binding.drawerLayout.close()
-            //TODO: Navegar al fragment de ajustes
-            true
+            menuItem.isChecked = false
+            if(!(navHostFragment.childFragmentManager.fragments.any {  it.javaClass == AjustesFragment().javaClass && it.isVisible })) {
+                //If para evitar que si el usuario esta en ajustes, y ese clicka en ajustes mucha veces a traves del drawer layout, que se le guarden muchas veces la pagina de ajustes en el historial de navegacion
+                navControllerMainContent.navigate(R.id.ajustesFragment)
+            }
+            false
         }
         binding.logout.setOnClickListener {
             auth.signOut()

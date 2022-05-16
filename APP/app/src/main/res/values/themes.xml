@@ -11,7 +11,11 @@
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
         <!-- Customize your theme here. -->
+        <item name="android:actionMenuTextColor">?android:attr/textColorPrimary</item>
+        <item name="android:actionMenuTextAppearance">?android:attr/textColorPrimary</item>
     </style>
     <style name="roundedImageViewRounded">
         <item name="cornerFamily">rounded</item>

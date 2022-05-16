@@ -35,4 +35,9 @@
         android:name="com.example.myvideogamelist.views.fragments.PerfilFragment"
         android:label="fragment_perfil"
         tools:layout="@layout/fragment_perfil" />
+    <fragment
+        android:id="@+id/ajustesFragment"
+        android:name="com.example.myvideogamelist.views.fragments.AjustesFragment"
+        android:label="fragment_ajustes"
+        tools:layout="@layout/fragment_ajustes" />
 </navigation>

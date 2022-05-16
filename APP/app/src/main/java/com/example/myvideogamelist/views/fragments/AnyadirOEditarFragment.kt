@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import com.example.myvideogamelist.R
-import com.example.myvideogamelist.api.repositories.clsListaVideojuegoRepository
 import com.example.myvideogamelist.databinding.FragmentAnyadirOEditarBinding
 import com.example.myvideogamelist.models.clsEstado
 import com.example.myvideogamelist.models.clsListaConInfoDeVideojuego
@@ -24,7 +23,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.lang.Exception
 
-class AnyadirOEditarFragment : Fragment() {
+class AnyadirOEditarFragment : Fragment()  {
 
     private var _binding: FragmentAnyadirOEditarBinding? = null
     private val binding get() = _binding!!
@@ -39,28 +38,24 @@ class AnyadirOEditarFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        /*
+        Este if-else es para optimizar la llamada a la API, ya que solo haremos 1 llamada a la API la 1º vez que intentemos añadir/editar algun videojuego a la lista
+         */
+        if (videojuegoViewModel.listaEstados.isNullOrEmpty()) {
+            cargarListaEstadosYAsignarValores()
+        }
+        oVideojuegoSeleccionado = videojuegoViewModel.videojuegoSeleccionado.value!!
+        oVideojuegoAInsertarOEditar = clsListaVideojuego(
+            idUsuario = SharedData.idUsuario,
+            idVideojuego = oVideojuegoSeleccionado.idVideojuego
+        )
+    }
+
+    private fun cargarListaEstadosYAsignarValores() {
         try {
             CoroutineScope(Dispatchers.IO).launch {
                 videojuegoViewModel.cargarListaEstados()
-                activity?.runOnUiThread {
-                    listaEstados.addAll(videojuegoViewModel.listaEstados)
-                    binding.pBIndeterminada.visibility = View.GONE
-                    adapter.notifyDataSetChanged()
-                    /*
-                    Para entender este if(editar) primero hay que entender como funciona el runOnUiThread:
-                    Como bien nos dice la documentación: "If the current thread is not the UI thread, the action is posted to the event queue of the UI thread."
-                    Esto significa que si ya hay algo ejecutandose en el hilo de la UI (en nuestro caso, si hay algo ejecutandose, que es el metodo onViewCreated),
-                    nuestro activity?.runOnUiThread esperará a que acabe el onViewCreated, y acto seguido, ejecutara el bloque de codigo en el que se encuentra este comentario, es
-                    por esta razon por la cual podemos usar el binding, si usasemos el binding en el onCreate normal (sin corrutinas ni nada), nos daria una excepcion ya que todavia
-                    no ha "cargado" la UI.
-                    Una vez que sabemos como funciona, sabemos que editar estara a true si el idUsuario no es nulo ni vacio, como bien vemos al final del metodo onViewCreated.
-                    Tuve que poner esto aqui porque como bien he explicado antes, se ejecuta antes el onViewCreated que este bloque del codigo
-                     */
-                    if(isEditable){
-                        binding.atVEstados.setText(listaEstados[oVideojuegoSeleccionado.estado-1].toString(), false)
-                        oVideojuegoAInsertarOEditar.estado = listaEstados[oVideojuegoSeleccionado.estado-1].id
-                    }
-                }
+                asignarValores()
             }
         } catch (e: Exception) {
             Toast.makeText(
@@ -69,8 +64,29 @@ class AnyadirOEditarFragment : Fragment() {
                 Toast.LENGTH_SHORT
             ).show()
         }
-        oVideojuegoSeleccionado = videojuegoViewModel.videojuegoSeleccionado.value!!
-        oVideojuegoAInsertarOEditar = clsListaVideojuego(idUsuario = SharedData.idUsuario, idVideojuego = oVideojuegoSeleccionado.idVideojuego)
+    }
+
+    private fun asignarValores(){
+        activity?.runOnUiThread {
+            listaEstados.clear()
+            listaEstados.addAll(videojuegoViewModel.listaEstados)
+            binding.pBIndeterminada.visibility = View.GONE
+            adapter.notifyDataSetChanged()
+            /*
+            Para entender este if(isEditable) primero hay que entender como funciona el runOnUiThread:
+            Como bien nos dice la documentación: "If the current thread is not the UI thread, the action is posted to the event queue of the UI thread."
+            Esto significa que si ya hay algo ejecutandose en el hilo de la UI (en nuestro caso, si hay algo ejecutandose, que es el metodo onViewCreated),
+            nuestro activity?.runOnUiThread esperará a que acabe el onViewCreated, y acto seguido, ejecutara el bloque de codigo en el que se encuentra este comentario, es
+            por esta razon por la cual podemos usar el binding, si usasemos el binding en el onCreate normal (sin corrutinas ni nada), nos daria una excepcion ya que todavia
+            no ha "cargado" la UI.
+            Una vez que sabemos como funciona, sabemos que editar estara a true si el idUsuario no es nulo ni vacio, como bien vemos al final del metodo onViewCreated.
+            Tuve que poner esto aqui porque como bien he explicado antes, se ejecuta antes el onViewCreated que este bloque del codigo
+             */
+            if(isEditable){
+                binding.atVEstados.setText(listaEstados[oVideojuegoSeleccionado.estado-1].toString(), false)
+                oVideojuegoAInsertarOEditar.estado = listaEstados[oVideojuegoSeleccionado.estado-1].id
+            }
+        }
     }
 
     override fun onCreateView(
@@ -206,7 +222,12 @@ class AnyadirOEditarFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        binding.pBIndeterminada.visibility = View.GONE
+        if(!listaEstados.isNullOrEmpty()){
+            binding.pBIndeterminada.visibility = View.GONE
+        }
+        if(!videojuegoViewModel.listaEstados.isNullOrEmpty()){
+            asignarValores()
+        }
     }
 
     private fun initRecyclerView() {

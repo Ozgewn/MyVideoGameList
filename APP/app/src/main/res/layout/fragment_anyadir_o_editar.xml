@@ -30,7 +30,8 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         app:layout_constraintLeft_toRightOf="@id/tFMenuDesplegable"
-        app:layout_constraintTop_toTopOf="@id/tFMenuDesplegable" />
+        app:layout_constraintTop_toTopOf="@id/tFMenuDesplegable"
+        android:indeterminateTint="?android:attr/textColorPrimary"/>
 
     <TextView
         app:layout_constraintTop_toBottomOf="@id/tFMenuDesplegable"
@@ -47,7 +48,7 @@
         android:id="@+id/hPickerNota"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/black"
+        android:textColor="?android:attr/textColorPrimary"
         android:textSize="15dp"
         android:ellipsize="middle"
         android:marqueeRepeatLimit="-1" />
@@ -76,7 +77,7 @@
         android:id="@+id/hPickerDificultad"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/black"
+        android:textColor="?android:attr/textColorPrimary"
         android:textSize="15dp"
         android:ellipsize="middle"
         android:marqueeRepeatLimit="-1" />

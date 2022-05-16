@@ -34,7 +34,17 @@ class RankingFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        cargarRanking()
+        /*
+        Este if lo hacemos para que si se destruye y se vuelve a crear la vista (lo que pasaria al seleccionar el modo oscuro), no salte una excepcion, y ademas,
+        no vuelva a hacer una llamada a la API
+         */
+        if(videojuegoViewModel.listaConInfoDeVideojuegosModel.isNullOrEmpty()){
+            cargarRanking()
+        }else{
+            listaVideojuegosConInfoCompleta = videojuegoViewModel.listaConInfoDeVideojuegosModel
+            listaVideojuegosConInfoFiltrada.clear()
+            listaVideojuegosConInfoFiltrada.addAll(listaVideojuegosConInfoCompleta)
+        }
     }
 
     override fun onCreateView(
