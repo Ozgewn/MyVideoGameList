@@ -7,7 +7,9 @@ class clsUsuarioRepository {
 
     private val api = clsUsuarioService()
 
-    suspend fun insertarUsuario(oUsuario: clsUsuario): Int = api.insertarPersona(oUsuario)
+    suspend fun insertarUsuario(oUsuario: clsUsuario): Int = api.insertarUsuario(oUsuario)
+
+    suspend fun editarUsuario(oUsuario: clsUsuario):Int = api.editarUsuario(oUsuario)
 
     suspend fun getUsuario(idUsuario: String): clsUsuario = api.getUsuario(idUsuario)
 

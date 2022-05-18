@@ -7,8 +7,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.navigation.fragment.findNavController
+import com.example.myvideogamelist.R
 import com.example.myvideogamelist.databinding.FragmentAjustesBinding
 import com.example.myvideogamelist.utils.SharedPreferencesManager
+import com.google.android.material.snackbar.Snackbar
 
 class AjustesFragment : Fragment() {
 
@@ -42,6 +45,9 @@ class AjustesFragment : Fragment() {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
                 sharedPref.setModoNoche(false)
             }
+        }
+        binding.tVModificarCredenciales.setOnClickListener {
+            findNavController().navigate(R.id.repetirContrasenyaFragment)
         }
     }
 

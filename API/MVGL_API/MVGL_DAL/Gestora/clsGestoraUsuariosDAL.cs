@@ -53,7 +53,7 @@ namespace MVGL_DAL.Gestora
         /// <summary>
         /// <b>Cabecera:</b> public int editarUsuarioDAL(clsUsuario oUsuario) <br />
         /// <b>Descripción:</b> Este metodo se encarga de editar la informacion del usuario, mas concretamente, <br />
-        /// si la lista es privada o no, solo modifica este valor ya que los demas campos se actualizaran automaticamente al añadir/borrar/editar un juego <br />
+        /// si la lista es privada o no, y su nombre de usuario, solo modifica estos valores ya que los demas campos se actualizaran automaticamente al añadir/borrar/editar un juego <br />
         /// de la lista del usuario <br />
         /// <b>Precondiciones:</b> El usuario debe existir <br />
         /// <b>Postcondiciones:</b> Los datos del usuario se modificaran <br />
@@ -70,8 +70,9 @@ namespace MVGL_DAL.Gestora
             //SqlConnection conexionEstablecida; si falla revisar esto
             miComando.Parameters.Add("@idUsuario", System.Data.SqlDbType.VarChar).Value = oUsuario.Id;
             miComando.Parameters.Add("@esListaPrivada", System.Data.SqlDbType.Bit).Value = oUsuario.EsListaPrivada;
+            miComando.Parameters.Add("@nombreUsuario", System.Data.SqlDbType.VarChar).Value = oUsuario.NombreUsuario;
 
-            miComando.CommandText = "UPDATE Usuarios SET EsListaPrivada = @esListaPrivada WHERE Id = @idUsuario";
+            miComando.CommandText = "UPDATE Usuarios SET EsListaPrivada = @esListaPrivada, NombreUsuario = @nombreUsuario WHERE Id = @idUsuario";
 
             conexionEstablecida = conexionBase.getConnection(); //pongo esto aqui para tener la conexion abierta el menor tiempo posible
             miComando.Connection = conexionEstablecida;

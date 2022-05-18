@@ -48,6 +48,7 @@ class DetallesFragment : Fragment() {
             with(binding){
                 pBIndeterminada.visibility = View.GONE
                 tVNombreVideojuegoValue.text = it.nombre
+                tVGenerosVideojuegoValue.text = it.generos
                 Glide.with(requireContext()).load(infoCompletaVideojuego.value!!.urlImagen).into(binding.iVImagenVideojuego)
 
                 if(infoDeVideojuegoEnLista!!.idUsuario.isNullOrEmpty()){ //si el usuario NO tiene el juego en su lista...

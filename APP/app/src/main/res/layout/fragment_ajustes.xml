@@ -20,19 +20,42 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/vwSeparador"
         android:textSize="24dp"
-        android:textColor="@color/black"
-        android:layout_margin="5dp"
+        android:drawableLeft="@drawable/ic_moon"
+        app:drawableTint="?android:attr/textColorPrimary"
+        android:gravity="center_vertical"
+        android:textColor="?android:attr/textColorPrimary"
         app:layout_constraintLeft_toLeftOf="parent"
         android:text="Modo oscuro" />
 
     <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/swModoOscuro"
         android:layout_width="wrap_content"
-        app:layout_constraintTop_toTopOf="@id/tVModoOscuro"
+        app:layout_constraintTop_toBottomOf="@id/vwSeparador"
         app:layout_constraintRight_toRightOf="parent"
-        android:layout_margin="5dp"
+        android:layout_marginRight="5dp"
         android:scaleX="1.25"
         android:scaleY="1.25"
         android:layout_height="wrap_content" />
+
+    <View
+        android:id="@+id/vwSeparador2"
+        app:layout_constraintTop_toBottomOf="@id/swModoOscuro"
+        android:layout_marginTop="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="#c0c0c0" />
+
+    <TextView
+        android:id="@+id/tVModificarCredenciales"
+        app:layout_constraintTop_toBottomOf="@id/vwSeparador2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:textSize="24dp"
+        android:drawableLeft="@drawable/ic_candado"
+        app:drawableTint="?android:attr/textColorPrimary"
+        android:textColor="?android:attr/textColorPrimary"
+        android:gravity="center_vertical"
+        android:text="Modificar credenciales" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

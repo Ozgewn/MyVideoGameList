@@ -69,11 +69,11 @@ class MiListaFragment : Fragment() {
         binding.tabLayout.addOnTabSelectedListener(object: TabLayout.OnTabSelectedListener{
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 if(tab!!.text.toString()=="Todos"){
-                    listaVideojuegosEnListaFiltrado.removeAll(listaVideojuegosEnListaFiltrado)
+                    listaVideojuegosEnListaFiltrado.clear()
                     listaVideojuegosEnListaFiltrado.addAll(listaVideojuegosEnListaCompleta)
                     adapter.notifyDataSetChanged()
                 }else{
-                    listaVideojuegosEnListaFiltrado.removeAll(listaVideojuegosEnListaFiltrado)
+                    listaVideojuegosEnListaFiltrado.clear()
                     listaVideojuegosEnListaFiltrado.addAll(listaVideojuegosEnListaCompleta.filter {
                         videojuegoViewModel.listaEstados[it.estado-1].nombreEstado.lowercase() == tab.text.toString().lowercase()
                     })

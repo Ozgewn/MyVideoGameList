@@ -27,7 +27,7 @@ namespace MVGL_BL.Gestora
         /// <summary>
         /// <b>Cabecera:</b> public int editarUsuarioBL(clsUsuario oUsuario) <br />
         /// <b>Descripción:</b> Este metodo se encarga de llamar a la capa DAL y que esta edite la informacion del usuario, mas concretamente, <br />
-        /// si la lista es privada o no, solo modifica este valor ya que los demas campos se actualizaran automaticamente al añadir/borrar/editar un juego <br />
+        /// si la lista es privada o no, y su nombre de usuario, solo modifica estos valores ya que los demas campos se actualizaran automaticamente al añadir/borrar/editar un juego <br />
         /// de la lista del usuario <br />
         /// <b>Precondiciones:</b> El usuario debe existir <br />
         /// <b>Postcondiciones:</b> Los datos del usuario se modificaran <br />

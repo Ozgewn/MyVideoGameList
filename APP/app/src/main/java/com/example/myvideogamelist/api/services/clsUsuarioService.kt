@@ -16,7 +16,9 @@ class clsUsuarioService {
 
     private val retrofit = RetrofitHelper.getRetrofit()
 
-    suspend fun insertarPersona(oUsuario: clsUsuario):Int = retrofit.create(clsUsuarioProvider::class.java).insertarUsuario(oUsuario)
+    suspend fun insertarUsuario(oUsuario: clsUsuario):Int = retrofit.create(clsUsuarioProvider::class.java).insertarUsuario(oUsuario)
+
+    suspend fun editarUsuario(oUsuario: clsUsuario):Int = retrofit.create(clsUsuarioProvider::class.java).editarUsuario(oUsuario)
 
     suspend fun getUsuario(idUsuario: String): clsUsuario =
         retrofit.create(clsUsuarioProvider::class.java)

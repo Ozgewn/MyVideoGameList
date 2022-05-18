@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
@@ -62,7 +61,7 @@ class SignUpFragment : Fragment() {
             if(!hasFocus && binding.signUpPassword.editText!!.text.isNullOrEmpty()){
                 binding.signUpPassword.error = Mensajes.errores.PASSWORD_VACIO
             }else if(!hasFocus && binding.signUpPassword.editText!!.text!!.length < 6){
-                binding.signUpPassword.error = Mensajes.errores.PASSWORD_MASDE6CHARS
+                binding.signUpPassword.error = Mensajes.errores.PASSWORD_MASDE5CHARS
             }
         }
         binding.signUpUsername.editText!!.setOnFocusChangeListener { _, hasFocus ->
@@ -109,8 +108,7 @@ class SignUpFragment : Fragment() {
             if(datosSignUpValidos){
                 register(email, password)
             }else{
-                Toast.makeText(requireContext(), Mensajes.errores.LOGIN_SIGNUP_FALTAN_DATOS, Toast.LENGTH_SHORT).show()
-                //TODO: Mejorar mensaje de error con snackbar
+                Snackbar.make(requireView(), Mensajes.errores.LOGIN_SIGNUP_FALTAN_DATOS, Snackbar.LENGTH_SHORT).show()
             }
         }
 
@@ -125,7 +123,10 @@ class SignUpFragment : Fragment() {
                 if(task.isSuccessful){
                     var oUsuario = clsUsuario(id = task.result.user!!.uid, nombreUsuario = binding.signUpUsername.editText!!.text!!.toString()) //creamos el usuario para su posterior insercion en la BBDD
                     CoroutineScope(Dispatchers.IO).launch {
-                        clsUsuarioRepository().insertarUsuario(oUsuario) //insertamos al usuario en la BBDD
+                        val respuesta = clsUsuarioRepository().insertarUsuario(oUsuario) //insertamos al usuario en la BBDD
+                        if(respuesta != 1){
+                            Snackbar.make(requireView(), Mensajes.errores.USERNAME_YA_EN_USO, Snackbar.LENGTH_SHORT).show()
+                        }
                     }
                     hideKeyboard()
                     navController.navigate(R.id.action_signUpFragment_to_loginFragment) //pasamos al login

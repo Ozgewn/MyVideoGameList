@@ -17,6 +17,7 @@ import com.example.myvideogamelist.databinding.FragmentComunidadBinding
 import com.example.myvideogamelist.models.clsUsuario
 import com.example.myvideogamelist.viewmodels.UsuarioViewModel
 import com.example.myvideogamelist.views.adapters.ComunidadAdapter
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -58,7 +59,11 @@ class ComunidadFragment : Fragment(), SearchView.OnQueryTextListener {
 
     fun initRecyclerView(nombreUsuario: String){
         CoroutineScope(Dispatchers.IO).launch {
-            usuarioViewModel.cargarUsuariosPorNombre(nombreUsuario)
+            try{
+                usuarioViewModel.cargarUsuariosPorNombre(nombreUsuario)
+            }catch (e: retrofit2.HttpException){
+                Snackbar.make(requireView(), "No se han encontrado usuarios", Snackbar.LENGTH_SHORT).show()
+            }
             activity?.runOnUiThread {
                 listaDeUsuariosEncontrados.clear()
                 listaDeUsuariosEncontrados.addAll(usuarioViewModel.listaUsuariosCompleto)
@@ -78,13 +83,13 @@ class ComunidadFragment : Fragment(), SearchView.OnQueryTextListener {
     }
 
     override fun onQueryTextChange(newText: String?): Boolean {
-        if(!newText.isNullOrEmpty() && !usuarioViewModel.listaUsuariosCompleto.isNullOrEmpty()){
+        /*if(!newText.isNullOrEmpty() && !usuarioViewModel.listaUsuariosCompleto.isNullOrEmpty()){
             listaDeUsuariosEncontrados.clear()
             listaDeUsuariosEncontrados.addAll(usuarioViewModel.listaUsuariosCompleto.filter {
                 it.nombreUsuario.lowercase().contains(newText.lowercase())
             })
             adapter.notifyDataSetChanged()
-        }
+        }*/
         return true
     }
 

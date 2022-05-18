@@ -40,4 +40,29 @@
         android:name="com.example.myvideogamelist.views.fragments.AjustesFragment"
         android:label="fragment_ajustes"
         tools:layout="@layout/fragment_ajustes" />
+    <fragment
+        android:id="@+id/repetirContrasenyaFragment"
+        android:name="com.example.myvideogamelist.views.fragments.RepetirContrasenyaFragment"
+        android:label="fragment_repetir_contrasenya"
+        tools:layout="@layout/fragment_repetir_contrasenya" />
+    <fragment
+        android:id="@+id/modificarCredencialesFragment"
+        android:name="com.example.myvideogamelist.views.fragments.ModificarCredencialesFragment"
+        android:label="fragment_modificar_credenciales"
+        tools:layout="@layout/fragment_modificar_credenciales" />
+    <fragment
+        android:id="@+id/cambiarEmailFragment"
+        android:name="com.example.myvideogamelist.views.fragments.CambiarEmailFragment"
+        android:label="fragment_cambiar_email"
+        tools:layout="@layout/fragment_cambiar_email" />
+    <fragment
+        android:id="@+id/cambiarNombreUsuarioFragment"
+        android:name="com.example.myvideogamelist.views.fragments.CambiarNombreUsuarioFragment"
+        android:label="fragment_cambiar_nombre_usuario"
+        tools:layout="@layout/fragment_cambiar_nombre_usuario" />
+    <fragment
+        android:id="@+id/cambiarPasswordFragment"
+        android:name="com.example.myvideogamelist.views.fragments.CambiarPasswordFragment"
+        android:label="fragment_cambiar_password"
+        tools:layout="@layout/fragment_cambiar_password" />
 </navigation>

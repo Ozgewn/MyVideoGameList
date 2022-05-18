@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
@@ -56,7 +55,7 @@ class LoginFragment : Fragment() {
             if(!hasFocus && binding.loginPassword.editText!!.text.isNullOrEmpty()){
                 binding.loginPassword.error = Mensajes.errores.PASSWORD_VACIO
             }else if(!hasFocus && binding.loginPassword.editText!!.text!!.length < 6){
-                binding.loginPassword.error = Mensajes.errores.PASSWORD_MASDE6CHARS
+                binding.loginPassword.error = Mensajes.errores.PASSWORD_MASDE5CHARS
             }
         }
         binding.loginPassword.editText!!.doOnTextChanged { _, _, _, _ ->

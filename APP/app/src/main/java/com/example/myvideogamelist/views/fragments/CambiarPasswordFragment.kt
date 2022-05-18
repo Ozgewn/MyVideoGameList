@@ -1,60 +1,110 @@
 package com.example.myvideogamelist.views.fragments
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
+import androidx.core.widget.doOnTextChanged
+import androidx.navigation.fragment.findNavController
 import com.example.myvideogamelist.R
+import com.example.myvideogamelist.databinding.FragmentCambiarPasswordBinding
+import com.example.myvideogamelist.views.mensajes.Mensajes
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [CambiarPasswordFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class CambiarPasswordFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private var _binding: FragmentCambiarPasswordBinding? = null
+    private val binding get() = _binding!!
+    private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
+        auth = Firebase.auth
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_cambiar_password, container, false)
+        _binding = FragmentCambiarPasswordBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment CambiarPasswordFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            CambiarPasswordFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        var datosValidos = false
+        var navController = requireParentFragment().requireParentFragment().findNavController()
+
+        binding.tINuevaPassword.editText!!.setOnFocusChangeListener { _, hasFocus ->
+            datosValidos = false
+            binding.tINuevaPassword.error = null
+            if(!hasFocus && binding.tINuevaPassword.editText!!.text.isNullOrEmpty()){
+                binding.tINuevaPassword.error = Mensajes.errores.PASSWORD_VACIO
+            }else if(!hasFocus && binding.tINuevaPassword.editText!!.text!!.length < 6){
+                binding.tINuevaPassword.error = Mensajes.errores.PASSWORD_MASDE5CHARS
             }
+        }
+
+        binding.tINuevaPassword.editText!!.doOnTextChanged { _, _, _, _ ->
+            if(binding.tINuevaPassword.editText!!.text!!.length >= 6){
+                datosValidos = true
+            }
+        }
+
+        binding.tINuevaPasswordRepetida.editText!!.doOnTextChanged { _, _, _, _ ->
+            if(binding.tINuevaPasswordRepetida.editText!!.text!!.toString() == binding.tINuevaPassword.editText!!.text!!.toString()){
+                datosValidos = true
+                binding.tINuevaPasswordRepetida.error = null
+            }else{
+                binding.tINuevaPasswordRepetida.error = Mensajes.errores.SIGNUP_PASSWORD_NO_COINCIDEN
+            }
+        }
+
+        binding.btnConfirmar.setOnClickListener {
+            hideKeyboard()
+            var password = binding.tINuevaPassword.editText!!.text.toString()
+            if(binding.tINuevaPasswordRepetida.editText!!.text.toString() == password){
+                if(datosValidos){
+                    MaterialAlertDialogBuilder(requireContext())
+                        .setTitle("Confirmar")
+                        .setMessage("¿Estás seguro de que deseas cambiar tu contraseña?")
+                        .setNeutralButton("Cancelar") { dialog, which ->
+                            //No hacemos nada
+                        }
+                        .setPositiveButton("Confirmar"){ dialog, which ->
+                            auth.currentUser!!.updatePassword(password).addOnCompleteListener { task ->
+                                if(task.isSuccessful){
+                                    Snackbar.make(requireView(), Mensajes.informacion.MODIFICACION_CREDENCIALES_EXITOSA, Snackbar.LENGTH_SHORT).show()
+                                    auth.signOut()
+                                    navController.navigate(R.id.action_mainContentFragment_to_loginFragment)
+                                }
+                            }
+                        }
+
+                }else{
+                    Snackbar.make(requireView(), Mensajes.informacion.PEDIR_CORRECION_DE_ERRORES, Snackbar.LENGTH_SHORT).show()
+                }
+            }else{
+                binding.tINuevaPasswordRepetida.error = Mensajes.errores.SIGNUP_PASSWORD_NO_COINCIDEN
+                Snackbar.make(requireView(), Mensajes.informacion.PEDIR_CORRECION_DE_ERRORES, Snackbar.LENGTH_SHORT).show()
+            }
+        }
+
     }
+
+    /**
+     * Oculta el teclado
+     */
+    private fun hideKeyboard(){
+        val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
+    }
+
 }

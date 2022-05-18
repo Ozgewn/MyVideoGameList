@@ -16,7 +16,7 @@
             android:layout_height="wrap_content"
             android:textSize="28sp"
             android:textAlignment="center"
-            android:textColor="@color/black"
+            android:textColor="?android:attr/textColorPrimary"
             android:text="Iniciar Sesión"/>
 
         <com.google.android.material.textfield.TextInputLayout

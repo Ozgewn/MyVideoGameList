@@ -51,6 +51,7 @@ class MainContentFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        (activity as AppCompatActivity).setSupportActionBar(binding.topAppBar)
         val navHostFragment = childFragmentManager.findFragmentById(R.id.MaincontentFragment_nav) as NavHostFragment
         val navControllerMainContent = navHostFragment.navController
         binding.bottomNavigation.setOnItemSelectedListener { item ->

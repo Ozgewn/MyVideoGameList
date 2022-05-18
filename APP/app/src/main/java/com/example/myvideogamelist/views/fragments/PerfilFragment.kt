@@ -46,7 +46,7 @@ class PerfilFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         navController = findNavController()
-        infoCompletaDeUsuario.observe(this, Observer{ usuario ->
+        infoCompletaDeUsuario.observe(this, { usuario ->
             with(binding){
                 tVNombreUsuario.text = usuario.nombreUsuario
                 tVVideojuegosDropeadosValue.text = usuario.videojuegosDropeados.toString()
@@ -60,6 +60,12 @@ class PerfilFragment : Fragment() {
                     }else{
                         navController.navigate(R.id.miListaFragment)
                     }
+                }
+                if(SharedData.idUsuario == usuario.id){
+                    btnEditarPerfil.visibility = View.VISIBLE
+                }
+                btnEditarPerfil.setOnClickListener {
+                    Snackbar.make(requireView(), "Esto te dejaria cambiar la foto y el nombre de usuario, y la privacidad de la lista", Snackbar.LENGTH_SHORT).show()
                 }
             }
         })
