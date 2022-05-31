@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myvideogamelist.R
 import com.example.myvideogamelist.databinding.FragmentMiListaBinding
 import com.example.myvideogamelist.models.clsListaConInfoDeVideojuego
+import com.example.myvideogamelist.utils.MaterialAlertDialogHelper
 import com.example.myvideogamelist.viewmodels.UsuarioViewModel
 import com.example.myvideogamelist.viewmodels.VideojuegoViewModel
 import com.example.myvideogamelist.views.adapters.MiListaAdapter
@@ -25,6 +26,9 @@ import com.example.myvideogamelist.views.sharedData.SharedData
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -41,9 +45,11 @@ class MiListaFragment : Fragment(), SearchView.OnQueryTextListener {
     private val listaVideojuegosEnEstado = mutableListOf<clsListaConInfoDeVideojuego>()
     private var listaVideojuegosEnListaCompleta: List<clsListaConInfoDeVideojuego> = emptyList()
     private lateinit var navController: NavController
+    private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        auth = Firebase.auth
         /*
         Metodo para cargar la lista llamado en el onViewCreated, en el cual explico el por que lo llamo ahi.
         Y no lo llamo en el onCreate porque si no, al entrar al fragment llamariamos 2 veces al metodo de cargar
@@ -169,7 +175,7 @@ class MiListaFragment : Fragment(), SearchView.OnQueryTextListener {
 
     private fun onVideojuegoSeleccionado(oVideojuegoConInfo: clsListaConInfoDeVideojuego){
         /*
-        Si el usuario desde el que estamos dando al boton anyadir no es el nuestro, si no desde la lista de otro usuario, debemos hacer un postValue
+        Si el usuario desde el que estamos dando al juego no es el nuestro, si no desde la lista de otro usuario, debemos hacer un postValue
         del videojuego en cuestion en nuestra lista, y no un postValue del viedojuego en la lista del usuario (que es lo que ocurriria sin este if)
          */
         if(usuarioViewModel.usuarioSeleccionado.value != null){
@@ -210,18 +216,22 @@ class MiListaFragment : Fragment(), SearchView.OnQueryTextListener {
     }
 
     private fun onVideojuegoAnyadidoOEditado(oVideojuego: clsListaConInfoDeVideojuego){
-        /*
-        Si el usuario desde el que estamos dando al boton anyadir no es el nuestro, si no desde la lista de otro usuario, debemos hacer un postValue
-        del videojuego en cuestion en nuestra lista, y no un postValue del viedojuego en la lista del usuario (que es lo que ocurriria sin este if)
-         */
-        if(usuarioViewModel.usuarioSeleccionado.value != null){
-            videojuegoViewModel.videojuegoSeleccionado.postValue(videojuegoViewModel.listaConInfoDeVideojuegosModel.find {
-                it.idVideojuego == oVideojuego.idVideojuego
-            })
-        }else{//en caso de que si sea nuestro propio usuario desde donde hacemos click a anyadir o editar
-            videojuegoViewModel.videojuegoSeleccionado.postValue(oVideojuego)
+        if(auth.currentUser!!.isAnonymous){
+            MaterialAlertDialogHelper.errorPorSerAnonimo(this, auth)
+        }else{
+            /*
+            Si el usuario desde el que estamos dando al boton anyadir no es el nuestro, si no desde la lista de otro usuario, debemos hacer un postValue
+            del videojuego en cuestion en nuestra lista, y no un postValue del viedojuego en la lista del usuario (que es lo que ocurriria sin este if)
+             */
+            if(usuarioViewModel.usuarioSeleccionado.value != null){
+                videojuegoViewModel.videojuegoSeleccionado.postValue(videojuegoViewModel.listaConInfoDeVideojuegosModel.find {
+                    it.idVideojuego == oVideojuego.idVideojuego
+                })
+            }else{//en caso de que si sea nuestro propio usuario desde donde hacemos click a anyadir o editar
+                videojuegoViewModel.videojuegoSeleccionado.postValue(oVideojuego)
+            }
+            navController.navigate(R.id.anyadirOEditarFragment)
         }
-        navController.navigate(R.id.anyadirOEditarFragment)
     }
 
     private fun cargarVideojuegosEnLista(){

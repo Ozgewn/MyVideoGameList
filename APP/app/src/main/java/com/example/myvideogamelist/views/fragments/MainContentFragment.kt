@@ -16,9 +16,11 @@ import androidx.navigation.fragment.findNavController
 import com.example.myvideogamelist.R
 import com.example.myvideogamelist.databinding.FragmentMainContentBinding
 import com.example.myvideogamelist.databinding.HeaderNavigationDrawerBinding
+import com.example.myvideogamelist.utils.MaterialAlertDialogHelper
 import com.example.myvideogamelist.utils.SharedPreferencesManager
 import com.example.myvideogamelist.viewmodels.UsuarioViewModel
 import com.example.myvideogamelist.views.sharedData.SharedData
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -58,11 +60,11 @@ class MainContentFragment : Fragment() {
             when(item.itemId) {
                 R.id.page_ranking -> {
                     /*
-                    Esto es para borrar los fragments del menu de abajo del historial de navegacion, el comportamiento que se obtendra es el siguiente:
-                    Al navegar hacia atras, iran al fragment del login, fragment el cual redirecciona al fragment del ranking (el principal), gracias a esto, no permitimos que el usuario
-                    le de hacia atras y navegue entre las distintas paginas del menu de abajo, esto lo prohibimos ya que imaginemos que el usuario ha estado dando muchos clicks
-                    a los menus de abajo, entonces por cada click, le deberia dar una vez al boton de atras. Gracias a borrar el historial de navegacion, conseguimos eso
-                     */
+                       Esto es para borrar los fragments del menu de abajo del historial de navegacion, el comportamiento que se obtendra es el siguiente:
+                       Al navegar hacia atras, iran al fragment del login, fragment el cual redirecciona al fragment del ranking (el principal), gracias a esto, no permitimos que el usuario
+                       le de hacia atras y navegue entre las distintas paginas del menu de abajo, esto lo prohibimos ya que imaginemos que el usuario ha estado dando muchos clicks
+                       a los menus de abajo, entonces por cada click, le deberia dar una vez al boton de atras. Gracias a borrar el historial de navegacion, conseguimos eso
+                        */
                     navControllerMainContent.popBackStack(R.id.comunidadFragment, true)
                     navControllerMainContent.popBackStack(R.id.miListaFragment, true)
                     navControllerMainContent.navigate(R.id.rankingFragment)
@@ -75,10 +77,14 @@ class MainContentFragment : Fragment() {
                     true
                 }
                 R.id.page_mi_lista -> {
-                    usuarioViewModel.usuarioSeleccionado.postValue(null) //aqui le estamos diciendo al viewmodel que el usuario seleccionado es el usuario que tiene iniciada la sesion
-                    navControllerMainContent.popBackStack(R.id.comunidadFragment, true)
-                    navControllerMainContent.popBackStack(R.id.rankingFragment, true)
-                    navControllerMainContent.navigate(R.id.miListaFragment)
+                    if(auth.currentUser!!.isAnonymous){
+                        MaterialAlertDialogHelper.errorPorSerAnonimo(this, auth)
+                    }else{
+                        usuarioViewModel.usuarioSeleccionado.postValue(null) //aqui le estamos diciendo al viewmodel que el usuario seleccionado es el usuario que tiene iniciada la sesion
+                        navControllerMainContent.popBackStack(R.id.comunidadFragment, true)
+                        navControllerMainContent.popBackStack(R.id.rankingFragment, true)
+                        navControllerMainContent.navigate(R.id.miListaFragment)
+                    }
                     true
                 }
                 else -> false
@@ -103,7 +109,11 @@ class MainContentFragment : Fragment() {
                 navControllerMainContent.navigate(R.id.comunidadFragment)
             }
             if(!(navHostFragment.childFragmentManager.fragments.any {  it.javaClass == MiListaFragment().javaClass && it.isVisible }) && it.itemId == R.id.page_mi_lista){
-                navControllerMainContent.navigate(R.id.miListaFragment)
+                if(auth.currentUser!!.isAnonymous){
+                    MaterialAlertDialogHelper.errorPorSerAnonimo(this, auth)
+                }else{
+                    navControllerMainContent.navigate(R.id.miListaFragment)
+                }
             }
         }
         binding.topAppBar.setNavigationOnClickListener {
@@ -126,8 +136,12 @@ class MainContentFragment : Fragment() {
         }
         val headerView: View = binding.navigationView.getHeaderView(0)
         headerView.setOnClickListener {
-            usuarioViewModel.usuarioSeleccionado.postValue(null)
-            navControllerMainContent.navigate(R.id.perfilFragment)
+            if(auth.currentUser!!.isAnonymous){
+                MaterialAlertDialogHelper.errorPorSerAnonimo(this, auth)
+            }else{
+                usuarioViewModel.usuarioSeleccionado.postValue(null)
+                navControllerMainContent.navigate(R.id.perfilFragment)
+            }
             binding.drawerLayout.close()
         }
         val bindingHeader: HeaderNavigationDrawerBinding = HeaderNavigationDrawerBinding.bind(headerView)

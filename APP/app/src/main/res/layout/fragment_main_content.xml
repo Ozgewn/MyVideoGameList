@@ -38,7 +38,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintBottom_toTopOf="@id/layoutBottomNavigationMenu"
-            android:layout_marginTop="65dp"
+            android:paddingTop="?android:attr/actionBarSize"
             />
 
 

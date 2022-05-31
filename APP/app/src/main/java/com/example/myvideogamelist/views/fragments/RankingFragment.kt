@@ -17,11 +17,15 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.example.myvideogamelist.R
 import com.example.myvideogamelist.databinding.FragmentRankingBinding
 import com.example.myvideogamelist.models.clsListaConInfoDeVideojuego
+import com.example.myvideogamelist.utils.MaterialAlertDialogHelper
 import com.example.myvideogamelist.viewmodels.VideojuegoViewModel
 import com.example.myvideogamelist.views.adapters.ListaConInfoDeVideojuegoAdapter
 import com.example.myvideogamelist.views.mensajes.Mensajes
 import com.example.myvideogamelist.views.sharedData.SharedData
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -36,14 +40,16 @@ class RankingFragment : Fragment(), SearchView.OnQueryTextListener {
     private val videojuegoViewModel: VideojuegoViewModel by activityViewModels()
     private lateinit var navController: NavController
     private var listaVideojuegosConInfoCompleta: List<clsListaConInfoDeVideojuego> = emptyList()
+    private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        auth = Firebase.auth
         /*
         Este if lo hacemos para que si se destruye y se vuelve a crear la vista (lo que pasaria al seleccionar el modo oscuro), no salte una excepcion, y ademas,
         no vuelva a hacer una llamada a la API
          */
-        if(videojuegoViewModel.listaConInfoDeVideojuegosModel.isNullOrEmpty()){
+        if(videojuegoViewModel.listaConInfoDeVideojuegosModel.isNullOrEmpty() || videojuegoViewModel.listaConInfoDeVideojuegosModel[0].idUsuario != SharedData.idUsuario){
             cargarRanking()
         }else{
             listaVideojuegosConInfoCompleta = videojuegoViewModel.listaConInfoDeVideojuegosModel
@@ -148,8 +154,12 @@ class RankingFragment : Fragment(), SearchView.OnQueryTextListener {
     }
 
     private fun onVideojuegoAnyadidoOEditado(oVideojuego: clsListaConInfoDeVideojuego){
-        videojuegoViewModel.videojuegoSeleccionado.postValue(oVideojuego)
-        navController.navigate(R.id.anyadirOEditarFragment)
+        if(auth.currentUser!!.isAnonymous){
+            MaterialAlertDialogHelper.errorPorSerAnonimo(this, auth)
+        }else{
+            videojuegoViewModel.videojuegoSeleccionado.postValue(oVideojuego)
+            navController.navigate(R.id.anyadirOEditarFragment)
+        }
     }
 
     private fun cargarRanking() {

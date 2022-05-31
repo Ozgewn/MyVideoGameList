@@ -29,6 +29,10 @@ class VideojuegoViewModel: ViewModel() {
             val result = repository.getListaVideojuegosPorUsuario(idUsuario)
             if(!result.isNullOrEmpty()){
                 listaConInfoDeVideojuegosModel.removeAll(listaConInfoDeVideojuegosModel)
+                result.forEach {
+                    it.fechaDeComienzo = it.fechaDeComienzo?.substring(0, 10)
+                    it.fechaDeFinalizacion = it.fechaDeFinalizacion?.substring(0, 10)
+                }
                 listaConInfoDeVideojuegosModel.addAll(result)
             }
         }
@@ -42,6 +46,10 @@ class VideojuegoViewModel: ViewModel() {
             val result = repository.getSoloVideojuegosEnListaDeUsuario(idUSuario)
             if(!result.isNullOrEmpty()){
                 listaDeVideojuegosSoloEnLista.removeAll(listaDeVideojuegosSoloEnLista)
+                result.forEach {
+                    it.fechaDeComienzo = it.fechaDeComienzo?.substring(0, 10)
+                    it.fechaDeFinalizacion = it.fechaDeFinalizacion?.substring(0, 10)
+                }
                 listaDeVideojuegosSoloEnLista.addAll(result)
             }
         }

@@ -15,11 +15,18 @@ import com.example.myvideogamelist.api.repositories.clsVideojuegoRepository
 import com.example.myvideogamelist.databinding.FragmentDetallesBinding
 import com.example.myvideogamelist.models.clsListaConInfoDeVideojuego
 import com.example.myvideogamelist.models.clsVideojuego
+import com.example.myvideogamelist.utils.MaterialAlertDialogHelper
 import com.example.myvideogamelist.viewmodels.VideojuegoViewModel
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.text.DecimalFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 
 class DetallesFragment : Fragment() {
 
@@ -28,9 +35,11 @@ class DetallesFragment : Fragment() {
     private val videojuegoViewModel: VideojuegoViewModel by activityViewModels()
     private val infoCompletaVideojuego = MutableLiveData<clsVideojuego>()
     private var infoDeVideojuegoEnLista : clsListaConInfoDeVideojuego? = null
+    private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        auth = Firebase.auth
         cargarInfoVideojuego()
     }
 
@@ -51,6 +60,11 @@ class DetallesFragment : Fragment() {
                 pBIndeterminada.visibility = View.GONE
                 tVNombreVideojuegoValue.text = it.nombre
                 tVGenerosVideojuegoValue.text = it.generos
+                tVPlataformasVideojuegoValue.text = it.plataformas
+                tVDesarrolladorVideojuegoValue.text = it.desarrollador
+                tVDistribuidorVideojuegoValue.text = it.distribuidores
+                val fechaLanzamiento = LocalDate.parse(it.fechaDeLanzamiento.substring(0, 10))
+                tVFechaLanzamientoVideojuegoValue.text = fechaLanzamiento.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
                 Glide.with(requireContext()).load(infoCompletaVideojuego.value!!.urlImagen).into(binding.iVImagenVideojuego)
 
                 if(infoDeVideojuegoEnLista!!.idUsuario.isNullOrEmpty()){ //si el usuario NO tiene el juego en su lista...
@@ -81,11 +95,15 @@ class DetallesFragment : Fragment() {
                 }else{
                     tVDificultadPersonalVideojuegoValue.text = "-"
                 }
-                btnAnyadirOEditar.setOnClickListener {
-                    findNavController().navigate(R.id.anyadirOEditarFragment)
-                }
             }
         })
+        binding.btnAnyadirOEditar.setOnClickListener {
+            if (auth.currentUser!!.isAnonymous) {
+                MaterialAlertDialogHelper.errorPorSerAnonimo(this, auth)
+            } else {
+                findNavController().navigate(R.id.anyadirOEditarFragment)
+            }
+        }
         binding.swipeRefresh.setOnRefreshListener {
             cargarInfoVideojuego()
             binding.swipeRefresh.isRefreshing = false

@@ -66,6 +66,16 @@ class MiListaAdapter(val listaConInfoDeVideojuego: List<clsListaConInfoDeVideoju
                 }else{
                     iVAnyadirOEditar.setImageResource(R.drawable.ic_add)
                 }
+                if(oVideojuegoConInfo.fechaDeComienzo.isNullOrEmpty()){
+                    tVFechaComienzoValue.text = "-"
+                }else{
+                    tVFechaComienzoValue.text = oVideojuegoConInfo.fechaDeComienzo
+                }
+                if(oVideojuegoConInfo.fechaDeFinalizacion.isNullOrEmpty()){
+                    tVFechaFinalizacionValue.text = "-"
+                }else{
+                    tVFechaFinalizacionValue.text = oVideojuegoConInfo.fechaDeFinalizacion
+                }
                 iVAnyadirOEditar.setOnClickListener {
                     listenerAnyadirOEditar(oVideojuegoConInfo)
                 }

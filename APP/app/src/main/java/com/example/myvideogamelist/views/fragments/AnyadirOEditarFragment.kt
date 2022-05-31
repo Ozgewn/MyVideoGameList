@@ -17,11 +17,17 @@ import com.example.myvideogamelist.viewmodels.VideojuegoViewModel
 import com.example.myvideogamelist.views.adapters.ListaEstadosAdapter
 import com.example.myvideogamelist.views.mensajes.Mensajes
 import com.example.myvideogamelist.views.sharedData.SharedData
+import com.google.android.material.datepicker.MaterialDatePicker
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.lang.Exception
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 class AnyadirOEditarFragment : Fragment()  {
 
@@ -85,6 +91,11 @@ class AnyadirOEditarFragment : Fragment()  {
             if(isEditable){
                 binding.atVEstados.setText(listaEstados[oVideojuegoSeleccionado.estado-1].toString(), false)
                 oVideojuegoAInsertarOEditar.estado = listaEstados[oVideojuegoSeleccionado.estado-1].id
+                binding.eTFechaComienzo.setText(oVideojuegoSeleccionado.fechaDeComienzo)
+                oVideojuegoAInsertarOEditar.fechaDeComienzo = oVideojuegoSeleccionado.fechaDeComienzo
+                binding.eTFechaFinalizacion.setText(oVideojuegoSeleccionado.fechaDeFinalizacion)
+                oVideojuegoAInsertarOEditar.fechaDeFinalizacion = oVideojuegoSeleccionado.fechaDeFinalizacion
+                mostrarUOcultarFechasSegunIdEstado()
             }
         }
     }
@@ -103,21 +114,63 @@ class AnyadirOEditarFragment : Fragment()  {
         initRecyclerView()
         binding.atVEstados.setOnItemClickListener { _, _, position, _ ->
             oVideojuegoAInsertarOEditar.estado = position+1
+            mostrarUOcultarFechasSegunIdEstado()
         }
         /*
         TODO: mejorar esto
          */
         binding.hPickerNota.values = listOf("-", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10").toTypedArray()
-        binding.hPickerNota.sideItems = 4
-        binding.hPickerNota.scrollBarSize = 4
+        binding.hPickerNota.sideItems = 2
+        binding.hPickerNota.scrollBarSize = 10
         binding.hPickerNota.setOnItemSelectedListener {
             oVideojuegoAInsertarOEditar.nota = it
         }
         binding.hPickerDificultad.values = listOf("-", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10").toTypedArray()
-        binding.hPickerDificultad.sideItems = 4
-        binding.hPickerDificultad.scrollBarSize = 4
+        binding.hPickerDificultad.sideItems = 2
+        binding.hPickerDificultad.scrollBarSize = 10
         binding.hPickerDificultad.setOnItemSelectedListener {
             oVideojuegoAInsertarOEditar.dificultad = it
+        }
+        binding.btnFechaComienzoHoy.setOnClickListener {
+            val fechaActual = LocalDate.now().toString()
+            binding.eTFechaComienzo.setText(fechaActual)
+            oVideojuegoAInsertarOEditar.fechaDeComienzo = fechaActual
+        }
+        binding.eTFechaComienzo.setOnClickListener {
+            val datePicker =
+                MaterialDatePicker.Builder.datePicker()
+                    .setTitleText("Seleccione fecha de comienzo")
+                    .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
+                    .build()
+            datePicker.show(childFragmentManager, "tag")
+            datePicker.addOnPositiveButtonClickListener {
+                val fechaComienzo = Instant.ofEpochMilli(datePicker.selection!!).atZone(ZoneId.systemDefault()).toLocalDate()
+                val fechaFormateada = fechaComienzo.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
+                binding.eTFechaComienzo.setText(fechaFormateada.toString())
+                oVideojuegoAInsertarOEditar.fechaDeComienzo = fechaComienzo.toString()
+            }
+            datePicker.addOnNegativeButtonClickListener {
+                oVideojuegoAInsertarOEditar.fechaDeComienzo = null
+                binding.eTFechaComienzo.setText("")
+            }
+        }
+        binding.eTFechaFinalizacion.setOnClickListener {
+            val datePicker =
+                MaterialDatePicker.Builder.datePicker()
+                    .setTitleText("Seleccione fecha de finalizacion")
+                    .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
+                    .build()
+            datePicker.show(childFragmentManager, "tag")
+            datePicker.addOnPositiveButtonClickListener {
+                val fechaComienzo = Instant.ofEpochMilli(datePicker.selection!!).atZone(ZoneId.systemDefault()).toLocalDate()
+                val fechaFormateada = fechaComienzo.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
+                binding.eTFechaFinalizacion.setText(fechaFormateada.toString())
+                oVideojuegoAInsertarOEditar.fechaDeFinalizacion = fechaComienzo.toString()
+            }
+            datePicker.addOnNegativeButtonClickListener {
+                oVideojuegoAInsertarOEditar.fechaDeFinalizacion = null
+                binding.eTFechaFinalizacion.setText("")
+            }
         }
         /*
         Ahora vamos a hacer que si el usuario ya tiene ese videojuego en la lista, y por consecuente, quiere editarlo, se le carguen los valores que tiene en la lista, es decir,
@@ -188,36 +241,60 @@ class AnyadirOEditarFragment : Fragment()  {
             }
         }
         binding.btnBorrar.setOnClickListener {
-            if(isBorrable){
-                try{
-                    CoroutineScope(Dispatchers.IO).launch {
-                        val filasEliminadas = videojuegoViewModel.eliminarVideojuegoEnLista(SharedData.idUsuario, oVideojuegoAInsertarOEditar.idVideojuego)
+            if(isBorrable) {
+                MaterialAlertDialogBuilder(requireContext())
+                    .setTitle("¿Desea borrar ${oVideojuegoSeleccionado.nombreVideojuego} de su lista?")
+                    .setMessage("¿Está seguro de que desea borrar ${oVideojuegoSeleccionado.nombreVideojuego} de su lista de videojuegos? Lo podrá volver a añadir" +
+                            "más tarde")
+                    .setNeutralButton("Cancelar") { dialog, which ->
+                        // nada
+                    }
+                    .setPositiveButton("Borrar") { dialog, which ->
+                        try{
+                            CoroutineScope(Dispatchers.IO).launch {
+                                val filasEliminadas = videojuegoViewModel.eliminarVideojuegoEnLista(SharedData.idUsuario, oVideojuegoAInsertarOEditar.idVideojuego)
 
-                        if(filasEliminadas == 4){
-                            isBorrable = false
-                            isEditable = false
-                            activity?.runOnUiThread {
-                                binding.atVEstados.text = null
+                                if(filasEliminadas == 4){
+                                    isBorrable = false
+                                    isEditable = false
+                                    activity?.runOnUiThread {
+                                        binding.atVEstados.text = null
+                                    }
+                                    Snackbar.make(requireView(), "Se ha eliminado "+oVideojuegoSeleccionado.nombreVideojuego+" de la lista", Snackbar.LENGTH_SHORT).show()
+                                }else{
+                                    Snackbar.make(requireView(), "Ha ocurrido un problema mientras se intentaba eliminar "+oVideojuegoSeleccionado.nombreVideojuego+" de la lista, intentelo de nuevo mas tarde", Snackbar.LENGTH_SHORT).show()
+                                }
                             }
-                            Snackbar.make(requireView(), "Se ha eliminado "+oVideojuegoSeleccionado.nombreVideojuego+" de la lista", Snackbar.LENGTH_SHORT).show()
-                        }else{
-                            Snackbar.make(requireView(), "Ha ocurrido un problema mientras se intentaba eliminar "+oVideojuegoSeleccionado.nombreVideojuego+" de la lista, intentelo de nuevo mas tarde", Snackbar.LENGTH_SHORT).show()
+                        }catch (e: Exception){
+                            Snackbar.make(requireView(), Mensajes.errores.CONEXION_INTERNET_FALLIDA, Snackbar.LENGTH_SHORT).show()
+                        }
+                        with(videojuegoViewModel.videojuegoSeleccionado.value!!){
+                            notaPersonal = 0
+                            dificultadPersonal = 0
+                            idUsuario = null
+                            estado = 0
                         }
                     }
-                }catch (e: Exception){
-                    Snackbar.make(requireView(), Mensajes.errores.CONEXION_INTERNET_FALLIDA, Snackbar.LENGTH_SHORT).show()
-                }
-                with(videojuegoViewModel.videojuegoSeleccionado.value!!){
-                    notaPersonal = 0
-                    dificultadPersonal = 0
-                    idUsuario = null
-                    estado = 0
-                }
+                    .show()
             }else{
                 Snackbar.make(requireView(), Mensajes.errores.BORRAR_VIDEOJUEGO_QUE_NO_ESTA_EN_LISTA, Snackbar.LENGTH_SHORT).show()
             }
         }
 
+    }
+
+    fun mostrarUOcultarFechasSegunIdEstado(){
+        if(oVideojuegoAInsertarOEditar.estado > 0){
+            binding.eTFechaComienzo.visibility = View.VISIBLE
+            binding.btnFechaComienzoHoy.visibility = View.VISIBLE
+        }
+        if((listaEstados.find { it.nombreEstado == "Jugado" }!!.id == oVideojuegoAInsertarOEditar.estado) || listaEstados.find { it.nombreEstado == "Dropeado" }!!.id == oVideojuegoAInsertarOEditar.estado){
+            binding.eTFechaFinalizacion.visibility = View.VISIBLE
+            binding.btnFechaFinalizacionHoy.visibility = View.VISIBLE
+        }else{
+            binding.eTFechaFinalizacion.visibility = View.GONE
+            binding.btnFechaFinalizacionHoy.visibility = View.GONE
+        }
     }
 
     override fun onResume() {

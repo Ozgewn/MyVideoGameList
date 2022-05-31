@@ -96,12 +96,27 @@ class LoginFragment : Fragment() {
             binding.loginEmail.error = null
             binding.loginPassword.error = null
         }
+        binding.loginAnonymous.setOnClickListener {
+            auth.signInAnonymously().addOnCompleteListener { task ->
+                if(task.isSuccessful){
+                    SharedData.idUsuario = "anonimo"
+                    navController.navigate(R.id.action_loginFragment_to_mainContentFragment)
+                    actualizarNombreEnSharedData()
+                }else{
+                    Snackbar.make(requireView(), Mensajes.errores.ERROR_GENERICO, Snackbar.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 
     override fun onStart() {
         super.onStart()
         if(auth.currentUser != null){
-            SharedData.idUsuario = auth.currentUser!!.uid //Lo pongo en la SharedData para no estar pasando Firebase en todos los fragments
+            if(auth.currentUser!!.isAnonymous){
+                SharedData.idUsuario = "anonimo"
+            }else{
+                SharedData.idUsuario = auth.currentUser!!.uid //Lo pongo en la SharedData para no estar pasando Firebase en todos los fragments
+            }
             actualizarNombreEnSharedData()
             navController.navigate(R.id.action_loginFragment_to_mainContentFragment)
         }
@@ -129,9 +144,14 @@ class LoginFragment : Fragment() {
      * Actualiza el nombre de usuario en la clase estatica SharedData haciendo uso del idUsuario
      */
     private fun actualizarNombreEnSharedData(){
-        CoroutineScope(Dispatchers.IO).launch {
-            SharedData.nombreUsuario.postValue(clsUsuarioRepository().getUsuario(SharedData.idUsuario).nombreUsuario)
+        if(auth.currentUser!!.isAnonymous){
+            SharedData.nombreUsuario.postValue("Anónimo")
+        }else{
+            CoroutineScope(Dispatchers.IO).launch {
+                SharedData.nombreUsuario.postValue(clsUsuarioRepository().getUsuario(SharedData.idUsuario).nombreUsuario)
+            }
         }
+
     }
 
     /**

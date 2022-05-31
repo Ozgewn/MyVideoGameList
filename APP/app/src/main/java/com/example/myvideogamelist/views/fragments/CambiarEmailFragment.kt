@@ -66,7 +66,7 @@ class CambiarEmailFragment : Fragment() {
                 var email = binding.tINuevoEmail.editText!!.text.toString()
                 MaterialAlertDialogBuilder(requireContext())
                     .setTitle("Confirmar")
-                    .setMessage("¿Estás seguro de que deseas cambiar el email a "+email+"?")
+                    .setMessage("¿Estás seguro de que deseas cambiar el email a $email?")
                     .setNeutralButton("Cancelar") { dialog, which ->
                         //No hacemos nada
                     }

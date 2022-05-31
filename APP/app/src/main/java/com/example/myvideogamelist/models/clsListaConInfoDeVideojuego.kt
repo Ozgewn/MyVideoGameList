@@ -11,8 +11,8 @@ data class clsListaConInfoDeVideojuego(
     @SerializedName("notaMediaVideojuego")val notaMediaVideojuego: Double,
     @SerializedName("dificultad") var dificultadPersonal: Int,
     @SerializedName("dificultadMediaVideojuego")val dificultadMediaVideojuego: Double,
-    @SerializedName("fechaDeComienzo")val fechaDeComienzo: LocalDate,
-    @SerializedName("fechaDeFinalizacion")val fechaDeFinalizacion: LocalDate,
+    @SerializedName("fechaDeComienzo")var fechaDeComienzo: String?,
+    @SerializedName("fechaDeFinalizacion")var fechaDeFinalizacion: String?,
     @SerializedName("generos")val generos: String,
     @SerializedName("estado") var estado: Int,
     @SerializedName("urlImagenVideojuego")val urlImagenVideojuego: String
