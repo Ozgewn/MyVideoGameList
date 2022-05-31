@@ -11,7 +11,11 @@ import androidx.navigation.fragment.findNavController
 import com.example.myvideogamelist.R
 import com.example.myvideogamelist.databinding.FragmentAjustesBinding
 import com.example.myvideogamelist.utils.SharedPreferencesManager
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 class AjustesFragment : Fragment() {
 

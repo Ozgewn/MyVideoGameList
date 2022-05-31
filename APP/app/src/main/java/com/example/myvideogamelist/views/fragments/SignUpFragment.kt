@@ -105,7 +105,7 @@ class SignUpFragment : Fragment() {
             val email = binding.signUpEmail.editText!!.text.toString()
             val password = binding.signUpPassword.editText!!.text.toString()
 
-            if(datosSignUpValidos){
+            if(datosSignUpValidos && binding.signUpUsername.editText!!.text.isNullOrEmpty()){
                 register(email, password)
             }else{
                 Snackbar.make(requireView(), Mensajes.errores.LOGIN_SIGNUP_FALTAN_DATOS, Snackbar.LENGTH_SHORT).show()
@@ -118,31 +118,45 @@ class SignUpFragment : Fragment() {
     }
 
     private fun register(email: String, password: String) {
-        auth.createUserWithEmailAndPassword(email, password)
-            .addOnCompleteListener(activity!!) { task ->
-                if(task.isSuccessful){
-                    var oUsuario = clsUsuario(id = task.result.user!!.uid, nombreUsuario = binding.signUpUsername.editText!!.text!!.toString()) //creamos el usuario para su posterior insercion en la BBDD
-                    CoroutineScope(Dispatchers.IO).launch {
-                        val respuesta = clsUsuarioRepository().insertarUsuario(oUsuario) //insertamos al usuario en la BBDD
-                        if(respuesta != 1){
-                            Snackbar.make(requireView(), Mensajes.errores.USERNAME_YA_EN_USO, Snackbar.LENGTH_SHORT).show()
+        val nombreUsuario = binding.signUpUsername.editText!!.text!!.toString()
+        CoroutineScope(Dispatchers.IO).launch {
+            val nombreUsuarioExistente = clsUsuarioRepository().comprobarExistenciaUsuario(nombreUsuario)
+            if(nombreUsuarioExistente){ //si el nombre existe, mostramos un error
+                activity?.runOnUiThread {
+                    binding.signUpUsername.error = Mensajes.errores.USERNAME_YA_EN_USO
+                }
+            }else{ //si no existe, seguimos con la creacion del usuario
+                auth.createUserWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(activity!!) { task ->
+                        if(task.isSuccessful){
+                            var oUsuario = clsUsuario(id = task.result.user!!.uid, nombreUsuario = nombreUsuario) //creamos el usuario para su posterior insercion en la BBDD
+                            CoroutineScope(Dispatchers.IO).launch {
+                                val respuesta = clsUsuarioRepository().insertarUsuario(oUsuario) //insertamos al usuario en la BBDD
+                                if(respuesta != 1){
+                                    Snackbar.make(requireView(), Mensajes.errores.USERNAME_YA_EN_USO, Snackbar.LENGTH_SHORT).show()
+                                }
+                                activity?.runOnUiThread {
+                                    //hacemos el navigate en el runOnUiThread, para que solo naveguemos cuando acabemos de insertar al usuario en la BBDD
+                                    navController.navigate(R.id.action_signUpFragment_to_loginFragment) //pasamos al login
+                                }
+                            }
+                            hideKeyboard()
+                            //TODO: mensaje de se ha creado el usuario
+                        }else{
+                            /*
+                            A continuacion vamos a manejar la excepcion de cuando se crea un usuario que ya tiene cuenta, si ponemos un try-catch capturando esa excepcion, no saltara al catch,
+                            asi que lo tenemos que hacer con un if
+                             */
+                            if(task.exception!!::class.java == FirebaseAuthUserCollisionException::class.java){
+                                binding.signUpEmail.error = Mensajes.errores.SIGNUP_EMAIL_REPETIDO
+                            }else{
+                                Snackbar.make(requireView(), Mensajes.errores.SIGNUP_FALLIDO, Snackbar.LENGTH_LONG).show()
+                            }
                         }
                     }
-                    hideKeyboard()
-                    navController.navigate(R.id.action_signUpFragment_to_loginFragment) //pasamos al login
-                    //TODO: mensaje de se ha creado el usuario
-                }else{
-                    /*
-                    A continuacion vamos a manejar la excepcion de cuando se crea un usuario que ya tiene cuenta, si ponemos un try-catch capturando esa excepcion, no saltara al catch,
-                    asi que lo tenemos que hacer con un if
-                     */
-                    if(task.exception!!::class.java == FirebaseAuthUserCollisionException::class.java){
-                        binding.signUpEmail.error = Mensajes.errores.SIGNUP_EMAIL_REPETIDO
-                    }else{
-                        Snackbar.make(requireView(), Mensajes.errores.SIGNUP_FALLIDO, Snackbar.LENGTH_LONG).show()
-                    }
-                }
             }
+        }
+
     }
 
     /**

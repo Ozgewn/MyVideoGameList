@@ -19,6 +19,7 @@ import com.example.myvideogamelist.viewmodels.VideojuegoViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.text.DecimalFormat
 
 class DetallesFragment : Fragment() {
 
@@ -44,6 +45,7 @@ class DetallesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val df = DecimalFormat("#.##")
         infoCompletaVideojuego.observe(this, Observer {
             with(binding){
                 pBIndeterminada.visibility = View.GONE
@@ -60,12 +62,12 @@ class DetallesFragment : Fragment() {
                 Controlamos para que en vez de poner como nota 0, ponemos "-" porque si la nota es 0, es que nadie le ha puesto nota a ese juego, de igual manera con la dificultad
                  */
                 if(infoCompletaVideojuego.value!!.notaMedia > 0){
-                    tVNotaMediaVideojuegoValue.text = it.notaMedia.toString()
+                    tVNotaMediaVideojuegoValue.text = df.format(it.notaMedia)
                 }else{
                     tVNotaMediaVideojuegoValue.text = "-"
                 }
                 if(infoCompletaVideojuego.value!!.dificultadMedia > 0){
-                    tVDificultadMediaVideojuegoValue.text = it.dificultadMedia.toString()
+                    tVDificultadMediaVideojuegoValue.text = df.format(it.dificultadMedia)
                 }else{
                     tVDificultadMediaVideojuegoValue.text = "-"
                 }

@@ -1,10 +1,14 @@
 package com.example.myvideogamelist.views.fragments
 
+import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
+import android.widget.SearchView
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
@@ -17,12 +21,13 @@ import com.example.myvideogamelist.viewmodels.VideojuegoViewModel
 import com.example.myvideogamelist.views.adapters.ListaConInfoDeVideojuegoAdapter
 import com.example.myvideogamelist.views.mensajes.Mensajes
 import com.example.myvideogamelist.views.sharedData.SharedData
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.lang.Exception
 
-class RankingFragment : Fragment() {
+class RankingFragment : Fragment(), SearchView.OnQueryTextListener {
 
     private var _binding: FragmentRankingBinding? = null
     private val binding get() = _binding!!
@@ -65,6 +70,56 @@ class RankingFragment : Fragment() {
             cargarRanking()
             binding.swipeRefresh.isRefreshing = false
         }
+        binding.sVRanking.setOnQueryTextListener(this)
+        //Ordenar
+        binding.btnOrdenar.setOnClickListener {
+
+            val opcionesDeOrdenado = arrayOf("Estado", "Nombre A-Z", "Nombre Z-A", "Nota media", "Dificultad media")
+            var opcionOrdenado = 0
+
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Elija modo de ordenado")
+                .setNeutralButton("cancelar") { dialog, which ->
+                    // nada
+                }
+                .setPositiveButton("Ok") { dialog, which ->
+                    ordenar(opcionOrdenado)
+                }
+                .setSingleChoiceItems(opcionesDeOrdenado, opcionOrdenado) { dialog, which ->
+                    opcionOrdenado = which
+                }
+                .show()
+        }
+    }
+
+    fun ordenar(opcionOrdenado: Int){
+        listaVideojuegosConInfoFiltrada.clear()
+        when(opcionOrdenado){
+            0 -> { //Estado
+                listaVideojuegosConInfoFiltrada.addAll(listaVideojuegosConInfoCompleta)
+            }
+            1 -> { //Nombre A-Z
+                listaVideojuegosConInfoFiltrada.addAll(listaVideojuegosConInfoCompleta.sortedBy {
+                    it.nombreVideojuego
+                })
+            }
+            2 -> { //Nombre Z-A
+                listaVideojuegosConInfoFiltrada.addAll(listaVideojuegosConInfoCompleta.sortedByDescending {
+                    it.nombreVideojuego
+                })
+            }
+            3 -> { //Nota media
+                listaVideojuegosConInfoFiltrada.addAll(listaVideojuegosConInfoCompleta.sortedByDescending {
+                    it.notaMediaVideojuego
+                })
+            }
+            4 -> { //Dificultad media
+                listaVideojuegosConInfoFiltrada.addAll(listaVideojuegosConInfoCompleta.sortedByDescending {
+                    it.dificultadMediaVideojuego
+                })
+            }
+        }
+        adapter.notifyDataSetChanged()
     }
 
     override fun onResume() {
@@ -110,12 +165,39 @@ class RankingFragment : Fragment() {
                 }
             }
         }catch (e: Exception) {
+            Log.d("_INFO", e.toString())
             Toast.makeText(
                 requireContext(),
                 Mensajes.errores.CONEXION_INTERNET_FALLIDA,
                 Toast.LENGTH_SHORT
             ).show()
         }
+    }
+
+    override fun onQueryTextSubmit(query: String?): Boolean {
+        hideKeyboard()
+        return true
+    }
+
+    override fun onQueryTextChange(newText: String?): Boolean {
+        listaVideojuegosConInfoFiltrada.clear()
+        if(!newText.isNullOrEmpty()){
+            listaVideojuegosConInfoFiltrada.addAll(listaVideojuegosConInfoCompleta.filter {
+                it.nombreVideojuego.lowercase().contains(newText.lowercase())
+            })
+        }else{
+            listaVideojuegosConInfoFiltrada.addAll(listaVideojuegosConInfoCompleta)
+        }
+        adapter.notifyDataSetChanged()
+        return true
+    }
+
+    /**
+     * Oculta el teclado, sin mas, no hay que profundizar mucho en esto
+     */
+    private fun hideKeyboard(){
+        val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
     }
 
 }

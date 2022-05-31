@@ -11,6 +11,10 @@ class clsUsuarioRepository {
 
     suspend fun editarUsuario(oUsuario: clsUsuario):Int = api.editarUsuario(oUsuario)
 
+    suspend fun comprobarExistenciaUsuario(idUsuario: String):Boolean = api.comprobarExistenciaUsuario(idUsuario)
+
+    suspend fun borrarUsuario(idUsuario: String): Int = api.borrarUsuario(idUsuario)
+
     suspend fun getUsuario(idUsuario: String): clsUsuario = api.getUsuario(idUsuario)
 
     suspend fun getUsuariosPorNombre(nombreUsuario: String): List<clsUsuario> = api.getUsuariosPorNombre(nombreUsuario)

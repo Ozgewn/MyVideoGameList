@@ -14,10 +14,16 @@ interface clsUsuarioProvider {
     @PUT(Conexion.POST_PUT_USUARIO)
     suspend fun editarUsuario(@Body clsUsuario: clsUsuario): Int
 
+    @DELETE
+    suspend fun borrarUsuario(@Url url: String): Int
+
     @GET
     suspend fun getUsuario(@Url url: String): clsUsuario
 
     @GET
     suspend fun getUsuariosPorNombre(@Url url: String): List<clsUsuario>
+
+    @GET
+    suspend fun comprobarExistenciaUsuario(@Url url: String): Boolean
 
 }

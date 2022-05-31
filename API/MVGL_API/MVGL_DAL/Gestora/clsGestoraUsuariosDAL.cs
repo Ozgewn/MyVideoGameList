@@ -97,7 +97,7 @@ namespace MVGL_DAL.Gestora
         /// <b>Precondiciones:</b> El usuario debe existir <br />
         /// <b>Postcondiciones:</b> El usuario sera borrado <br />
         /// <b>Entrada:</b> String id. El id del usuario a borrar <br />
-        /// <b>Salida:</b> int resultado. El numero de filas borradas. Deberia ser 1, cualquier otro valor podria significar error <br />
+        /// <b>Salida:</b> int resultado. El numero de filas borradas. Deberia ser más de 1, cualquier otro valor podria significar error <br />
         /// </summary>
         /// <param name="id"><b>id - String. </b>El id del usuario a borrar</param>
         /// <returns><b>resultado - int. </b>El numero de filas afectadas por la instruccion de borrado. El resultado esperado es 1, cualquier otro resultado podria significara error</returns>

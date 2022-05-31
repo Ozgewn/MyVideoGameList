@@ -23,6 +23,6 @@ class Mensajes {
         const val PEDIR_CORRECION_DE_ERRORES = "Por favor, arregla los problemas informados por pantalla"
         const val MODIFICACION_CREDENCIALES_EXITOSA = "Se han modificado los credenciales exitosamente, vuelva a iniciar sesión, por favor"
         const val MODIFICACION_CREDENCIALES_EXITOSA_NO_RELOG = "Se han modificado los credenciales exitosamente"
-        const val MODIFICACION_CREDENCIALES_FALLIDA = "Ha ocurrido un error, puede que las credenciales no se hayan modificado, no todas las credenciales se hayan modificado"
+        const val NO_VIDEOJUEGOS_EN_LISTA = "Todavía no hay videojuegos en esta lista"
     }
 }

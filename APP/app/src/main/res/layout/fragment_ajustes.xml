@@ -56,6 +56,6 @@
         app:drawableTint="?android:attr/textColorPrimary"
         android:textColor="?android:attr/textColorPrimary"
         android:gravity="center_vertical"
-        android:text="Modificar credenciales" />
+        android:text="Modificar cuenta" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

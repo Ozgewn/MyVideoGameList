@@ -9,6 +9,7 @@ import com.bumptech.glide.Glide
 import com.example.myvideogamelist.R
 import com.example.myvideogamelist.databinding.ItemMiListaVideojuegoBinding
 import com.example.myvideogamelist.models.clsListaConInfoDeVideojuego
+import java.text.DecimalFormat
 
 class MiListaAdapter(val listaConInfoDeVideojuego: List<clsListaConInfoDeVideojuego>,
                      private val listener: (clsListaConInfoDeVideojuego) -> Unit,
@@ -35,17 +36,18 @@ class MiListaAdapter(val listaConInfoDeVideojuego: List<clsListaConInfoDeVideoju
         val binding = ItemMiListaVideojuegoBinding.bind(view)
 
         fun completarTextos(oVideojuegoConInfo: clsListaConInfoDeVideojuego, nombreEstado: String, idEstadoObservador: Int){
+            val df = DecimalFormat("#.##")
             with(binding){
                 tVNombreVideojuego.text = oVideojuegoConInfo.nombreVideojuego
                 Glide.with(iVImagenVideojuego.context).load(oVideojuegoConInfo.urlImagenVideojuego).into(iVImagenVideojuego)
                 tVNombreEstado.text = nombreEstado
                 if(oVideojuegoConInfo.dificultadMediaVideojuego > 0){
-                    tVDificultadMediaVideojuego.text = oVideojuegoConInfo.dificultadMediaVideojuego.toString()
+                    tVDificultadMediaVideojuego.text = df.format(oVideojuegoConInfo.dificultadMediaVideojuego)
                 }else{
                     tVDificultadMediaVideojuego.text = "-"
                 }
                 if(oVideojuegoConInfo.notaMediaVideojuego > 0){
-                    tVNotaMediaVideojuego.text = oVideojuegoConInfo.notaMediaVideojuego.toString()
+                    tVNotaMediaVideojuego.text = df.format(oVideojuegoConInfo.notaMediaVideojuego)
                 }else{
                     tVNotaMediaVideojuego.text = "-"
                 }

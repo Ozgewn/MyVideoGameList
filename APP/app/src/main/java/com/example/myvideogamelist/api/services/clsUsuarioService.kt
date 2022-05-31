@@ -20,6 +20,14 @@ class clsUsuarioService {
 
     suspend fun editarUsuario(oUsuario: clsUsuario):Int = retrofit.create(clsUsuarioProvider::class.java).editarUsuario(oUsuario)
 
+    suspend fun comprobarExistenciaUsuario(idUsuario: String):Boolean =
+        retrofit.create(clsUsuarioProvider::class.java)
+            .comprobarExistenciaUsuario(Conexion.COMPROBAR_EXISTENCIA_USUARIO+idUsuario)
+
+    suspend fun borrarUsuario(idUsuario: String):Int =
+        retrofit.create(clsUsuarioProvider::class.java)
+            .borrarUsuario(Conexion.DELETE_USUARIO + idUsuario)
+
     suspend fun getUsuario(idUsuario: String): clsUsuario =
         retrofit.create(clsUsuarioProvider::class.java)
             .getUsuario(Conexion.GET_USUARIO_POR_ID+idUsuario)

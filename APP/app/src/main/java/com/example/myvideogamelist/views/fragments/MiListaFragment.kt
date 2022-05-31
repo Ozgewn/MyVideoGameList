@@ -1,10 +1,13 @@
 package com.example.myvideogamelist.views.fragments
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
+import android.widget.SearchView
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
@@ -19,6 +22,7 @@ import com.example.myvideogamelist.viewmodels.VideojuegoViewModel
 import com.example.myvideogamelist.views.adapters.MiListaAdapter
 import com.example.myvideogamelist.views.mensajes.Mensajes
 import com.example.myvideogamelist.views.sharedData.SharedData
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import kotlinx.coroutines.CoroutineScope
@@ -26,7 +30,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.lang.Exception
 
-class MiListaFragment : Fragment() {
+class MiListaFragment : Fragment(), SearchView.OnQueryTextListener {
 
     private var _binding: FragmentMiListaBinding? = null
     private val binding get() = _binding!!
@@ -34,6 +38,7 @@ class MiListaFragment : Fragment() {
     private val usuarioViewModel: UsuarioViewModel by activityViewModels()
     private lateinit var adapter: MiListaAdapter
     private val listaVideojuegosEnListaFiltrado = mutableListOf<clsListaConInfoDeVideojuego>()
+    private val listaVideojuegosEnEstado = mutableListOf<clsListaConInfoDeVideojuego>()
     private var listaVideojuegosEnListaCompleta: List<clsListaConInfoDeVideojuego> = emptyList()
     private lateinit var navController: NavController
 
@@ -68,17 +73,18 @@ class MiListaFragment : Fragment() {
         initRecyclerView()
         binding.tabLayout.addOnTabSelectedListener(object: TabLayout.OnTabSelectedListener{
             override fun onTabSelected(tab: TabLayout.Tab?) {
+                listaVideojuegosEnEstado.clear()
                 if(tab!!.text.toString()=="Todos"){
-                    listaVideojuegosEnListaFiltrado.clear()
-                    listaVideojuegosEnListaFiltrado.addAll(listaVideojuegosEnListaCompleta)
-                    adapter.notifyDataSetChanged()
+                    listaVideojuegosEnEstado.addAll(listaVideojuegosEnListaCompleta)
+
                 }else{
-                    listaVideojuegosEnListaFiltrado.clear()
-                    listaVideojuegosEnListaFiltrado.addAll(listaVideojuegosEnListaCompleta.filter {
+                    listaVideojuegosEnEstado.addAll(listaVideojuegosEnListaCompleta.filter {
                         videojuegoViewModel.listaEstados[it.estado-1].nombreEstado.lowercase() == tab.text.toString().lowercase()
                     })
-                    adapter.notifyDataSetChanged()
                 }
+                listaVideojuegosEnListaFiltrado.clear()
+                listaVideojuegosEnListaFiltrado.addAll(listaVideojuegosEnEstado)
+                adapter.notifyDataSetChanged()
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab?) {
@@ -90,6 +96,56 @@ class MiListaFragment : Fragment() {
             }
 
         })
+        binding.sVMiLista.setOnQueryTextListener(this)
+        //Ordenar
+        binding.btnOrdenar.setOnClickListener {
+
+            val opcionesDeOrdenado = arrayOf("Estado", "Nombre A-Z", "Nombre Z-A", "Nota personal", "Dificultad personal")
+            var opcionOrdenado = 0
+
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Elija modo de ordenado")
+                .setNeutralButton("cancelar") { dialog, which ->
+                    // nada
+                }
+                .setPositiveButton("Ok") { dialog, which ->
+                    ordenar(opcionOrdenado)
+                }
+                .setSingleChoiceItems(opcionesDeOrdenado, opcionOrdenado) { dialog, which ->
+                    opcionOrdenado = which
+                }
+                .show()
+        }
+    }
+
+    fun ordenar(opcionOrdenado: Int){
+        listaVideojuegosEnListaFiltrado.clear()
+        when(opcionOrdenado){
+            0 -> { //Estado
+                listaVideojuegosEnListaFiltrado.addAll(listaVideojuegosEnEstado)
+            }
+            1 -> { //Nombre A-Z
+                listaVideojuegosEnListaFiltrado.addAll(listaVideojuegosEnEstado.sortedBy {
+                    it.nombreVideojuego
+                })
+            }
+            2 -> { //Nombre Z-A
+                listaVideojuegosEnListaFiltrado.addAll(listaVideojuegosEnEstado.sortedByDescending {
+                    it.nombreVideojuego
+                })
+            }
+            3 -> { //Nota personal
+                listaVideojuegosEnListaFiltrado.addAll(listaVideojuegosEnEstado.sortedByDescending {
+                    it.notaPersonal
+                })
+            }
+            4 -> { //Dificultad personal
+                listaVideojuegosEnListaFiltrado.addAll(listaVideojuegosEnEstado.sortedByDescending {
+                    it.dificultadPersonal
+                })
+            }
+        }
+        adapter.notifyDataSetChanged()
     }
 
     override fun onResume() {
@@ -177,7 +233,23 @@ class MiListaFragment : Fragment() {
                 su propia lista, si no es null, es que el usuario quiere ver la lista de otro usuario
                  */
                 if(usuarioViewModel.usuarioSeleccionado.value == null){
-                    videojuegoViewModel.cargarSoloVideojuegosEnListaDelUsuario(SharedData.idUsuario) //el onCreate le asigna el valor a listaConInfoDeVideojuegosModel de lo que devuelva la API
+                    try{
+                        videojuegoViewModel.cargarSoloVideojuegosEnListaDelUsuario(SharedData.idUsuario) //el onCreate le asigna el valor a listaConInfoDeVideojuegosModel de lo que devuelva la API
+                    }catch (e: retrofit2.HttpException){
+                        /*
+                        Para entender este clear pongamos el siguiente ejemplo:
+                        El usuario con nombre Pepito esta en su cuenta nueva, y no tiene videojuegos en su lista, pero Pepito va a ver la lista del usuario con
+                        nombre Juanito, al ver la lista de Juanito, el viewModel tendra los valores de la lista de Juanito, por lo cual, si Pepito va a ver su propia
+                        lista, le apareceran los videojuegos de la lista de Juanito, porque ha saltado excepcion y el metodo de cargarSoloVideojuegosEnListaDelUsuario()
+                        solo asigna el valor a la lista del viewmodel en caso de que el resultado no sea nulo ni este vacio, y en este caso, la lista que recibimos
+                        del usuario Pepito esta vacia, con lo cual, el viewmodel se quedaria con los datos de Juanito
+                         */
+                        videojuegoViewModel.listaDeVideojuegosSoloEnLista.clear()
+                        Snackbar.make(requireView(), Mensajes.informacion.NO_VIDEOJUEGOS_EN_LISTA, Snackbar.LENGTH_SHORT).show()
+                        activity?.runOnUiThread {
+                            adapter.notifyDataSetChanged()
+                        }
+                    }
                 }else{
                     videojuegoViewModel.cargarSoloVideojuegosEnListaDelUsuario(usuarioViewModel.usuarioSeleccionado.value!!.id)
                 }
@@ -189,17 +261,44 @@ class MiListaFragment : Fragment() {
                 activity?.runOnUiThread{
                     listaVideojuegosEnListaFiltrado.removeAll(listaVideojuegosEnListaFiltrado)
                     listaVideojuegosEnListaFiltrado.addAll(listaVideojuegosEnListaCompleta)//añadimos lo de la lista completa a la lista que vamos a ofrecer
+                    listaVideojuegosEnEstado.addAll(listaVideojuegosEnListaCompleta)//añadimos lo de la lista a la lista que tiene filtrado SOLO los estados
                     binding.pBIndeterminada.visibility = View.GONE //quitamos el progress bar(el circulo que indica que esta cargando)
                     adapter.notifyDataSetChanged() //avisamos el adapter que hemos modificado la lista
                 }
             }
         }catch (e: Exception) {
-            Toast.makeText(
-                requireContext(),
+            Snackbar.make(
+                requireView(),
                 Mensajes.errores.CONEXION_INTERNET_FALLIDA,
-                Toast.LENGTH_SHORT
+                Snackbar.LENGTH_SHORT
             ).show()
         }
+    }
+
+    override fun onQueryTextSubmit(query: String?): Boolean {
+        hideKeyboard()
+        return true
+    }
+
+    override fun onQueryTextChange(newText: String?): Boolean {
+        listaVideojuegosEnListaFiltrado.clear()
+        if(!newText.isNullOrEmpty()){
+            listaVideojuegosEnListaFiltrado.addAll(listaVideojuegosEnEstado.filter {
+                it.nombreVideojuego.lowercase().contains(newText.lowercase())
+            })
+        }else{
+            listaVideojuegosEnListaFiltrado.addAll(listaVideojuegosEnEstado)
+        }
+        adapter.notifyDataSetChanged()
+        return true
+    }
+
+    /**
+     * Oculta el teclado, sin mas, no hay que profundizar mucho en esto
+     */
+    private fun hideKeyboard(){
+        val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
     }
 
 }

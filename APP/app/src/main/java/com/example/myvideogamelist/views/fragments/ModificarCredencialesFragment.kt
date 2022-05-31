@@ -9,15 +9,26 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.navigation.fragment.findNavController
 import com.example.myvideogamelist.R
+import com.example.myvideogamelist.api.repositories.clsUsuarioRepository
 import com.example.myvideogamelist.databinding.FragmentModificarCredencialesBinding
+import com.example.myvideogamelist.views.sharedData.SharedData
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class ModificarCredencialesFragment : Fragment() {
 
     private var _binding: FragmentModificarCredencialesBinding? = null
     private val binding get() = _binding!!
+    private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        auth = Firebase.auth
     }
 
     override fun onCreateView(
@@ -31,6 +42,7 @@ class ModificarCredencialesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val navController = findNavController()
+        var navControllerMainContent = requireParentFragment().requireParentFragment().findNavController()
         with(binding){
             tVCambiarEmail.setOnClickListener {
                 navController.navigate(R.id.cambiarEmailFragment)
@@ -43,6 +55,22 @@ class ModificarCredencialesFragment : Fragment() {
             tVCambiarPassword.setOnClickListener {
                 navController.navigate(R.id.cambiarPasswordFragment)
                 hideKeyboard()
+            }
+            tVBorrarCuenta.setOnClickListener {
+                MaterialAlertDialogBuilder(requireContext())
+                    .setTitle("¿Desea borrar su cuenta?")
+                    .setMessage("¡ANTENCIÓN! Esta acción es irreversible, ¿está realmente seguro de que desea borrar su cuenta? No la podrá recuperar.")
+                    .setNeutralButton("cancelar") { dialog, which ->
+                        // nada
+                    }
+                    .setPositiveButton("Borrar") { dialog, which ->
+                        auth.currentUser!!.delete()
+                        CoroutineScope(Dispatchers.IO).launch {
+                            clsUsuarioRepository().borrarUsuario(SharedData.idUsuario)
+                        }
+                        navControllerMainContent.navigate(R.id.action_mainContentFragment_to_loginFragment)
+                    }
+                    .show()
             }
         }
     }

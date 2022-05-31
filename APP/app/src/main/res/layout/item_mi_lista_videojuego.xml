@@ -95,9 +95,10 @@
     <ImageView
         android:id="@+id/iVAnyadirOEditar"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:background="@color/lightBlack"
         app:layout_constraintWidth_percent="0.12"
+        app:layout_constraintHeight_percent="0.30"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toBottomOf="@id/iVImagenVideojuego"
         android:layout_marginRight="10dp"
