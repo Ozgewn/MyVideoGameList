@@ -65,7 +65,8 @@ class PerfilFragment : Fragment() {
                     btnEditarPerfil.visibility = View.VISIBLE
                 }
                 btnEditarPerfil.setOnClickListener {
-                    Snackbar.make(requireView(), "Esto te dejaria cambiar la foto y el nombre de usuario, y la privacidad de la lista", Snackbar.LENGTH_SHORT).show()
+                    usuarioViewModel.usuarioSeleccionado.postValue(infoDeUsuario)
+                    navController.navigate(R.id.editarPerfilFragment)
                 }
             }
         })

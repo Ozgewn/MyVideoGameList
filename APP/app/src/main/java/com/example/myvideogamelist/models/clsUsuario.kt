@@ -10,5 +10,5 @@ data class clsUsuario(
     @SerializedName("videojuegosEnPausa")val videojuegosEnPausa: Int = 0,
     @SerializedName("videojuegosDropeados")val videojuegosDropeados: Int = 0,
     @SerializedName("videojuegosPlaneados")val videojuegosPlaneados: Int = 0,
-    @SerializedName("esListaPrivada")val esListaPrivada: Boolean = false,
+    @SerializedName("esListaPrivada")var esListaPrivada: Boolean = false,
 )

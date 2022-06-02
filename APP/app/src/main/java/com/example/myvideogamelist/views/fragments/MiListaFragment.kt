@@ -269,8 +269,9 @@ class MiListaFragment : Fragment(), SearchView.OnQueryTextListener {
                     videojuegoViewModel.cargarListaEstados()
                 }
                 activity?.runOnUiThread{
-                    listaVideojuegosEnListaFiltrado.removeAll(listaVideojuegosEnListaFiltrado)
+                    listaVideojuegosEnListaFiltrado.clear()
                     listaVideojuegosEnListaFiltrado.addAll(listaVideojuegosEnListaCompleta)//añadimos lo de la lista completa a la lista que vamos a ofrecer
+                    listaVideojuegosEnEstado.clear()
                     listaVideojuegosEnEstado.addAll(listaVideojuegosEnListaCompleta)//añadimos lo de la lista a la lista que tiene filtrado SOLO los estados
                     binding.pBIndeterminada.visibility = View.GONE //quitamos el progress bar(el circulo que indica que esta cargando)
                     adapter.notifyDataSetChanged() //avisamos el adapter que hemos modificado la lista

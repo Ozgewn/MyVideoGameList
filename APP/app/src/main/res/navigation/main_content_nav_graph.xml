@@ -65,4 +65,9 @@
         android:name="com.example.myvideogamelist.views.fragments.CambiarPasswordFragment"
         android:label="fragment_cambiar_password"
         tools:layout="@layout/fragment_cambiar_password" />
+    <fragment
+        android:id="@+id/editarPerfilFragment"
+        android:name="com.example.myvideogamelist.views.fragments.EditarPerfilFragment"
+        android:label="fragment_editar_perfil"
+        tools:layout="@layout/fragment_editar_perfil" />
 </navigation>
