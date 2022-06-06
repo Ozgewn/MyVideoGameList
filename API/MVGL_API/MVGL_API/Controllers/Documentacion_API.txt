@@ -67,7 +67,7 @@ sus videojuegos dropeados, sus videojuegos jugando, sus videojuegos en pausa, si
 		-404 (Not Found) -> Se devolverá el código 404 siempre que el objeto que recibamos sea nulo, o su id sea igual a ""
 		-500 (InternalServerError) -> Se devolverá el código 500 cuando ha ocurrido un error en el codigo, por ejemplo, un error de BBDD
 
-GET /api/Usuario/nombre/juanito -> Obtendremos una lista con todos los usuarios cuyo nombre contenga las palabras "juanito" (en este caso), y toda su informacion relacionada.
+GET /api/Usuario -> Obtendremos una lista con todos los usuarios, y toda su informacion relacionada.
 	Dependiendo del resultado obtenido de dicha llamada, recibiremos los siguientes códigos de estado:
 		-200 (OK) -> Se devolverá el código 200 siempre que la lista que recibimos contenga 1 o mas datos, y no sea nula
 		-404 (Not Found) -> Se devolverá el código 404 siempre que la lista contenga 0 datos, o sea nula

@@ -17,6 +17,6 @@ class clsUsuarioRepository {
 
     suspend fun getUsuario(idUsuario: String): clsUsuario = api.getUsuario(idUsuario)
 
-    suspend fun getUsuariosPorNombre(nombreUsuario: String): List<clsUsuario> = api.getUsuariosPorNombre(nombreUsuario)
+    suspend fun getListadoCompletoUsuarios(): List<clsUsuario> = api.getListadoCompletoUsuarios()
 
 }

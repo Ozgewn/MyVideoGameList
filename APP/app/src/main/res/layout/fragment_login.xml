@@ -6,12 +6,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".views.fragments.LoginFragment">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
         <TextView
+            android:id="@+id/tVIniciarSesionTitle"
+            app:layout_constraintTop_toTopOf="parent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="28sp"
@@ -21,11 +23,13 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/loginEmail"
+            app:layout_constraintTop_toBottomOf="@id/tVIniciarSesionTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="E-mail"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            app:endIconMode="clear_text">
+            app:endIconMode="clear_text"
+            android:layout_marginHorizontal="5dp">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
@@ -38,11 +42,13 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/loginPassword"
+            app:layout_constraintTop_toBottomOf="@id/loginEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Password"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            app:endIconMode="password_toggle">
+            app:endIconMode="password_toggle"
+            android:layout_marginHorizontal="5dp">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
@@ -55,25 +61,37 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <Button
+            app:layout_constraintTop_toBottomOf="@id/loginPassword"
             android:id="@+id/loginButton"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="56dp"
             android:text="Iniciar sesión"
-            style="@style/Widget.MaterialComponents.Button"/>
+            app:layout_constraintWidth_percent="0.9"
+            app:layout_constraintLeft_toLeftOf="@id/loginEmail"
+            app:layout_constraintRight_toRightOf="@id/loginEmail"
+            style="@style/Widget.MaterialComponents.Button" />
 
         <Button
+            app:layout_constraintTop_toBottomOf="@id/loginButton"
             android:id="@+id/loginGoRegisterButton"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="56dp"
             android:text="Crear una cuenta"
+            app:layout_constraintWidth_percent="0.9"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
             style="@style/Widget.MaterialComponents.Button"/>
 
         <Button
+            app:layout_constraintTop_toBottomOf="@id/loginGoRegisterButton"
             android:id="@+id/loginAnonymous"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="56dp"
             android:text="Anonimo"
+            app:layout_constraintWidth_percent="0.9"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
             style="@style/Widget.MaterialComponents.Button"/>
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>

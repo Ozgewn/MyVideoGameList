@@ -32,8 +32,8 @@ class clsUsuarioService {
         retrofit.create(clsUsuarioProvider::class.java)
             .getUsuario(Conexion.GET_USUARIO_POR_ID+idUsuario)
 
-    suspend fun getUsuariosPorNombre(nombreUsuario: String): List<clsUsuario> =
+    suspend fun getListadoCompletoUsuarios(): List<clsUsuario> =
         retrofit.create(clsUsuarioProvider::class.java)
-            .getUsuariosPorNombre(Conexion.GET_USUARIOS_POR_NOMBRE+nombreUsuario)
+            .getListadoCompletoUsuarios()
 
 }

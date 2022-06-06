@@ -91,10 +91,20 @@ class AnyadirOEditarFragment : Fragment()  {
             if(isEditable){
                 binding.atVEstados.setText(listaEstados[oVideojuegoSeleccionado.estado-1].toString(), false)
                 oVideojuegoAInsertarOEditar.estado = listaEstados[oVideojuegoSeleccionado.estado-1].id
-                binding.eTFechaComienzo.setText(oVideojuegoSeleccionado.fechaDeComienzo)
-                oVideojuegoAInsertarOEditar.fechaDeComienzo = oVideojuegoSeleccionado.fechaDeComienzo
-                binding.eTFechaFinalizacion.setText(oVideojuegoSeleccionado.fechaDeFinalizacion)
-                oVideojuegoAInsertarOEditar.fechaDeFinalizacion = oVideojuegoSeleccionado.fechaDeFinalizacion
+                if(!oVideojuegoSeleccionado.fechaDeComienzo.isNullOrEmpty()){
+                    binding.eTFechaComienzo.setText(
+                        LocalDate.parse(oVideojuegoSeleccionado.fechaDeComienzo)
+                            .format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
+                    )
+                    oVideojuegoAInsertarOEditar.fechaDeComienzo = oVideojuegoSeleccionado.fechaDeComienzo
+                }
+                if(!oVideojuegoSeleccionado.fechaDeFinalizacion.isNullOrEmpty()){
+                    binding.eTFechaFinalizacion.setText(
+                        LocalDate.parse(oVideojuegoSeleccionado.fechaDeFinalizacion)
+                            .format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
+                    )
+                    oVideojuegoAInsertarOEditar.fechaDeFinalizacion = oVideojuegoSeleccionado.fechaDeFinalizacion
+                }
                 mostrarUOcultarFechasSegunIdEstado()
             }
         }

@@ -33,17 +33,17 @@ namespace MVGL_API.Controllers
             }
             return result;
         }
-        // GET api/<UsuarioController>/nombre/username123
-        [HttpGet("nombre/{nombreUsuario}")]
-        public ObjectResult GetListadoUsuariosQueContenganNombreUsuario(string nombreUsuario)
+        // GET api/<UsuarioController>
+        [HttpGet]
+        public ObjectResult GetListadoUsuariosQueContenganNombreUsuario()
         {
             ObjectResult result = new ObjectResult(new { });
             result.Value = null;
             try
             {
-                result.Value = new clsListadoUsuariosBL().getListadoUsuariosQueContenganNombreUsuarioBL(nombreUsuario);
+                result.Value = new clsListadoUsuariosBL().getListadoCompletoUsuariosBL();
                 result.StatusCode = (int)HttpStatusCode.OK;
-                if ((result.Value as List<clsUsuario>) == null || (result.Value as List<clsUsuario>).Count == 0) //si tiene el id vacio significa que no ha encontrado al usuario especificado en la BBDD
+                if ((result.Value as List<clsUsuario>) == null || (result.Value as List<clsUsuario>).Count == 0)
                 {
                     result.StatusCode = (int)HttpStatusCode.NotFound;
                 }

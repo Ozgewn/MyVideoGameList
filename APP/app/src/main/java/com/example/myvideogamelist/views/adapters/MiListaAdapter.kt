@@ -10,6 +10,8 @@ import com.example.myvideogamelist.R
 import com.example.myvideogamelist.databinding.ItemMiListaVideojuegoBinding
 import com.example.myvideogamelist.models.clsListaConInfoDeVideojuego
 import java.text.DecimalFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 class MiListaAdapter(val listaConInfoDeVideojuego: List<clsListaConInfoDeVideojuego>,
                      private val listener: (clsListaConInfoDeVideojuego) -> Unit,
@@ -42,7 +44,7 @@ class MiListaAdapter(val listaConInfoDeVideojuego: List<clsListaConInfoDeVideoju
                 Glide.with(iVImagenVideojuego.context).load(oVideojuegoConInfo.urlImagenVideojuego).into(iVImagenVideojuego)
                 tVNombreEstado.text = nombreEstado
                 if(oVideojuegoConInfo.dificultadMediaVideojuego > 0){
-                    tVDificultadMediaVideojuego.text = df.format(oVideojuegoConInfo.dificultadMediaVideojuego)
+                    tVDificultadMediaVideojuego.text = df.format(oVideojuegoConInfo.dificultadMediaVideojuego) //para que solo tenga 2 decimales
                 }else{
                     tVDificultadMediaVideojuego.text = "-"
                 }
@@ -69,12 +71,19 @@ class MiListaAdapter(val listaConInfoDeVideojuego: List<clsListaConInfoDeVideoju
                 if(oVideojuegoConInfo.fechaDeComienzo.isNullOrEmpty()){
                     tVFechaComienzoValue.text = "-"
                 }else{
-                    tVFechaComienzoValue.text = oVideojuegoConInfo.fechaDeComienzo
+                    /*
+                    Para que salga con formato D/M/Y
+                     */
+                    tVFechaComienzoValue.text = LocalDate.parse(
+                        oVideojuegoConInfo.fechaDeComienzo).format(
+                        DateTimeFormatter.ofPattern("dd-MM-yyyy"))
                 }
                 if(oVideojuegoConInfo.fechaDeFinalizacion.isNullOrEmpty()){
                     tVFechaFinalizacionValue.text = "-"
                 }else{
-                    tVFechaFinalizacionValue.text = oVideojuegoConInfo.fechaDeFinalizacion
+                    tVFechaFinalizacionValue.text = LocalDate.parse(
+                        oVideojuegoConInfo.fechaDeFinalizacion).format(
+                        DateTimeFormatter.ofPattern("dd-MM-yyyy"))
                 }
                 iVAnyadirOEditar.setOnClickListener {
                     listenerAnyadirOEditar(oVideojuegoConInfo)

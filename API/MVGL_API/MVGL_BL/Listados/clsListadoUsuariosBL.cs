@@ -40,23 +40,16 @@ namespace MVGL_BL.Listados
             return new clsListadoUsuariosDAL().isNombreUsuarioExistenteDAL(nombreUsuario);
         }
         /// <summary>
-        /// <b>Cabecera:</b> public List<clsUsuario> getListadoUsuariosQueContenganNombreUsuarioBL(String nombreUsuario) <br />
-        /// <b>Descripción:</b> Este metodo se encarga de llamar a la capa DAL y que esta devuelva un listado de todos los usuarios que contengan el nombre de usuario
-        /// introducido por parámetros<br />
-        /// <b>Precondiciones:</b> El nombre del usuario a encontrar debe empezar por el parametro introducido, por ejemplo, debe empezar por "p", si el parametro introducido
-        /// fuese "p <br />
-        /// <b>Postcondiciones:</b> Se devolvera un listado de usuarios con todos los usuarios que contengan el nombre de usuario introducido por parametros <br />
-        /// <b>Entrada:</b> String nombreUsuario. El nombre de usuario del cual se desean buscar semejantes en la BBDD <br />
-        /// <b>Salida:</b> List<clsUsuario> oListadoUsuariosQueContienenElNombreUsuario. Un listado de todos los usuarios que contienen el nombre
-        /// de usuario introducido por parametros<br />
+        /// <b>Cabecera:</b> public List<clsUsuario> getListadoCompletoUsuariosDAL() <br />
+        /// <b>Descripción:</b> Este método se encarga de devolver una lista de usuarios completa<br />
+        /// <b>Precondiciones:</b>Se debe tener conexión a Internet, debe existir 1 o más usuarios en la BBDD<br />
+        /// <b>Postcondiciones:</b> Se devolvera un listado completo con todos los usuarios encontrados en la BBDD <br />
+        /// <b>Salida:</b> List<clsUsuario> oListadoCompletoUsuarios. Un listado completo de usuarios<br />
         /// </summary>
-        /// <param name="nombreUsuario"><b>nombreUsuario - String. </b>El nombre de usuario del cual se desean buscar los usuarios que contengan
-        /// dicho nombre</param>
-        /// <returns><b>oListadoUsuariosQueContienenElNombreUsuario - List<clsUsuario>. </b>Un listado de todos los usuarios que contienen el nombre usuario
-        /// introducido por parametros</returns>
-        public List<clsUsuario> getListadoUsuariosQueContenganNombreUsuarioBL(String nombreUsuario)
+        /// <returns><b>oListadoCompletoUsuarios - List<clsUsuario>. </b>Un listado completo de usuarios</returns>
+        public List<clsUsuario> getListadoCompletoUsuariosBL()
         {
-            return new clsListadoUsuariosDAL().getListadoUsuariosQueContenganNombreUsuarioDAL(nombreUsuario);
+            return new clsListadoUsuariosDAL().getListadoCompletoUsuariosDAL();
         }
     }
 }

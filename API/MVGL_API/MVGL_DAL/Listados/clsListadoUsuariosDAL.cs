@@ -98,28 +98,20 @@ namespace MVGL_DAL.Listados
             return nombreUsuarioExiste;
         }
         /// <summary>
-        /// <b>Cabecera:</b> public List<clsUsuario> getListadoUsuariosQueContenganNombreUsuarioDAL(String nombreUsuario) <br />
-        /// <b>Descripción:</b> Este metodo se encarga de devolver un listado de todos los usuarios que contengan el nombre de usuario
-        /// introducido por parámetros<br />
-        /// <b>Precondiciones:</b> El nombre del usuario a encontrar debe empezar por el parametro introducido, por ejemplo, debe empezar por "p", si el parametro introducido
-        /// fuese "p"<br />
-        /// <b>Postcondiciones:</b> Se devolvera un listado de usuarios con todos los usuarios que contengan el nombre de usuario introducido por parametros <br />
-        /// <b>Entrada:</b> String nombreUsuario. El nombre de usuario del cual se desean buscar semejantes en la BBDD <br />
-        /// <b>Salida:</b> List<clsUsuario> oListadoUsuariosQueContienenElNombreUsuario. Un listado de todos los usuarios que contienen el nombre
-        /// de usuario introducido por parametros<br />
+        /// <b>Cabecera:</b> public List<clsUsuario> getListadoCompletoUsuariosDAL() <br />
+        /// <b>Descripción:</b> Este método se encarga de devolver una lista de usuarios completa<br />
+        /// <b>Precondiciones:</b>Se debe tener conexión a Internet, debe existir 1 o más usuarios en la BBDD<br />
+        /// <b>Postcondiciones:</b> Se devolvera un listado completo con todos los usuarios encontrados en la BBDD <br />
+        /// <b>Salida:</b> List<clsUsuario> oListadoCompletoUsuarios. Un listado completo de usuarios<br />
         /// </summary>
-        /// <param name="nombreUsuario"><b>nombreUsuario - String. </b>El nombre de usuario del cual se desean buscar los usuarios que contengan
-        /// dicho nombre</param>
-        /// <returns><b>oListadoUsuariosQueContienenElNombreUsuario - List<clsUsuario>. </b>Un listado de todos los usuarios que contienen el nombre usuario
-        /// introducido por parametros</returns>
-        public List<clsUsuario> getListadoUsuariosQueContenganNombreUsuarioDAL(String nombreUsuario)
+        /// <returns><b>oListadoCompletoUsuarios - List<clsUsuario>. </b>Un listado completo de usuarios</returns>
+        public List<clsUsuario> getListadoCompletoUsuariosDAL()
         {
-            List<clsUsuario> oListadoUsuariosQueContienenElNombreUsuario = new List<clsUsuario>();
-            clsUsuario oUsuario = new clsUsuario();
+            List<clsUsuario> oListadoCompletoUsuarios = new List<clsUsuario>();
+            clsUsuario oUsuario;
             SqlCommand miComando = new SqlCommand();
             SqlDataReader miLector;
-            miComando.Parameters.Add("@nombreUsuario", System.Data.SqlDbType.VarChar).Value = nombreUsuario+"%";
-            miComando.CommandText = "SELECT * FROM Usuarios WHERE NombreUsuario LIKE @nombreUsuario";
+            miComando.CommandText = "SELECT * FROM Usuarios";
             conexionEstablecida = conexionBase.getConnection();
             miComando.Connection = conexionEstablecida;
             miLector = miComando.ExecuteReader();
@@ -130,6 +122,7 @@ namespace MVGL_DAL.Listados
                 {
                     while (miLector.Read())
                     {
+                        oUsuario = new clsUsuario();
                         oUsuario.Id = (String)miLector["Id"];
                         oUsuario.NombreUsuario = (String)miLector["NombreUsuario"];
                         oUsuario.VideojuegosJugados = (int)miLector["VideojuegosJugados"]; //no controlo nulos porque la BBDD no permite que aqui hayan nulos, y la BBDD lo controla poniendo 0 como valor por defecto
@@ -138,7 +131,7 @@ namespace MVGL_DAL.Listados
                         oUsuario.VideojuegosEnPausa = (int)miLector["VideojuegosEnPausa"];
                         oUsuario.VideojuegosJugando = (int)miLector["VideojuegosJugando"];
                         oUsuario.EsListaPrivada = (bool)miLector["esListaPrivada"];
-                        oListadoUsuariosQueContienenElNombreUsuario.Add(oUsuario);
+                        oListadoCompletoUsuarios.Add(oUsuario);
                     } 
                 }
                 miLector.Close();
@@ -148,7 +141,7 @@ namespace MVGL_DAL.Listados
             {
                 throw;
             }
-            return oListadoUsuariosQueContienenElNombreUsuario;
+            return oListadoCompletoUsuarios;
         }
     }
 }

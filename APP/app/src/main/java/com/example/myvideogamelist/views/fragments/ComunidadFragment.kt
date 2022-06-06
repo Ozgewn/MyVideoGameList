@@ -29,10 +29,18 @@ class ComunidadFragment : Fragment(), SearchView.OnQueryTextListener {
     private val usuarioViewModel: UsuarioViewModel by activityViewModels()
     private lateinit var navController: NavController
     private lateinit var adapter: ComunidadAdapter
-    private val listaDeUsuariosEncontrados = mutableListOf<clsUsuario>()
+    private var listaDeUsuariosCompleta: List<clsUsuario> = emptyList()
+    private val listaDeUsuariosFiltrada = mutableListOf<clsUsuario>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if(usuarioViewModel.listaUsuariosCompleto.isNullOrEmpty()){
+            cargarUsuarios()
+        }else{
+            listaDeUsuariosCompleta = usuarioViewModel.listaUsuariosCompleto
+            listaDeUsuariosFiltrada.clear()
+            listaDeUsuariosFiltrada.addAll(listaDeUsuariosCompleta)
+        }
     }
 
     override fun onCreateView(
@@ -46,10 +54,15 @@ class ComunidadFragment : Fragment(), SearchView.OnQueryTextListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         navController = findNavController()
-        adapter = ComunidadAdapter(listaDeUsuariosEncontrados) {onUsuarioSeleccionado(it)}
-        binding.rVComunidad.layoutManager = LinearLayoutManager(requireContext())
-        binding.rVComunidad.adapter = adapter
+        initRecyclerView()
         binding.sVComunidad.setOnQueryTextListener(this)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if(!listaDeUsuariosFiltrada.isNullOrEmpty()){
+            binding.pBIndeterminada.visibility = View.GONE
+        }
     }
 
     private fun onUsuarioSeleccionado(oUsuario: clsUsuario){
@@ -57,16 +70,23 @@ class ComunidadFragment : Fragment(), SearchView.OnQueryTextListener {
         navController.navigate(R.id.perfilFragment)
     }
 
-    fun initRecyclerView(nombreUsuario: String){
+    fun initRecyclerView(){
+        adapter = ComunidadAdapter(listaDeUsuariosFiltrada) {onUsuarioSeleccionado(it)}
+        binding.rVComunidad.layoutManager = LinearLayoutManager(requireContext())
+        binding.rVComunidad.adapter = adapter
+    }
+
+    fun cargarUsuarios(){
         CoroutineScope(Dispatchers.IO).launch {
             try{
-                usuarioViewModel.cargarUsuariosPorNombre(nombreUsuario)
+                usuarioViewModel.cargarUsuarios()
+                listaDeUsuariosCompleta = usuarioViewModel.listaUsuariosCompleto
             }catch (e: retrofit2.HttpException){
                 Snackbar.make(requireView(), "No se han encontrado usuarios", Snackbar.LENGTH_SHORT).show()
             }
             activity?.runOnUiThread {
-                listaDeUsuariosEncontrados.clear()
-                listaDeUsuariosEncontrados.addAll(usuarioViewModel.listaUsuariosCompleto)
+                listaDeUsuariosFiltrada.clear()
+                listaDeUsuariosFiltrada.addAll(usuarioViewModel.listaUsuariosCompleto)
                 adapter.notifyDataSetChanged()
                 binding.pBIndeterminada.visibility = View.GONE
             }
@@ -74,22 +94,20 @@ class ComunidadFragment : Fragment(), SearchView.OnQueryTextListener {
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {
-        if(!query.isNullOrEmpty()){
-            binding.pBIndeterminada.visibility = View.VISIBLE
-            initRecyclerView(query)
-            hideKeyboard()
-        }
         return true
     }
 
     override fun onQueryTextChange(newText: String?): Boolean {
-        /*if(!newText.isNullOrEmpty() && !usuarioViewModel.listaUsuariosCompleto.isNullOrEmpty()){
-            listaDeUsuariosEncontrados.clear()
-            listaDeUsuariosEncontrados.addAll(usuarioViewModel.listaUsuariosCompleto.filter {
+        if(!newText.isNullOrEmpty() && !usuarioViewModel.listaUsuariosCompleto.isNullOrEmpty()){
+            listaDeUsuariosFiltrada.clear()
+            listaDeUsuariosFiltrada.addAll(listaDeUsuariosCompleta.filter {
                 it.nombreUsuario.lowercase().contains(newText.lowercase())
             })
-            adapter.notifyDataSetChanged()
-        }*/
+        }else{
+            listaDeUsuariosFiltrada.clear()
+            listaDeUsuariosFiltrada.addAll(listaDeUsuariosCompleta)
+        }
+        adapter.notifyDataSetChanged()
         return true
     }
 

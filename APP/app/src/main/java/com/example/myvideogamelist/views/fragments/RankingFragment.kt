@@ -23,6 +23,7 @@ import com.example.myvideogamelist.views.adapters.ListaConInfoDeVideojuegoAdapte
 import com.example.myvideogamelist.views.mensajes.Mensajes
 import com.example.myvideogamelist.views.sharedData.SharedData
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -47,7 +48,8 @@ class RankingFragment : Fragment(), SearchView.OnQueryTextListener {
         auth = Firebase.auth
         /*
         Este if lo hacemos para que si se destruye y se vuelve a crear la vista (lo que pasaria al seleccionar el modo oscuro), no salte una excepcion, y ademas,
-        no vuelva a hacer una llamada a la API
+        no vuelva a hacer una llamada a la API, ademas hago el != SharedData.idUsuario, porque si el usuario cierra sesion, e inicia sesion con otra cuenta, tendra en el viewmodel
+        la lista de la cuenta que ha cerrado sesion, por lo cual, habra que cargar la del nuevo usuario
          */
         if(videojuegoViewModel.listaConInfoDeVideojuegosModel.isNullOrEmpty() || videojuegoViewModel.listaConInfoDeVideojuegosModel[0].idUsuario != SharedData.idUsuario){
             cargarRanking()
@@ -176,10 +178,10 @@ class RankingFragment : Fragment(), SearchView.OnQueryTextListener {
             }
         }catch (e: Exception) {
             Log.d("_INFO", e.toString())
-            Toast.makeText(
-                requireContext(),
+            Snackbar.make(
+                requireView(),
                 Mensajes.errores.CONEXION_INTERNET_FALLIDA,
-                Toast.LENGTH_SHORT
+                Snackbar.LENGTH_SHORT
             ).show()
         }
     }

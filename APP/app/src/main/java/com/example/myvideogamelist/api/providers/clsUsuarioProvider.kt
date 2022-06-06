@@ -20,8 +20,8 @@ interface clsUsuarioProvider {
     @GET
     suspend fun getUsuario(@Url url: String): clsUsuario
 
-    @GET
-    suspend fun getUsuariosPorNombre(@Url url: String): List<clsUsuario>
+    @GET(Conexion.GET_LISTADO_COMPLETO_USUARIOS)
+    suspend fun getListadoCompletoUsuarios(): List<clsUsuario>
 
     @GET
     suspend fun comprobarExistenciaUsuario(@Url url: String): Boolean
