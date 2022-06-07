@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myvideogamelist.R
 import com.example.myvideogamelist.databinding.FragmentMiListaBinding
 import com.example.myvideogamelist.models.clsListaConInfoDeVideojuego
+import com.example.myvideogamelist.utils.InterfazUsuarioUtils
 import com.example.myvideogamelist.utils.MaterialAlertDialogHelper
 import com.example.myvideogamelist.viewmodels.UsuarioViewModel
 import com.example.myvideogamelist.viewmodels.VideojuegoViewModel
@@ -79,18 +80,7 @@ class MiListaFragment : Fragment(), SearchView.OnQueryTextListener {
         initRecyclerView()
         binding.tabLayout.addOnTabSelectedListener(object: TabLayout.OnTabSelectedListener{
             override fun onTabSelected(tab: TabLayout.Tab?) {
-                listaVideojuegosEnEstado.clear()
-                if(tab!!.text.toString()=="Todos"){
-                    listaVideojuegosEnEstado.addAll(listaVideojuegosEnListaCompleta)
-
-                }else{
-                    listaVideojuegosEnEstado.addAll(listaVideojuegosEnListaCompleta.filter {
-                        videojuegoViewModel.listaEstados[it.estado-1].nombreEstado.lowercase() == tab.text.toString().lowercase()
-                    })
-                }
-                listaVideojuegosEnListaFiltrado.clear()
-                listaVideojuegosEnListaFiltrado.addAll(listaVideojuegosEnEstado)
-                adapter.notifyDataSetChanged()
+                mostrarVideojuegosSegunEstado(tab!!)
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab?) {
@@ -122,6 +112,21 @@ class MiListaFragment : Fragment(), SearchView.OnQueryTextListener {
                 }
                 .show()
         }
+    }
+
+    private fun mostrarVideojuegosSegunEstado(tab: TabLayout.Tab) {
+        listaVideojuegosEnEstado.clear()
+        if(tab!!.text.toString()=="Todos"){
+            listaVideojuegosEnEstado.addAll(listaVideojuegosEnListaCompleta)
+
+        }else{
+            listaVideojuegosEnEstado.addAll(listaVideojuegosEnListaCompleta.filter {
+                videojuegoViewModel.listaEstados[it.estado-1].nombreEstado.lowercase() == tab.text.toString().lowercase()
+            })
+        }
+        listaVideojuegosEnListaFiltrado.clear()
+        listaVideojuegosEnListaFiltrado.addAll(listaVideojuegosEnEstado)
+        adapter.notifyDataSetChanged()
     }
 
     fun ordenar(opcionOrdenado: Int){
@@ -269,12 +274,7 @@ class MiListaFragment : Fragment(), SearchView.OnQueryTextListener {
                     videojuegoViewModel.cargarListaEstados()
                 }
                 activity?.runOnUiThread{
-                    listaVideojuegosEnListaFiltrado.clear()
-                    listaVideojuegosEnListaFiltrado.addAll(listaVideojuegosEnListaCompleta)//añadimos lo de la lista completa a la lista que vamos a ofrecer
-                    listaVideojuegosEnEstado.clear()
-                    listaVideojuegosEnEstado.addAll(listaVideojuegosEnListaCompleta)//añadimos lo de la lista a la lista que tiene filtrado SOLO los estados
-                    binding.pBIndeterminada.visibility = View.GONE //quitamos el progress bar(el circulo que indica que esta cargando)
-                    adapter.notifyDataSetChanged() //avisamos el adapter que hemos modificado la lista
+                    actualizarListas()
                 }
             }
         }catch (e: Exception) {
@@ -286,8 +286,17 @@ class MiListaFragment : Fragment(), SearchView.OnQueryTextListener {
         }
     }
 
+    private fun actualizarListas() {
+        listaVideojuegosEnListaFiltrado.clear()
+        listaVideojuegosEnListaFiltrado.addAll(listaVideojuegosEnListaCompleta)//añadimos lo de la lista completa a la lista que vamos a ofrecer
+        listaVideojuegosEnEstado.clear()
+        listaVideojuegosEnEstado.addAll(listaVideojuegosEnListaCompleta)//añadimos lo de la lista a la lista que tiene filtrado SOLO los estados
+        binding.pBIndeterminada.visibility = View.GONE //quitamos el progress bar(el circulo que indica que esta cargando)
+        adapter.notifyDataSetChanged() //avisamos el adapter que hemos modificado la lista
+    }
+
     override fun onQueryTextSubmit(query: String?): Boolean {
-        hideKeyboard()
+        InterfazUsuarioUtils.hideKeyboard(binding.root, this)
         return true
     }
 
@@ -302,14 +311,6 @@ class MiListaFragment : Fragment(), SearchView.OnQueryTextListener {
         }
         adapter.notifyDataSetChanged()
         return true
-    }
-
-    /**
-     * Oculta el teclado, sin mas, no hay que profundizar mucho en esto
-     */
-    private fun hideKeyboard(){
-        val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
     }
 
 }

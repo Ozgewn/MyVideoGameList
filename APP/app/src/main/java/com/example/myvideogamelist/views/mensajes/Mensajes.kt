@@ -25,5 +25,6 @@ class Mensajes {
         const val MODIFICACION_CREDENCIALES_EXITOSA_NO_RELOG = "Se han modificado los credenciales exitosamente"
         const val CAMBIOS_CORRECTOS_GENERICO = "Los cambios se han efectuado correctamente"
         const val NO_VIDEOJUEGOS_EN_LISTA = "Todavía no hay videojuegos en esta lista"
+        const val ERRORES_SIN_CORREGIR = "Hay errores sin corregir en el formulario"
     }
 }

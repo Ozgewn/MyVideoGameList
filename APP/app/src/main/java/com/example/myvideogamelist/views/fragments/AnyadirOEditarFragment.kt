@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import com.example.myvideogamelist.R
@@ -20,6 +21,7 @@ import com.example.myvideogamelist.views.sharedData.SharedData
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
+import com.wefika.horizontalpicker.HorizontalPicker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -74,10 +76,7 @@ class AnyadirOEditarFragment : Fragment()  {
 
     private fun asignarValores(){
         activity?.runOnUiThread {
-            listaEstados.clear()
-            listaEstados.addAll(videojuegoViewModel.listaEstados)
-            binding.pBIndeterminada.visibility = View.GONE
-            adapter.notifyDataSetChanged()
+            actualizarListaEstados()
             /*
             Para entender este if(isEditable) primero hay que entender como funciona el runOnUiThread:
             Como bien nos dice la documentación: "If the current thread is not the UI thread, the action is posted to the event queue of the UI thread."
@@ -92,22 +91,30 @@ class AnyadirOEditarFragment : Fragment()  {
                 binding.atVEstados.setText(listaEstados[oVideojuegoSeleccionado.estado-1].toString(), false)
                 oVideojuegoAInsertarOEditar.estado = listaEstados[oVideojuegoSeleccionado.estado-1].id
                 if(!oVideojuegoSeleccionado.fechaDeComienzo.isNullOrEmpty()){
-                    binding.eTFechaComienzo.setText(
-                        LocalDate.parse(oVideojuegoSeleccionado.fechaDeComienzo)
-                            .format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
-                    )
+                    formatearFecha(oVideojuegoSeleccionado.fechaDeComienzo!!, binding.eTFechaComienzo)
                     oVideojuegoAInsertarOEditar.fechaDeComienzo = oVideojuegoSeleccionado.fechaDeComienzo
                 }
                 if(!oVideojuegoSeleccionado.fechaDeFinalizacion.isNullOrEmpty()){
-                    binding.eTFechaFinalizacion.setText(
-                        LocalDate.parse(oVideojuegoSeleccionado.fechaDeFinalizacion)
-                            .format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
-                    )
+                    formatearFecha(oVideojuegoSeleccionado.fechaDeFinalizacion!!, binding.eTFechaFinalizacion)
                     oVideojuegoAInsertarOEditar.fechaDeFinalizacion = oVideojuegoSeleccionado.fechaDeFinalizacion
                 }
                 mostrarUOcultarFechasSegunIdEstado()
             }
         }
+    }
+
+    private fun actualizarListaEstados(){
+        listaEstados.clear()
+        listaEstados.addAll(videojuegoViewModel.listaEstados)
+        binding.pBIndeterminada.visibility = View.GONE
+        adapter.notifyDataSetChanged()
+    }
+
+    private fun formatearFecha(fecha: String, eTFecha: EditText) {
+        eTFecha.setText(
+            LocalDate.parse(fecha)
+                .format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
+        )
     }
 
     override fun onCreateView(
@@ -129,22 +136,23 @@ class AnyadirOEditarFragment : Fragment()  {
         /*
         TODO: mejorar esto
          */
-        binding.hPickerNota.values = listOf("-", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10").toTypedArray()
-        binding.hPickerNota.sideItems = 2
-        binding.hPickerNota.scrollBarSize = 10
+        formatearHorizontalPicker(binding.hPickerNota)
         binding.hPickerNota.setOnItemSelectedListener {
             oVideojuegoAInsertarOEditar.nota = it
         }
-        binding.hPickerDificultad.values = listOf("-", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10").toTypedArray()
-        binding.hPickerDificultad.sideItems = 2
-        binding.hPickerDificultad.scrollBarSize = 10
+        formatearHorizontalPicker(binding.hPickerDificultad)
         binding.hPickerDificultad.setOnItemSelectedListener {
             oVideojuegoAInsertarOEditar.dificultad = it
         }
         binding.btnFechaComienzoHoy.setOnClickListener {
             val fechaActual = LocalDate.now().toString()
-            binding.eTFechaComienzo.setText(fechaActual)
+            formatearFecha(fechaActual, binding.eTFechaComienzo)
             oVideojuegoAInsertarOEditar.fechaDeComienzo = fechaActual
+        }
+        binding.btnFechaFinalizacionHoy.setOnClickListener {
+            val fechaActual = LocalDate.now().toString()
+            formatearFecha(fechaActual, binding.eTFechaFinalizacion)
+            oVideojuegoAInsertarOEditar.fechaDeFinalizacion = fechaActual
         }
         binding.eTFechaComienzo.setOnClickListener {
             val datePicker =
@@ -291,6 +299,12 @@ class AnyadirOEditarFragment : Fragment()  {
             }
         }
 
+    }
+
+    private fun formatearHorizontalPicker(hPicker: HorizontalPicker) {
+        hPicker.values = listOf("-", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10").toTypedArray()
+        hPicker.sideItems = 2
+        hPicker.scrollBarSize = 10
     }
 
     fun mostrarUOcultarFechasSegunIdEstado(){

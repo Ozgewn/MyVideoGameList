@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.FrameLayout
 import androidx.core.widget.doOnTextChanged
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
@@ -15,7 +16,12 @@ import com.example.myvideogamelist.R
 import com.example.myvideogamelist.api.repositories.clsUsuarioRepository
 import com.example.myvideogamelist.databinding.FragmentSignUpBinding
 import com.example.myvideogamelist.models.clsUsuario
+import com.example.myvideogamelist.utils.InterfazUsuarioUtils
+import com.example.myvideogamelist.views.validaciones.Validaciones
+import com.google.android.gms.tasks.Task
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.textfield.TextInputLayout
+import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.ktx.auth
@@ -30,6 +36,7 @@ class SignUpFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var auth: FirebaseAuth
     private lateinit var navController: NavController
+    private val thisFragment = this //esto es para poder obtener el fragment en la corrutina, porque si hago this en la corrutina, me cogera el CorroutineScope
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,72 +55,51 @@ class SignUpFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         navController = findNavController()
-        var datosSignUpValidos = false
 
         /*
         Todos estos listeners y doOnTextChanged son simples validaciones que se hacen, y las hago de esta manera
         para que el usuario tenga un mejor feedback y siempre sepa qué esta fallando, y qué esta fallando concretamente
          */
+        inicializarListenersCamposTexto()
+    }
 
-        binding.signUpPassword.editText!!.setOnFocusChangeListener { _, hasFocus ->
-            datosSignUpValidos = false
-            binding.signUpPassword.error = null
-            if(!hasFocus && binding.signUpPassword.editText!!.text.isNullOrEmpty()){
-                binding.signUpPassword.error = Mensajes.errores.PASSWORD_VACIO
-            }else if(!hasFocus && binding.signUpPassword.editText!!.text!!.length < 6){
-                binding.signUpPassword.error = Mensajes.errores.PASSWORD_MASDE5CHARS
-            }
-        }
-        binding.signUpUsername.editText!!.setOnFocusChangeListener { _, hasFocus ->
-            datosSignUpValidos = false
-            binding.signUpUsername.error = null
-            if(!hasFocus && binding.signUpUsername.editText!!.text.isNullOrEmpty()){
-                binding.signUpPassword.error = Mensajes.errores.SIGNUP_USERNAME_VACIO
-            }else{
-                datosSignUpValidos = true
-            }
-        }
+    private fun inicializarListenersCamposTexto(){
+        var eTPasswordCorrecta = false
+        var eTUsernameCorrecto = false
+        var eTCorreoCorrecto = false
+        var eTRepetirPasswordCorrecto = false
+        var datosSignUpValidos = false
+
         binding.signUpPassword.editText!!.doOnTextChanged { _, _, _, _ ->
-            if(binding.signUpPassword.editText!!.text!!.length >= 6){
-                datosSignUpValidos = true
-            }
+            eTPasswordCorrecta = Validaciones.validacionPassword(binding.signUpPassword)
         }
+
         binding.signUpEmail.editText!!.doOnTextChanged { _, _, _, _ ->
-            if(binding.signUpEmail.editText!!.text!!.length >= 3 && binding.signUpEmail.editText!!.text!!.contains("@")){
-                datosSignUpValidos = true
-            }
+            eTCorreoCorrecto = Validaciones.validacionEmail(binding.signUpEmail)
         }
+
         binding.signUpRepeatPassword.editText!!.doOnTextChanged { _, _, _, _ ->
-            if(binding.signUpRepeatPassword.editText!!.text!!.toString() == binding.signUpPassword.editText!!.text!!.toString()){
-                datosSignUpValidos = true
-                binding.signUpRepeatPassword.error = null
-            }else{
-                binding.signUpRepeatPassword.error = Mensajes.errores.SIGNUP_PASSWORD_NO_COINCIDEN
-            }
-        }
-        binding.signUpEmail.editText!!.setOnFocusChangeListener { _, hasFocus ->
-            datosSignUpValidos = false
-            binding.signUpEmail.error = null
-            if(!hasFocus && binding.signUpEmail.editText!!.text.isNullOrEmpty()){
-                binding.signUpEmail.error = Mensajes.errores.EMAIL_VACIO
-            }else if(!hasFocus && !binding.signUpEmail.editText!!.text!!.contains("@")){
-                binding.signUpEmail.error = Mensajes.errores.EMAIL_NOVALIDO
-            }
+            eTRepetirPasswordCorrecto = Validaciones.validacionRepetirPassword(binding.signUpRepeatPassword, binding.signUpPassword.editText!!.text.toString())
         }
 
-        binding.signUpButton.setOnClickListener {
-            val email = binding.signUpEmail.editText!!.text.toString()
-            val password = binding.signUpPassword.editText!!.text.toString()
-
-            if(datosSignUpValidos && binding.signUpUsername.editText!!.text.isNullOrEmpty()){
-                register(email, password)
-            }else{
-                Snackbar.make(requireView(), Mensajes.errores.LOGIN_SIGNUP_FALTAN_DATOS, Snackbar.LENGTH_SHORT).show()
-            }
+        binding.signUpUsername.editText!!.doOnTextChanged { _, _, _, _ ->
+            eTUsernameCorrecto = Validaciones.validacionUsername(binding.signUpUsername)
         }
 
         binding.signUpGoLoginButton.setOnClickListener {
             navController.navigate(R.id.action_signUpFragment_to_loginFragment) //pasamos al login
+        }
+
+        binding.signUpButton.setOnClickListener {
+            datosSignUpValidos = eTPasswordCorrecta && eTUsernameCorrecto && eTCorreoCorrecto && eTRepetirPasswordCorrecto
+            val email = binding.signUpEmail.editText!!.text.toString()
+            val password = binding.signUpPassword.editText!!.text.toString()
+
+            if(datosSignUpValidos){
+                register(email, password)
+            }else{
+                Snackbar.make(requireView(), Mensajes.informacion.ERRORES_SIN_CORREGIR, Snackbar.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -129,29 +115,10 @@ class SignUpFragment : Fragment() {
                 auth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener(activity!!) { task ->
                         if(task.isSuccessful){
-                            var oUsuario = clsUsuario(id = task.result.user!!.uid, nombreUsuario = nombreUsuario) //creamos el usuario para su posterior insercion en la BBDD
-                            CoroutineScope(Dispatchers.IO).launch {
-                                val respuesta = clsUsuarioRepository().insertarUsuario(oUsuario) //insertamos al usuario en la BBDD
-                                if(respuesta != 1){
-                                    Snackbar.make(requireView(), Mensajes.errores.USERNAME_YA_EN_USO, Snackbar.LENGTH_SHORT).show()
-                                }
-                                activity?.runOnUiThread {
-                                    //hacemos el navigate en el runOnUiThread, para que solo naveguemos cuando acabemos de insertar al usuario en la BBDD
-                                    navController.navigate(R.id.action_signUpFragment_to_loginFragment) //pasamos al login
-                                }
-                            }
-                            hideKeyboard()
-                            //TODO: mensaje de se ha creado el usuario
+                            insertarUsuarioEnBBDD(task, nombreUsuario)
+                            InterfazUsuarioUtils.hideKeyboard(binding.root, thisFragment)
                         }else{
-                            /*
-                            A continuacion vamos a manejar la excepcion de cuando se crea un usuario que ya tiene cuenta, si ponemos un try-catch capturando esa excepcion, no saltara al catch,
-                            asi que lo tenemos que hacer con un if
-                             */
-                            if(task.exception!!::class.java == FirebaseAuthUserCollisionException::class.java){
-                                binding.signUpEmail.error = Mensajes.errores.SIGNUP_EMAIL_REPETIDO
-                            }else{
-                                Snackbar.make(requireView(), Mensajes.errores.SIGNUP_FALLIDO, Snackbar.LENGTH_LONG).show()
-                            }
+                            controlarExcepcion(task)
                         }
                     }
             }
@@ -159,11 +126,29 @@ class SignUpFragment : Fragment() {
 
     }
 
-    /**
-     * Oculta el teclado
-     */
-    private fun hideKeyboard(){
-        val imm = requireActivity().getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
+    private fun insertarUsuarioEnBBDD(task: Task<AuthResult>, nombreUsuario: String){
+        val oUsuario = clsUsuario(id = task.result.user!!.uid, nombreUsuario = nombreUsuario) //creamos el usuario para su posterior insercion en la BBDD
+        CoroutineScope(Dispatchers.IO).launch {
+            val respuesta = clsUsuarioRepository().insertarUsuario(oUsuario) //insertamos al usuario en la BBDD
+            if(respuesta != 1){
+                Snackbar.make(requireView(), Mensajes.errores.ERROR_GENERICO, Snackbar.LENGTH_SHORT).show()
+            }
+            activity?.runOnUiThread {
+                //hacemos el navigate en el runOnUiThread, para que solo naveguemos cuando acabemos de insertar al usuario en la BBDD
+                navController.navigate(R.id.action_signUpFragment_to_loginFragment) //pasamos al login
+            }
+        }
+    }
+
+    private fun controlarExcepcion(task: Task<AuthResult>){
+        /*
+        A continuacion vamos a manejar la excepcion de cuando se crea un usuario que ya tiene cuenta, si ponemos un try-catch capturando esa excepcion, no saltara al catch,
+        asi que lo tenemos que hacer con un if
+         */
+        if(task.exception!!::class.java == FirebaseAuthUserCollisionException::class.java){
+            binding.signUpEmail.error = Mensajes.errores.SIGNUP_EMAIL_REPETIDO
+        }else{
+            Snackbar.make(requireView(), Mensajes.errores.SIGNUP_FALLIDO, Snackbar.LENGTH_LONG).show()
+        }
     }
 }

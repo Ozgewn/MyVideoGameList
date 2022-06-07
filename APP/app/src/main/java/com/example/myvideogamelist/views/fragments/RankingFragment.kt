@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.example.myvideogamelist.R
 import com.example.myvideogamelist.databinding.FragmentRankingBinding
 import com.example.myvideogamelist.models.clsListaConInfoDeVideojuego
+import com.example.myvideogamelist.utils.InterfazUsuarioUtils
 import com.example.myvideogamelist.utils.MaterialAlertDialogHelper
 import com.example.myvideogamelist.viewmodels.VideojuegoViewModel
 import com.example.myvideogamelist.views.adapters.ListaConInfoDeVideojuegoAdapter
@@ -81,23 +82,26 @@ class RankingFragment : Fragment(), SearchView.OnQueryTextListener {
         binding.sVRanking.setOnQueryTextListener(this)
         //Ordenar
         binding.btnOrdenar.setOnClickListener {
-
-            val opcionesDeOrdenado = arrayOf("Estado", "Nombre A-Z", "Nombre Z-A", "Nota media", "Dificultad media")
-            var opcionOrdenado = 0
-
-            MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Elija modo de ordenado")
-                .setNeutralButton("cancelar") { dialog, which ->
-                    // nada
-                }
-                .setPositiveButton("Ok") { dialog, which ->
-                    ordenar(opcionOrdenado)
-                }
-                .setSingleChoiceItems(opcionesDeOrdenado, opcionOrdenado) { dialog, which ->
-                    opcionOrdenado = which
-                }
-                .show()
+            elegirOpcionOrdenadoYOrdenar()
         }
+    }
+
+    private fun elegirOpcionOrdenadoYOrdenar() {
+        val opcionesDeOrdenado = arrayOf("Estado", "Nombre A-Z", "Nombre Z-A", "Nota media", "Dificultad media")
+        var opcionOrdenado = 0
+
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle("Elija modo de ordenado")
+            .setNeutralButton("cancelar") { dialog, which ->
+                // nada
+            }
+            .setPositiveButton("Ok") { dialog, which ->
+                ordenar(opcionOrdenado)
+            }
+            .setSingleChoiceItems(opcionesDeOrdenado, opcionOrdenado) { dialog, which ->
+                opcionOrdenado = which
+            }
+            .show()
     }
 
     fun ordenar(opcionOrdenado: Int){
@@ -187,7 +191,7 @@ class RankingFragment : Fragment(), SearchView.OnQueryTextListener {
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {
-        hideKeyboard()
+        InterfazUsuarioUtils.hideKeyboard(binding.root, this)
         return true
     }
 
@@ -202,14 +206,6 @@ class RankingFragment : Fragment(), SearchView.OnQueryTextListener {
         }
         adapter.notifyDataSetChanged()
         return true
-    }
-
-    /**
-     * Oculta el teclado, sin mas, no hay que profundizar mucho en esto
-     */
-    private fun hideKeyboard(){
-        val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
     }
 
 }

@@ -111,13 +111,4 @@ class ComunidadFragment : Fragment(), SearchView.OnQueryTextListener {
         return true
     }
 
-    /**
-     * Oculta el teclado, sin mas, no hay que profundizar mucho en esto
-     */
-    //TODO: METER ESTE METODO EN CLASE DE UTILIDADES
-    private fun hideKeyboard(){
-        val imm = requireActivity().getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
-    }
-
 }

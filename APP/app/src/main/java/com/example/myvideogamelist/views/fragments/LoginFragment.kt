@@ -14,7 +14,9 @@ import com.example.myvideogamelist.views.mensajes.Mensajes
 import com.example.myvideogamelist.R
 import com.example.myvideogamelist.api.repositories.clsUsuarioRepository
 import com.example.myvideogamelist.databinding.FragmentLoginBinding
+import com.example.myvideogamelist.utils.InterfazUsuarioUtils
 import com.example.myvideogamelist.views.sharedData.SharedData
+import com.example.myvideogamelist.views.validaciones.Validaciones
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -47,38 +49,18 @@ class LoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         navController = findNavController()
-        var datosLoginValidos = false
+        var eTPasswordCorrecta = false
+        var eTCorreoCorrecto = false
 
-        binding.loginPassword.editText!!.setOnFocusChangeListener { _, hasFocus ->
-            datosLoginValidos = false
-            binding.loginPassword.error = null
-            if(!hasFocus && binding.loginPassword.editText!!.text.isNullOrEmpty()){
-                binding.loginPassword.error = Mensajes.errores.PASSWORD_VACIO
-            }else if(!hasFocus && binding.loginPassword.editText!!.text!!.length < 6){
-                binding.loginPassword.error = Mensajes.errores.PASSWORD_MASDE5CHARS
-            }
-        }
+
         binding.loginPassword.editText!!.doOnTextChanged { _, _, _, _ ->
-            if(binding.loginPassword.editText!!.text!!.length >= 6){
-                datosLoginValidos = true
-            }
+            eTPasswordCorrecta = Validaciones.validacionPassword(binding.loginPassword)
         }
-        binding.loginEmail.editText!!.doOnTextChanged { text, _, _, count ->
-            if(binding.loginEmail.editText!!.text!!.length >= 3 && binding.loginEmail.editText!!.text!!.contains("@")){
-                datosLoginValidos = true
-            }
+        binding.loginEmail.editText!!.doOnTextChanged { _, _, _, _ ->
+            eTCorreoCorrecto = Validaciones.validacionEmail(binding.loginEmail)
         }
-        binding.loginEmail.editText!!.setOnFocusChangeListener { _, hasFocus ->
-            datosLoginValidos = false
-            binding.loginEmail.error = null
-            if(!hasFocus && binding.loginEmail.editText!!.text.isNullOrEmpty()){
-                binding.loginEmail.error = Mensajes.errores.EMAIL_VACIO
-            }else if(!hasFocus && !binding.loginEmail.editText!!.text!!.contains("@")){
-                binding.loginEmail.error = Mensajes.errores.EMAIL_NOVALIDO
-            }
-        }
-
         binding.loginButton.setOnClickListener {
+            val datosLoginValidos = eTPasswordCorrecta && eTCorreoCorrecto
             val email = binding.loginEmail.editText?.text.toString()
             val password = binding.loginPassword.editText?.text.toString()
 
@@ -87,7 +69,7 @@ class LoginFragment : Fragment() {
             }else{
                 binding.loginPassword.clearFocus()
                 binding.loginEmail.clearFocus()
-                hideKeyboard()
+                InterfazUsuarioUtils.hideKeyboard(binding.root, this)
                 Snackbar.make(requireView(), Mensajes.errores.LOGIN_SIGNUP_FALTAN_DATOS, Snackbar.LENGTH_LONG).show()
             }
         }
@@ -128,7 +110,7 @@ class LoginFragment : Fragment() {
                 if (task.isSuccessful) {
                     SharedData.idUsuario = task.result.user!!.uid
                     actualizarNombreEnSharedData()
-                    hideKeyboard()
+                    InterfazUsuarioUtils.hideKeyboard(binding.root, this)
                     navController.navigate(R.id.action_loginFragment_to_mainContentFragment)
                 } else {
                     Snackbar.make(
@@ -152,13 +134,5 @@ class LoginFragment : Fragment() {
             }
         }
 
-    }
-
-    /**
-     * Oculta el teclado
-     */
-    private fun hideKeyboard(){
-        val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
     }
 }
