@@ -13,8 +13,10 @@ import com.example.myvideogamelist.R
 import com.example.myvideogamelist.api.repositories.clsUsuarioRepository
 import com.example.myvideogamelist.databinding.FragmentCambiarNombreUsuarioBinding
 import com.example.myvideogamelist.models.clsUsuario
+import com.example.myvideogamelist.utils.InterfazUsuarioUtils
 import com.example.myvideogamelist.views.mensajes.Mensajes
 import com.example.myvideogamelist.views.sharedData.SharedData
+import com.example.myvideogamelist.views.validaciones.Validaciones
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
@@ -47,20 +49,14 @@ class CambiarNombreUsuarioFragment : Fragment() {
         var modificacionCompletadaCorrectamente = true
         var datosValidos = false
 
-        binding.tINuevoNombreUsuario.editText!!.doOnTextChanged { text, start, before, count ->
-            binding.tINuevoNombreUsuario.error = null
-            if(binding.tINuevoNombreUsuario.editText!!.text.length > 2){
-                datosValidos = true
-            }else{
-                datosValidos = false
-                binding.tINuevoNombreUsuario.error = Mensajes.errores.USERNAME_MASDE2CHARS
-            }
+        binding.tINuevoNombreUsuario.editText!!.doOnTextChanged { _, _, _, _ ->
+            datosValidos = Validaciones.validacionUsername(binding.tINuevoNombreUsuario)
         }
 
         binding.btnConfirmar.setOnClickListener {
-            hideKeyboard()
+            InterfazUsuarioUtils.hideKeyboard(binding.root, this)
             if(datosValidos){
-                var nombreUsuario = binding.tINuevoNombreUsuario.editText!!.text.toString()
+                val nombreUsuario = binding.tINuevoNombreUsuario.editText!!.text.toString()
                 MaterialAlertDialogBuilder(requireContext())
                     .setTitle("Confirmar")
                     .setMessage("¿Estás seguro de que deseas cambiar el nombre de usuario a $nombreUsuario?")
@@ -68,28 +64,7 @@ class CambiarNombreUsuarioFragment : Fragment() {
                         //No hacemos nada
                     }
                     .setPositiveButton("Confirmar") { dialog, which ->
-                        CoroutineScope(Dispatchers.IO).launch {
-                            try{
-                                val respuesta = clsUsuarioRepository().editarUsuario(clsUsuario(id = SharedData.idUsuario, nombreUsuario = nombreUsuario))
-                                if(respuesta != 1){
-                                    modificacionCompletadaCorrectamente = false
-                                }
-                            }catch (e: Exception){
-                                activity?.runOnUiThread {
-                                    binding.tINuevoNombreUsuario.error = Mensajes.errores.USERNAME_YA_EN_USO
-                                }
-                                modificacionCompletadaCorrectamente = false
-                            }
-                            activity?.runOnUiThread {
-                                if(modificacionCompletadaCorrectamente){
-                                    SharedData.nombreUsuario.postValue(nombreUsuario)
-                                    Snackbar.make(requireView(), Mensajes.informacion.MODIFICACION_CREDENCIALES_EXITOSA_NO_RELOG, Snackbar.LENGTH_SHORT).show()
-                                }else{
-                                    Snackbar.make(requireView(), Mensajes.informacion.PEDIR_CORRECION_DE_ERRORES, Snackbar.LENGTH_SHORT).show()
-                                }
-                            }
-                        }
-
+                        modificacionCompletadaCorrectamente = editarNombreUsuario(nombreUsuario)
                     }
                     .show()
             }else{
@@ -100,12 +75,30 @@ class CambiarNombreUsuarioFragment : Fragment() {
         }
     }
 
-    /**
-     * Oculta el teclado
-     */
-    private fun hideKeyboard(){
-        val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
+    private fun editarNombreUsuario(nombreUsuario: String): Boolean {
+        var modificacionRealizada = true
+        CoroutineScope(Dispatchers.IO).launch {
+            try{
+                val respuesta = clsUsuarioRepository().editarUsuario(clsUsuario(id = SharedData.idUsuario, nombreUsuario = nombreUsuario))
+                if(respuesta != 1){
+                    modificacionRealizada = false
+                }
+            }catch (e: Exception){
+                activity?.runOnUiThread {
+                    binding.tINuevoNombreUsuario.error = Mensajes.errores.USERNAME_YA_EN_USO
+                }
+                modificacionRealizada = false
+            }
+            activity?.runOnUiThread {
+                if(modificacionRealizada){
+                    SharedData.nombreUsuario.postValue(nombreUsuario)
+                    Snackbar.make(requireView(), Mensajes.informacion.MODIFICACION_CREDENCIALES_EXITOSA_NO_RELOG, Snackbar.LENGTH_SHORT).show()
+                }else{
+                    Snackbar.make(requireView(), Mensajes.informacion.PEDIR_CORRECION_DE_ERRORES, Snackbar.LENGTH_SHORT).show()
+                }
+            }
+        }
+        return modificacionRealizada
     }
 
 }

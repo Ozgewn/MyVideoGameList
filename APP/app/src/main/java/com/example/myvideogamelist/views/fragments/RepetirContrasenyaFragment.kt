@@ -14,6 +14,7 @@ import androidx.navigation.NavDestination
 import androidx.navigation.fragment.findNavController
 import com.example.myvideogamelist.R
 import com.example.myvideogamelist.databinding.FragmentRepetirContrasenyaBinding
+import com.example.myvideogamelist.utils.InterfazUsuarioUtils
 import com.example.myvideogamelist.views.mensajes.Mensajes
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
@@ -52,7 +53,7 @@ class RepetirContrasenyaFragment : Fragment() {
             }
         }
         binding.btnConfirmar.setOnClickListener {
-            hideKeyboard()
+            InterfazUsuarioUtils.hideKeyboard(binding.root, this)
             if(datosValidos){
                 auth.signInWithEmailAndPassword(auth.currentUser!!.email!!, binding.tIContrasenyaRepetida.editText!!.text.toString()).addOnCompleteListener { task ->
                     if(task.isSuccessful){
@@ -68,14 +69,6 @@ class RepetirContrasenyaFragment : Fragment() {
                 Snackbar.make(requireView(), Mensajes.informacion.PEDIR_CORRECION_DE_ERRORES, Snackbar.LENGTH_SHORT).show()
             }
         }
-    }
-
-    /**
-     * Oculta el teclado
-     */
-    private fun hideKeyboard(){
-        val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
     }
 
 }

@@ -1,17 +1,17 @@
 package com.example.myvideogamelist.views.fragments
 
-import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import androidx.core.widget.doOnTextChanged
 import androidx.navigation.fragment.findNavController
 import com.example.myvideogamelist.R
 import com.example.myvideogamelist.databinding.FragmentCambiarPasswordBinding
+import com.example.myvideogamelist.utils.InterfazUsuarioUtils
 import com.example.myvideogamelist.views.mensajes.Mensajes
+import com.example.myvideogamelist.views.validaciones.Validaciones
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
@@ -39,37 +39,22 @@ class CambiarPasswordFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        var datosValidos = false
-        var navController = requireParentFragment().requireParentFragment().findNavController()
-
-        binding.tINuevaPassword.editText!!.setOnFocusChangeListener { _, hasFocus ->
-            datosValidos = false
-            binding.tINuevaPassword.error = null
-            if(!hasFocus && binding.tINuevaPassword.editText!!.text.isNullOrEmpty()){
-                binding.tINuevaPassword.error = Mensajes.errores.PASSWORD_VACIO
-            }else if(!hasFocus && binding.tINuevaPassword.editText!!.text!!.length < 6){
-                binding.tINuevaPassword.error = Mensajes.errores.PASSWORD_MASDE5CHARS
-            }
-        }
+        val navController = requireParentFragment().requireParentFragment().findNavController()
+        var eTNuevaPasswordCorrecta = false
+        var eTNuevaPasswordRepetidaCorrecta = false
 
         binding.tINuevaPassword.editText!!.doOnTextChanged { _, _, _, _ ->
-            if(binding.tINuevaPassword.editText!!.text!!.length >= 6){
-                datosValidos = true
-            }
+            eTNuevaPasswordCorrecta = Validaciones.validacionPassword(binding.tINuevaPassword)
         }
 
         binding.tINuevaPasswordRepetida.editText!!.doOnTextChanged { _, _, _, _ ->
-            if(binding.tINuevaPasswordRepetida.editText!!.text!!.toString() == binding.tINuevaPassword.editText!!.text!!.toString()){
-                datosValidos = true
-                binding.tINuevaPasswordRepetida.error = null
-            }else{
-                binding.tINuevaPasswordRepetida.error = Mensajes.errores.SIGNUP_PASSWORD_NO_COINCIDEN
-            }
+            eTNuevaPasswordRepetidaCorrecta = Validaciones.validacionRepetirPassword(binding.tINuevaPasswordRepetida, binding.tINuevaPassword.editText!!.text.toString())
         }
 
         binding.btnConfirmar.setOnClickListener {
-            hideKeyboard()
-            var password = binding.tINuevaPassword.editText!!.text.toString()
+            InterfazUsuarioUtils.hideKeyboard(binding.root, this)
+            val datosValidos = eTNuevaPasswordCorrecta && eTNuevaPasswordRepetidaCorrecta
+            val password = binding.tINuevaPassword.editText!!.text.toString()
             if(binding.tINuevaPasswordRepetida.editText!!.text.toString() == password){
                 if(datosValidos){
                     MaterialAlertDialogBuilder(requireContext())
@@ -97,14 +82,6 @@ class CambiarPasswordFragment : Fragment() {
             }
         }
 
-    }
-
-    /**
-     * Oculta el teclado
-     */
-    private fun hideKeyboard(){
-        val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
     }
 
 }

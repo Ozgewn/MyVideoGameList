@@ -17,5 +17,4 @@ class SharedPreferencesManager(private val context: Context) {
         editor.apply()
     }
     fun getModoNoche(): Boolean = mySharedPref.getBoolean(constantes.KEY_MODO_NOCHE, false)
-
 }

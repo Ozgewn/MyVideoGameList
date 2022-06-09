@@ -104,7 +104,7 @@ class RankingFragment : Fragment(), SearchView.OnQueryTextListener {
             .show()
     }
 
-    fun ordenar(opcionOrdenado: Int){
+    private fun ordenar(opcionOrdenado: Int){
         listaVideojuegosConInfoFiltrada.clear()
         when(opcionOrdenado){
             0 -> { //Estado

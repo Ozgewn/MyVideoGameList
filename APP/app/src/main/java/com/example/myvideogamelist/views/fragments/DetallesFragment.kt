@@ -54,6 +54,21 @@ class DetallesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        asignarValoresVideojuego()
+        binding.btnAnyadirOEditar.setOnClickListener {
+            if (auth.currentUser!!.isAnonymous) {
+                MaterialAlertDialogHelper.errorPorSerAnonimo(this, auth)
+            } else {
+                findNavController().navigate(R.id.anyadirOEditarFragment)
+            }
+        }
+        binding.swipeRefresh.setOnRefreshListener {
+            cargarInfoVideojuego()
+            binding.swipeRefresh.isRefreshing = false
+        }
+    }
+
+    private fun asignarValoresVideojuego() {
         val df = DecimalFormat("#.##")
         infoCompletaVideojuego.observe(this, Observer {
             with(binding){
@@ -97,17 +112,6 @@ class DetallesFragment : Fragment() {
                 }
             }
         })
-        binding.btnAnyadirOEditar.setOnClickListener {
-            if (auth.currentUser!!.isAnonymous) {
-                MaterialAlertDialogHelper.errorPorSerAnonimo(this, auth)
-            } else {
-                findNavController().navigate(R.id.anyadirOEditarFragment)
-            }
-        }
-        binding.swipeRefresh.setOnRefreshListener {
-            cargarInfoVideojuego()
-            binding.swipeRefresh.isRefreshing = false
-        }
     }
 
     private fun cargarInfoVideojuego() {

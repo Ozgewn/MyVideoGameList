@@ -11,6 +11,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.myvideogamelist.R
 import com.example.myvideogamelist.api.repositories.clsUsuarioRepository
 import com.example.myvideogamelist.databinding.FragmentModificarCredencialesBinding
+import com.example.myvideogamelist.utils.InterfazUsuarioUtils
 import com.example.myvideogamelist.views.sharedData.SharedData
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.FirebaseAuth
@@ -25,6 +26,7 @@ class ModificarCredencialesFragment : Fragment() {
     private var _binding: FragmentModificarCredencialesBinding? = null
     private val binding get() = _binding!!
     private lateinit var auth: FirebaseAuth
+    private val thisFragment = this
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,15 +48,15 @@ class ModificarCredencialesFragment : Fragment() {
         with(binding){
             tVCambiarEmail.setOnClickListener {
                 navController.navigate(R.id.cambiarEmailFragment)
-                hideKeyboard()
+                InterfazUsuarioUtils.hideKeyboard(binding.root, thisFragment)
             }
             tVCambiarNombreUsuario.setOnClickListener {
                 navController.navigate(R.id.cambiarNombreUsuarioFragment)
-                hideKeyboard()
+                InterfazUsuarioUtils.hideKeyboard(binding.root, thisFragment)
             }
             tVCambiarPassword.setOnClickListener {
                 navController.navigate(R.id.cambiarPasswordFragment)
-                hideKeyboard()
+                InterfazUsuarioUtils.hideKeyboard(binding.root, thisFragment)
             }
             tVBorrarCuenta.setOnClickListener {
                 MaterialAlertDialogBuilder(requireContext())
@@ -73,14 +75,6 @@ class ModificarCredencialesFragment : Fragment() {
                     .show()
             }
         }
-    }
-
-    /**
-     * Oculta el teclado
-     */
-    private fun hideKeyboard(){
-        val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
     }
 
 }

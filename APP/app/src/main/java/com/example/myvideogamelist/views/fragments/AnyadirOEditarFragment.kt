@@ -36,7 +36,6 @@ class AnyadirOEditarFragment : Fragment()  {
     private var _binding: FragmentAnyadirOEditarBinding? = null
     private val binding get() = _binding!!
     private val videojuegoViewModel: VideojuegoViewModel by activityViewModels()
-    //private lateinit var navController: NavController
     private var listaEstados = mutableListOf<clsEstado>()
     private lateinit var adapter: ListaEstadosAdapter
     private lateinit var oVideojuegoAInsertarOEditar: clsListaVideojuego
@@ -133,9 +132,6 @@ class AnyadirOEditarFragment : Fragment()  {
             oVideojuegoAInsertarOEditar.estado = position+1
             mostrarUOcultarFechasSegunIdEstado()
         }
-        /*
-        TODO: mejorar esto
-         */
         formatearHorizontalPicker(binding.hPickerNota)
         binding.hPickerNota.setOnItemSelectedListener {
             oVideojuegoAInsertarOEditar.nota = it
@@ -160,17 +156,12 @@ class AnyadirOEditarFragment : Fragment()  {
                     .setTitleText("Seleccione fecha de comienzo")
                     .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
                     .build()
-            datePicker.show(childFragmentManager, "tag")
-            datePicker.addOnPositiveButtonClickListener {
-                val fechaComienzo = Instant.ofEpochMilli(datePicker.selection!!).atZone(ZoneId.systemDefault()).toLocalDate()
-                val fechaFormateada = fechaComienzo.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
-                binding.eTFechaComienzo.setText(fechaFormateada.toString())
-                oVideojuegoAInsertarOEditar.fechaDeComienzo = fechaComienzo.toString()
-            }
+            mostrarFechaSeleccionada(datePicker, binding.eTFechaComienzo)
             datePicker.addOnNegativeButtonClickListener {
                 oVideojuegoAInsertarOEditar.fechaDeComienzo = null
                 binding.eTFechaComienzo.setText("")
             }
+
         }
         binding.eTFechaFinalizacion.setOnClickListener {
             val datePicker =
@@ -178,13 +169,7 @@ class AnyadirOEditarFragment : Fragment()  {
                     .setTitleText("Seleccione fecha de finalizacion")
                     .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
                     .build()
-            datePicker.show(childFragmentManager, "tag")
-            datePicker.addOnPositiveButtonClickListener {
-                val fechaComienzo = Instant.ofEpochMilli(datePicker.selection!!).atZone(ZoneId.systemDefault()).toLocalDate()
-                val fechaFormateada = fechaComienzo.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
-                binding.eTFechaFinalizacion.setText(fechaFormateada.toString())
-                oVideojuegoAInsertarOEditar.fechaDeFinalizacion = fechaComienzo.toString()
-            }
+            mostrarFechaSeleccionada(datePicker, binding.eTFechaFinalizacion)
             datePicker.addOnNegativeButtonClickListener {
                 oVideojuegoAInsertarOEditar.fechaDeFinalizacion = null
                 binding.eTFechaFinalizacion.setText("")
@@ -198,61 +183,27 @@ class AnyadirOEditarFragment : Fragment()  {
         if(!oVideojuegoSeleccionado.idUsuario.isNullOrEmpty()){
             isEditable = true
             isBorrable = true
-            oVideojuegoAInsertarOEditar.nota = oVideojuegoSeleccionado.notaPersonal
-            oVideojuegoAInsertarOEditar.dificultad = oVideojuegoSeleccionado.dificultadPersonal
-            binding.hPickerNota.selectedItem = oVideojuegoAInsertarOEditar.nota
-            binding.hPickerDificultad.selectedItem = oVideojuegoAInsertarOEditar.dificultad
+            asignarNotaYDificultadPrevias()
             //el valor del estado esta arriba, en el onCreate -> activity?.runOnUiThread (hay un comentario explicando el por que esta ahi)
         }
 
         binding.btnAnyadirOEditar.setOnClickListener {
             if(binding.atVEstados.text.isNullOrEmpty()){
-                binding.tFMenuDesplegable.error = "Elija un estado, por favor"
+                binding.tFMenuDesplegable.error = Mensajes.errores.ELIGE_UN_ESTADO
             }else{
                 binding.tFMenuDesplegable.error = null
                 try{
                     if(isEditable){
-                        var filasEditadas = 0
-                        CoroutineScope(Dispatchers.IO).launch{
-                            Log.d("_INFO", oVideojuegoAInsertarOEditar.toString())
-                            filasEditadas = videojuegoViewModel.editarVideojuegoEnLista(oVideojuegoAInsertarOEditar)
-                            /*
-                            Tengo que hacer esto aqui, porque si no, siempre llegara la variable de filasEditadas a 0 (porque se hace antes el Snackbar que la asignacion del valor de la variable con la API)
-                             */
-                            if(filasEditadas == 4){
-                                Snackbar.make(requireView(), "Se ha modificado "+oVideojuegoSeleccionado.nombreVideojuego+" satisfactoriamente", Snackbar.LENGTH_SHORT).show()
-                            }else{
-                                Snackbar.make(requireView(), "Ha ocurrido un problema mientras se intentaba editar "+oVideojuegoSeleccionado.nombreVideojuego+", intentelo de nuevo mas tarde", Snackbar.LENGTH_SHORT).show()
-                            }
-                        }
+                        editarJuego()
                     }else{
-                        var filasInsertadas = 0
-                        CoroutineScope(Dispatchers.IO).launch{
-                            filasInsertadas = videojuegoViewModel.insertarVideojuegoEnLista(oVideojuegoAInsertarOEditar)
-                            /*
-                            Tengo que hacer esto aqui, porque si no, siempre llegara la variable de filasInsertadas a 0 (porque se hace antes el Snackbar que la asignacion del valor de la variable con la API)
-                             */
-                            if(filasInsertadas == 4){
-                                Snackbar.make(requireView(), "Se ha añadido "+oVideojuegoSeleccionado.nombreVideojuego+" a la lista satisfactoriamente", Snackbar.LENGTH_SHORT).show()
-                                //este editar = true para que si el usuario le da 2 veces al boton, la 1º vez inserte y la 2º inserte, evitando asi, un error
-                                isEditable = true
-                                isBorrable = true
-                            }else{
-                                Snackbar.make(requireView(), "Ha ocurrido un problema mientras se intentaba añadir "+oVideojuegoSeleccionado.nombreVideojuego+" a la lista, intentelo de nuevo mas tarde", Snackbar.LENGTH_SHORT).show()
-                            }
-                        }
+                        insertarJuego()
                     }
                     /*
                     Esto de aqui es para cambiar el valor del videojuegoSeleccionado del viewmodel, ya que si el usuario va a detalles de un videojuego, y luego le a añadir o editar,
                     cuando acabe de añadir o editar, y le de hacia atras, los cambios no se veran reflejados por mucho que recargue, con esto que hacemos aqui abajo, actualizamos la informacion
                     del videojuego seleccionado en el viewmodel, que es lo que se usa en el fragment de detalles para visualizar la informacion
                      */
-                    with(videojuegoViewModel.videojuegoSeleccionado.value!!){
-                        notaPersonal = oVideojuegoAInsertarOEditar.nota
-                        dificultadPersonal = oVideojuegoAInsertarOEditar.dificultad
-                        idUsuario = oVideojuegoAInsertarOEditar.idUsuario
-                        estado = oVideojuegoAInsertarOEditar.estado
-                    }
+                    actualizarInfoJuegoEnViewModel()
                 }catch (e: Exception){
                     Snackbar.make(requireView(), Mensajes.errores.CONEXION_INTERNET_FALLIDA, Snackbar.LENGTH_SHORT).show()
                 }
@@ -269,29 +220,11 @@ class AnyadirOEditarFragment : Fragment()  {
                     }
                     .setPositiveButton("Borrar") { dialog, which ->
                         try{
-                            CoroutineScope(Dispatchers.IO).launch {
-                                val filasEliminadas = videojuegoViewModel.eliminarVideojuegoEnLista(SharedData.idUsuario, oVideojuegoAInsertarOEditar.idVideojuego)
-
-                                if(filasEliminadas == 4){
-                                    isBorrable = false
-                                    isEditable = false
-                                    activity?.runOnUiThread {
-                                        binding.atVEstados.text = null
-                                    }
-                                    Snackbar.make(requireView(), "Se ha eliminado "+oVideojuegoSeleccionado.nombreVideojuego+" de la lista", Snackbar.LENGTH_SHORT).show()
-                                }else{
-                                    Snackbar.make(requireView(), "Ha ocurrido un problema mientras se intentaba eliminar "+oVideojuegoSeleccionado.nombreVideojuego+" de la lista, intentelo de nuevo mas tarde", Snackbar.LENGTH_SHORT).show()
-                                }
-                            }
+                            borrarJuego()
                         }catch (e: Exception){
                             Snackbar.make(requireView(), Mensajes.errores.CONEXION_INTERNET_FALLIDA, Snackbar.LENGTH_SHORT).show()
                         }
-                        with(videojuegoViewModel.videojuegoSeleccionado.value!!){
-                            notaPersonal = 0
-                            dificultadPersonal = 0
-                            idUsuario = null
-                            estado = 0
-                        }
+                        borrarInfoJuegoEnViewModel()
                     }
                     .show()
             }else{
@@ -299,6 +232,92 @@ class AnyadirOEditarFragment : Fragment()  {
             }
         }
 
+    }
+
+    private fun borrarInfoJuegoEnViewModel() {
+        with(videojuegoViewModel.videojuegoSeleccionado.value!!){
+            notaPersonal = 0
+            dificultadPersonal = 0
+            idUsuario = null
+            estado = 0
+        }
+    }
+
+    private fun borrarJuego() {
+        CoroutineScope(Dispatchers.IO).launch {
+            val filasEliminadas = videojuegoViewModel.eliminarVideojuegoEnLista(SharedData.idUsuario, oVideojuegoAInsertarOEditar.idVideojuego)
+
+            if(filasEliminadas == 4){
+                isBorrable = false
+                isEditable = false
+                activity?.runOnUiThread {
+                    binding.atVEstados.text = null
+                }
+                Snackbar.make(requireView(), "Se ha eliminado "+oVideojuegoSeleccionado.nombreVideojuego+" de la lista", Snackbar.LENGTH_SHORT).show()
+            }else{
+                Snackbar.make(requireView(), "Ha ocurrido un problema mientras se intentaba eliminar "+oVideojuegoSeleccionado.nombreVideojuego+" de la lista, intentelo de nuevo mas tarde", Snackbar.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun actualizarInfoJuegoEnViewModel() {
+        with(videojuegoViewModel.videojuegoSeleccionado.value!!){
+            notaPersonal = oVideojuegoAInsertarOEditar.nota
+            dificultadPersonal = oVideojuegoAInsertarOEditar.dificultad
+            idUsuario = oVideojuegoAInsertarOEditar.idUsuario
+            estado = oVideojuegoAInsertarOEditar.estado
+        }
+    }
+
+    private fun insertarJuego() {
+        var filasInsertadas = 0
+        CoroutineScope(Dispatchers.IO).launch{
+            filasInsertadas = videojuegoViewModel.insertarVideojuegoEnLista(oVideojuegoAInsertarOEditar)
+            /*
+            Tengo que hacer esto aqui, porque si no, siempre llegara la variable de filasInsertadas a 0 (porque se hace antes el Snackbar que la asignacion del valor de la variable con la API)
+             */
+            if(filasInsertadas == 4){
+                Snackbar.make(requireView(), "Se ha añadido "+oVideojuegoSeleccionado.nombreVideojuego+" a la lista satisfactoriamente", Snackbar.LENGTH_SHORT).show()
+                //este editar = true para que si el usuario le da 2 veces al boton, la 1º vez inserte y la 2º inserte, evitando asi, un error
+                isEditable = true
+                isBorrable = true
+            }else{
+                Snackbar.make(requireView(), "Ha ocurrido un problema mientras se intentaba añadir "+oVideojuegoSeleccionado.nombreVideojuego+" a la lista, intentelo de nuevo mas tarde", Snackbar.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun editarJuego() {
+        var filasEditadas = 0
+        CoroutineScope(Dispatchers.IO).launch{
+            Log.d("_INFO", oVideojuegoAInsertarOEditar.toString())
+            filasEditadas = videojuegoViewModel.editarVideojuegoEnLista(oVideojuegoAInsertarOEditar)
+            /*
+            Tengo que hacer esto aqui, porque si no, siempre llegara la variable de filasEditadas a 0 (porque se hace antes el Snackbar que la asignacion del valor de la variable con la API)
+             */
+            if(filasEditadas == 4){
+                Snackbar.make(requireView(), "Se ha modificado "+oVideojuegoSeleccionado.nombreVideojuego+" satisfactoriamente", Snackbar.LENGTH_SHORT).show()
+            }else{
+                Snackbar.make(requireView(), "Ha ocurrido un problema mientras se intentaba editar "+oVideojuegoSeleccionado.nombreVideojuego+", intentelo de nuevo mas tarde", Snackbar.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun asignarNotaYDificultadPrevias() {
+        oVideojuegoAInsertarOEditar.nota = oVideojuegoSeleccionado.notaPersonal
+        oVideojuegoAInsertarOEditar.dificultad = oVideojuegoSeleccionado.dificultadPersonal
+        binding.hPickerNota.selectedItem = oVideojuegoAInsertarOEditar.nota
+        binding.hPickerDificultad.selectedItem = oVideojuegoAInsertarOEditar.dificultad
+    }
+
+    private fun mostrarFechaSeleccionada(datePicker: MaterialDatePicker<Long>, eTFecha: EditText) {
+        datePicker.show(childFragmentManager, "tag")
+        datePicker.addOnPositiveButtonClickListener {
+            val fecha = Instant.ofEpochMilli(datePicker.selection!!).atZone(ZoneId.systemDefault()).toLocalDate()
+            val fechaFormateada = fecha.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
+            eTFecha.setText(fechaFormateada.toString())
+            oVideojuegoAInsertarOEditar.fechaDeComienzo = fecha.toString()
+        }
     }
 
     private fun formatearHorizontalPicker(hPicker: HorizontalPicker) {

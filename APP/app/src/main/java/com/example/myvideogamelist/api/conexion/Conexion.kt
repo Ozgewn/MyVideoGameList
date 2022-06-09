@@ -13,5 +13,4 @@ object Conexion{
     const val DELETE_LISTAVIDEOJUEGOS_VIDEOJUEGO="Videojuego/"
     const val GET_VIDEOJUEGO="Videojuego/"
     const val GET_SOLO_VIDEOJUEGOS_EN_LISTA= GET_POST_PUT_LISTA_VIDEOJUEGOS_POR_USUARIO+"soloEnLista/"
-    const val GET_USUARIOS_POR_NOMBRE = "Usuario/nombre/"
 }

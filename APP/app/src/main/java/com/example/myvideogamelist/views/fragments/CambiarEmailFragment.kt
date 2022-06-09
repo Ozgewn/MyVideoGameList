@@ -13,7 +13,9 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import com.example.myvideogamelist.R
 import com.example.myvideogamelist.databinding.FragmentCambiarEmailBinding
+import com.example.myvideogamelist.utils.InterfazUsuarioUtils
 import com.example.myvideogamelist.views.mensajes.Mensajes
+import com.example.myvideogamelist.views.validaciones.Validaciones
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
@@ -41,27 +43,15 @@ class CambiarEmailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         //Obtenemos el navController del MainContent (el navHost), para que nos permita navegar a la pantalla de login
-        var navController = requireParentFragment().requireParentFragment().findNavController()
+        val navController = requireParentFragment().requireParentFragment().findNavController()
         var datosValidos = false
 
-        binding.tINuevoEmail.editText!!.setOnFocusChangeListener { _, hasFocus ->
-            datosValidos = false
-            binding.tINuevoEmail.error = null
-            if(!hasFocus && binding.tINuevoEmail.editText!!.text.isNullOrEmpty()){
-                binding.tINuevoEmail.error = Mensajes.errores.EMAIL_VACIO
-            }else if(!hasFocus && !binding.tINuevoEmail.editText!!.text!!.contains("@")){
-                binding.tINuevoEmail.error = Mensajes.errores.EMAIL_NOVALIDO
-            }
-        }
-
         binding.tINuevoEmail.editText!!.doOnTextChanged { _, _, _, _ ->
-            if(binding.tINuevoEmail.editText!!.text!!.length >= 3 && binding.tINuevoEmail.editText!!.text!!.contains("@")){
-                datosValidos = true
-            }
+            datosValidos = Validaciones.validacionEmail(binding.tINuevoEmail)
         }
 
         binding.btnConfirmar.setOnClickListener {
-            hideKeyboard()
+            InterfazUsuarioUtils.hideKeyboard(binding.root, this)
             if(datosValidos){
                 var email = binding.tINuevoEmail.editText!!.text.toString()
                 MaterialAlertDialogBuilder(requireContext())
@@ -86,14 +76,6 @@ class CambiarEmailFragment : Fragment() {
 
         }
 
-    }
-
-    /**
-     * Oculta el teclado
-     */
-    private fun hideKeyboard(){
-        val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
     }
 
 }

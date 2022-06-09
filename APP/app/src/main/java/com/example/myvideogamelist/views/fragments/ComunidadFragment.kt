@@ -70,13 +70,13 @@ class ComunidadFragment : Fragment(), SearchView.OnQueryTextListener {
         navController.navigate(R.id.perfilFragment)
     }
 
-    fun initRecyclerView(){
+    private fun initRecyclerView(){
         adapter = ComunidadAdapter(listaDeUsuariosFiltrada) {onUsuarioSeleccionado(it)}
         binding.rVComunidad.layoutManager = LinearLayoutManager(requireContext())
         binding.rVComunidad.adapter = adapter
     }
 
-    fun cargarUsuarios(){
+    private fun cargarUsuarios(){
         CoroutineScope(Dispatchers.IO).launch {
             try{
                 usuarioViewModel.cargarUsuarios()
