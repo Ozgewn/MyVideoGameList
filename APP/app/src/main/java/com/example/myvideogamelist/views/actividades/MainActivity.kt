@@ -10,6 +10,9 @@ import com.google.firebase.ktx.Firebase
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        setTheme(R.style.Theme_MyVideoGameList) //para que se quite el splash screen
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
     }

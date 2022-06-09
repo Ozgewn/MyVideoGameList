@@ -21,4 +21,7 @@
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
     </style>
+    <style name="SplashScreen" parent="Theme.MyVideoGameList">
+        <item name="android:windowBackground">@drawable/splash_screen</item>
+    </style>
 </resources>

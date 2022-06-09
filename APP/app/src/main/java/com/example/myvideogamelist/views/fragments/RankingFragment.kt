@@ -181,7 +181,7 @@ class RankingFragment : Fragment(), SearchView.OnQueryTextListener {
                 }
             }
         }catch (e: Exception) {
-            Log.d("_INFO", e.toString())
+            Log.d("::INFO", e.toString())
             Snackbar.make(
                 requireView(),
                 Mensajes.errores.CONEXION_INTERNET_FALLIDA,
