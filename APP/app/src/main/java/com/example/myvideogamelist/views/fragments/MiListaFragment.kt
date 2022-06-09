@@ -19,6 +19,7 @@ import com.example.myvideogamelist.databinding.FragmentMiListaBinding
 import com.example.myvideogamelist.models.clsListaConInfoDeVideojuego
 import com.example.myvideogamelist.utils.InterfazUsuarioUtils
 import com.example.myvideogamelist.utils.MaterialAlertDialogHelper
+import com.example.myvideogamelist.utils.SnackbarHelper
 import com.example.myvideogamelist.viewmodels.UsuarioViewModel
 import com.example.myvideogamelist.viewmodels.VideojuegoViewModel
 import com.example.myvideogamelist.views.adapters.MiListaAdapter
@@ -34,6 +35,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.lang.Exception
+import java.net.UnknownHostException
 
 class MiListaFragment : Fragment(), SearchView.OnQueryTextListener {
 
@@ -264,14 +266,40 @@ class MiListaFragment : Fragment(), SearchView.OnQueryTextListener {
                         activity?.runOnUiThread {
                             adapter.notifyDataSetChanged()
                         }
+                    }catch (e: UnknownHostException){
+                        videojuegoViewModel.listaDeVideojuegosSoloEnLista.clear()
+                        activity?.runOnUiThread {
+                            SnackbarHelper.errorNoInternet(this@MiListaFragment)
+                            adapter.notifyDataSetChanged()
+                        }
                     }
                 }else{
-                    videojuegoViewModel.cargarSoloVideojuegosEnListaDelUsuario(usuarioViewModel.usuarioSeleccionado.value!!.id)
+                    try{
+                        videojuegoViewModel.cargarSoloVideojuegosEnListaDelUsuario(usuarioViewModel.usuarioSeleccionado.value!!.id)
+                    }catch (e: retrofit2.HttpException){
+                        videojuegoViewModel.listaDeVideojuegosSoloEnLista.clear()
+                        Snackbar.make(requireView(), Mensajes.informacion.NO_VIDEOJUEGOS_EN_LISTA, Snackbar.LENGTH_SHORT).show()
+                        activity?.runOnUiThread {
+                            adapter.notifyDataSetChanged()
+                        }
+                    }catch (e: UnknownHostException){
+                        videojuegoViewModel.listaDeVideojuegosSoloEnLista.clear()
+                        activity?.runOnUiThread {
+                            SnackbarHelper.errorNoInternet(this@MiListaFragment)
+                            adapter.notifyDataSetChanged()
+                        }
+                    }
                 }
                 listaVideojuegosEnListaCompleta = videojuegoViewModel.listaDeVideojuegosSoloEnLista //le asignamos valor a la lista completa
                 if(videojuegoViewModel.listaEstados.isNullOrEmpty()){
                     //aunque lo comprobemos ya en el viewmodel, hacemos doble comprobacion por si acaso, y asi no hacemos la llamada para "nada"
-                    videojuegoViewModel.cargarListaEstados()
+                    try{
+                        videojuegoViewModel.cargarListaEstados()
+                    }catch (e: UnknownHostException){
+                        activity?.runOnUiThread {
+                            SnackbarHelper.errorNoInternet(this@MiListaFragment)
+                        }
+                    }
                 }
                 activity?.runOnUiThread{
                     actualizarListas()

@@ -19,6 +19,7 @@ import com.example.myvideogamelist.databinding.FragmentRankingBinding
 import com.example.myvideogamelist.models.clsListaConInfoDeVideojuego
 import com.example.myvideogamelist.utils.InterfazUsuarioUtils
 import com.example.myvideogamelist.utils.MaterialAlertDialogHelper
+import com.example.myvideogamelist.utils.SnackbarHelper
 import com.example.myvideogamelist.viewmodels.VideojuegoViewModel
 import com.example.myvideogamelist.views.adapters.ListaConInfoDeVideojuegoAdapter
 import com.example.myvideogamelist.views.mensajes.Mensajes
@@ -31,7 +32,9 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.io.IOException
 import java.lang.Exception
+import java.net.UnknownHostException
 
 class RankingFragment : Fragment(), SearchView.OnQueryTextListener {
 
@@ -169,24 +172,21 @@ class RankingFragment : Fragment(), SearchView.OnQueryTextListener {
     }
 
     private fun cargarRanking() {
-        try{
-            CoroutineScope(Dispatchers.IO).launch { //iniciamos la corrutina
+        CoroutineScope(Dispatchers.IO).launch { //iniciamos la corrutina
+            try{
                 videojuegoViewModel.cargarListaConInfoDeVideojuego(SharedData.idUsuario) //el onCreate le asigna el valor a listaConInfoDeVideojuegosModel de lo que devuelva la API
-                listaVideojuegosConInfoCompleta = videojuegoViewModel.listaConInfoDeVideojuegosModel //le asignamos valor a la lista completa
-                activity?.runOnUiThread{
-                    listaVideojuegosConInfoFiltrada.removeAll(listaVideojuegosConInfoFiltrada)
-                    listaVideojuegosConInfoFiltrada.addAll(listaVideojuegosConInfoCompleta) //añadimos lo de la lista completa a la lista que vamos a ofrecer
-                    binding.pBIndeterminada.visibility = View.GONE //quitamos el progress bar(el circulo que indica que esta cargando)
-                    adapter.notifyDataSetChanged() //avisamos el adapter que hemos modificado la lista
+            }catch (e: UnknownHostException){
+                activity?.runOnUiThread {
+                    SnackbarHelper.errorNoInternet(this@RankingFragment)
                 }
             }
-        }catch (e: Exception) {
-            Log.d("::INFO", e.toString())
-            Snackbar.make(
-                requireView(),
-                Mensajes.errores.CONEXION_INTERNET_FALLIDA,
-                Snackbar.LENGTH_SHORT
-            ).show()
+            listaVideojuegosConInfoCompleta = videojuegoViewModel.listaConInfoDeVideojuegosModel //le asignamos valor a la lista completa
+            activity?.runOnUiThread{
+                listaVideojuegosConInfoFiltrada.removeAll(listaVideojuegosConInfoFiltrada)
+                listaVideojuegosConInfoFiltrada.addAll(listaVideojuegosConInfoCompleta) //añadimos lo de la lista completa a la lista que vamos a ofrecer
+                binding.pBIndeterminada.visibility = View.GONE //quitamos el progress bar(el circulo que indica que esta cargando)
+                adapter.notifyDataSetChanged() //avisamos el adapter que hemos modificado la lista
+            }
         }
     }
 

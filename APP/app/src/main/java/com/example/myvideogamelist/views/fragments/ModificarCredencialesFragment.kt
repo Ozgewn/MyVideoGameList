@@ -26,7 +26,6 @@ class ModificarCredencialesFragment : Fragment() {
     private var _binding: FragmentModificarCredencialesBinding? = null
     private val binding get() = _binding!!
     private lateinit var auth: FirebaseAuth
-    private val thisFragment = this
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,15 +47,15 @@ class ModificarCredencialesFragment : Fragment() {
         with(binding){
             tVCambiarEmail.setOnClickListener {
                 navController.navigate(R.id.cambiarEmailFragment)
-                InterfazUsuarioUtils.hideKeyboard(binding.root, thisFragment)
+                InterfazUsuarioUtils.hideKeyboard(binding.root, this@ModificarCredencialesFragment)
             }
             tVCambiarNombreUsuario.setOnClickListener {
                 navController.navigate(R.id.cambiarNombreUsuarioFragment)
-                InterfazUsuarioUtils.hideKeyboard(binding.root, thisFragment)
+                InterfazUsuarioUtils.hideKeyboard(binding.root, this@ModificarCredencialesFragment)
             }
             tVCambiarPassword.setOnClickListener {
                 navController.navigate(R.id.cambiarPasswordFragment)
-                InterfazUsuarioUtils.hideKeyboard(binding.root, thisFragment)
+                InterfazUsuarioUtils.hideKeyboard(binding.root, this@ModificarCredencialesFragment)
             }
             tVBorrarCuenta.setOnClickListener {
                 MaterialAlertDialogBuilder(requireContext())

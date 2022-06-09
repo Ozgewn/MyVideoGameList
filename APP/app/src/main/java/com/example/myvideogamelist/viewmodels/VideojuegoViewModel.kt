@@ -1,5 +1,7 @@
 package com.example.myvideogamelist.viewmodels
 
+import android.util.Log
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.myvideogamelist.api.repositories.clsEstadoRepository
@@ -8,8 +10,13 @@ import com.example.myvideogamelist.api.repositories.clsListaVideojuegoRepository
 import com.example.myvideogamelist.models.clsEstado
 import com.example.myvideogamelist.models.clsListaConInfoDeVideojuego
 import com.example.myvideogamelist.models.clsListaVideojuego
+import com.example.myvideogamelist.utils.SnackbarHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import retrofit2.HttpException
+import retrofit2.Retrofit
+import java.io.IOException
+import java.net.UnknownHostException
 
 class VideojuegoViewModel: ViewModel() {
 

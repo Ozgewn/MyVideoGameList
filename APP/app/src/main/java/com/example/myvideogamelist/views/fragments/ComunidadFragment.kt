@@ -15,12 +15,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myvideogamelist.R
 import com.example.myvideogamelist.databinding.FragmentComunidadBinding
 import com.example.myvideogamelist.models.clsUsuario
+import com.example.myvideogamelist.utils.SnackbarHelper
 import com.example.myvideogamelist.viewmodels.UsuarioViewModel
 import com.example.myvideogamelist.views.adapters.ComunidadAdapter
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.net.UnknownHostException
 
 class ComunidadFragment : Fragment(), SearchView.OnQueryTextListener {
 
@@ -83,6 +85,10 @@ class ComunidadFragment : Fragment(), SearchView.OnQueryTextListener {
                 listaDeUsuariosCompleta = usuarioViewModel.listaUsuariosCompleto
             }catch (e: retrofit2.HttpException){
                 Snackbar.make(requireView(), "No se han encontrado usuarios", Snackbar.LENGTH_SHORT).show()
+            }catch (e: UnknownHostException){
+                activity?.runOnUiThread {
+                    SnackbarHelper.errorNoInternet(this@ComunidadFragment)
+                }
             }
             activity?.runOnUiThread {
                 listaDeUsuariosFiltrada.clear()

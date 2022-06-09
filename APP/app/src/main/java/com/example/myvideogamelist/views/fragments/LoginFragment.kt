@@ -2,6 +2,7 @@ package com.example.myvideogamelist.views.fragments
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -15,6 +16,7 @@ import com.example.myvideogamelist.R
 import com.example.myvideogamelist.api.repositories.clsUsuarioRepository
 import com.example.myvideogamelist.databinding.FragmentLoginBinding
 import com.example.myvideogamelist.utils.InterfazUsuarioUtils
+import com.example.myvideogamelist.utils.SnackbarHelper
 import com.example.myvideogamelist.views.sharedData.SharedData
 import com.example.myvideogamelist.views.validaciones.Validaciones
 import com.google.android.material.snackbar.Snackbar
@@ -24,6 +26,8 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.lang.Exception
+import java.net.UnknownHostException
 
 class LoginFragment : Fragment() {
 
@@ -130,7 +134,11 @@ class LoginFragment : Fragment() {
             SharedData.nombreUsuario.postValue("Anónimo")
         }else{
             CoroutineScope(Dispatchers.IO).launch {
-                SharedData.nombreUsuario.postValue(clsUsuarioRepository().getUsuario(SharedData.idUsuario).nombreUsuario)
+                try{
+                    SharedData.nombreUsuario.postValue(clsUsuarioRepository().getUsuario(SharedData.idUsuario).nombreUsuario)
+                }catch (e: UnknownHostException){
+                    SnackbarHelper.errorNoInternet(this@LoginFragment)
+                }
             }
         }
 

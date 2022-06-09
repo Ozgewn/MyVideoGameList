@@ -13,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.myvideogamelist.R
 import com.example.myvideogamelist.databinding.FragmentPerfilBinding
 import com.example.myvideogamelist.models.clsUsuario
+import com.example.myvideogamelist.utils.SnackbarHelper
 import com.example.myvideogamelist.viewmodels.UsuarioViewModel
 import com.example.myvideogamelist.views.mensajes.Mensajes
 import com.example.myvideogamelist.views.sharedData.SharedData
@@ -20,6 +21,7 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.net.UnknownHostException
 
 class PerfilFragment : Fragment() {
 
@@ -47,26 +49,28 @@ class PerfilFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         navController = findNavController()
         infoCompletaDeUsuario.observe(this, { usuario ->
-            with(binding){
-                tVNombreUsuario.text = usuario.nombreUsuario
-                tVVideojuegosDropeadosValue.text = usuario.videojuegosDropeados.toString()
-                tVVideojuegosPlaneadosValue.text = usuario.videojuegosPlaneados.toString()
-                tVVideojuegosJugandoValue.text = usuario.videojuegosJugando.toString()
-                tVVideojuegosJugadosValue.text = usuario.videojuegosJugados.toString()
-                tVVideojuegosEnPausaValue.text = usuario.videojuegosEnPausa.toString()
-                btnVerLista.setOnClickListener {
-                    if(usuario.esListaPrivada){
-                        Snackbar.make(requireView(), Mensajes.informacion.LA_LISTA_ES_PRIVADA, Snackbar.LENGTH_SHORT).show()
-                    }else{
-                        navController.navigate(R.id.miListaFragment)
+            if(usuario != null){
+                with(binding){
+                    tVNombreUsuario.text = usuario.nombreUsuario
+                    tVVideojuegosDropeadosValue.text = usuario.videojuegosDropeados.toString()
+                    tVVideojuegosPlaneadosValue.text = usuario.videojuegosPlaneados.toString()
+                    tVVideojuegosJugandoValue.text = usuario.videojuegosJugando.toString()
+                    tVVideojuegosJugadosValue.text = usuario.videojuegosJugados.toString()
+                    tVVideojuegosEnPausaValue.text = usuario.videojuegosEnPausa.toString()
+                    btnVerLista.setOnClickListener {
+                        if(usuario.esListaPrivada){
+                            Snackbar.make(requireView(), Mensajes.informacion.LA_LISTA_ES_PRIVADA, Snackbar.LENGTH_SHORT).show()
+                        }else{
+                            navController.navigate(R.id.miListaFragment)
+                        }
                     }
-                }
-                if(SharedData.idUsuario == usuario.id){
-                    btnEditarPerfil.visibility = View.VISIBLE
-                }
-                btnEditarPerfil.setOnClickListener {
-                    usuarioViewModel.usuarioSeleccionado.postValue(infoDeUsuario)
-                    navController.navigate(R.id.editarPerfilFragment)
+                    if(SharedData.idUsuario == usuario.id){
+                        btnEditarPerfil.visibility = View.VISIBLE
+                    }
+                    btnEditarPerfil.setOnClickListener {
+                        usuarioViewModel.usuarioSeleccionado.postValue(infoDeUsuario)
+                        navController.navigate(R.id.editarPerfilFragment)
+                    }
                 }
             }
         })
@@ -84,12 +88,18 @@ class PerfilFragment : Fragment() {
             del MutableLiveData del viewModel, si es null es que el usuario quiere ver su propio perfil, si no es
             null, es que quiere ver el perfil de otra persona
              */
-            if(usuarioViewModel.usuarioSeleccionado.value == null){
-                infoDeUsuario = usuarioViewModel.getUsuario(SharedData.idUsuario)
-            }else{
-                infoDeUsuario = usuarioViewModel.getUsuario(usuarioViewModel.usuarioSeleccionado.value!!.id)
+            try{
+                if(usuarioViewModel.usuarioSeleccionado.value == null){
+                    infoDeUsuario = usuarioViewModel.getUsuario(SharedData.idUsuario)
+                }else{
+                    infoDeUsuario = usuarioViewModel.getUsuario(usuarioViewModel.usuarioSeleccionado.value!!.id)
+                }
+                infoCompletaDeUsuario.postValue(infoDeUsuario!!)
+            }catch (e: UnknownHostException){
+                activity?.runOnUiThread {
+                    SnackbarHelper.errorNoInternet(this@PerfilFragment)
+                }
             }
-            infoCompletaDeUsuario.postValue(infoDeUsuario!!)
             activity?.runOnUiThread {
                 binding.pBIndeterminada.visibility = View.GONE
             }

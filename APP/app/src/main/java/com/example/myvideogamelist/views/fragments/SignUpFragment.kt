@@ -36,7 +36,6 @@ class SignUpFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var auth: FirebaseAuth
     private lateinit var navController: NavController
-    private val thisFragment = this //esto es para poder obtener el fragment en la corrutina, porque si hago this en la corrutina, me cogera el CorroutineScope
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -116,7 +115,7 @@ class SignUpFragment : Fragment() {
                     .addOnCompleteListener(activity!!) { task ->
                         if(task.isSuccessful){
                             insertarUsuarioEnBBDD(task, nombreUsuario)
-                            InterfazUsuarioUtils.hideKeyboard(binding.root, thisFragment)
+                            InterfazUsuarioUtils.hideKeyboard(binding.root, this@SignUpFragment)
                         }else{
                             controlarExcepcion(task)
                         }
