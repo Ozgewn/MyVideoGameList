@@ -47,13 +47,16 @@
             android:hint="Username"
             app:endIconMode="clear_text"
             app:layout_constraintTop_toBottomOf="@id/signUpEmail"
-            android:layout_marginHorizontal="5dp">
+            android:layout_marginHorizontal="5dp"
+            app:counterEnabled="true"
+            app:counterMaxLength="30">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="text"
-                app:errorEnabled="true" />
+                app:errorEnabled="true"
+                android:maxLength="30"/>
 
         </com.google.android.material.textfield.TextInputLayout>
 
