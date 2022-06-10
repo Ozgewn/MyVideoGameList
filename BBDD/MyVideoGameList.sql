@@ -234,9 +234,9 @@ INSERT INTO EstadosVideojuego(Id, NombreEstado) VALUES
 	(5, 'Jugando')
 
 INSERT INTO Videojuegos(Nombre, Desarrollador, Distribuidores, Plataformas, FechaDeLanzamiento, Generos, urlImagen) VALUES
-	('The Witcher 3', 'CD Projekt RED', 'Warner Bros, Namco Bandai Games', 'PC, XboxONE, Series X y Series Y, PS4, PS5, Nintendo Switch', '19-05-2015', 'ARPG', 'https://images.ctfassets.net/umhrp0op95v1/7rn68TUGN1lZuQRQz1zqSY/f3da676f0ce14f07653cfc5a97aad211/la-key-600.jpg'),
+	('The Witcher 3', 'CD Projekt RED', 'Warner Bros, Namco Bandai Games', 'PC, XboxONE, Series X y Series Y, PS4, PS5, Nintendo Switch', '19-05-2015', 'ARPG', 'https://cdn.akamai.steamstatic.com/steam/apps/292030/header.jpg?t=1646996408'),
 	('Lost Ark', 'SmileGate RPG', 'SmileGate, Amazon Games', 'PC', '11-02-2022', 'MMORPG', 'https://images.ctfassets.net/umhrp0op95v1/7rn68TUGN1lZuQRQz1zqSY/f3da676f0ce14f07653cfc5a97aad211/la-key-600.jpg'),
-	('Red Dead Redemption 2', 'Rockstar Games', 'Rockstar Games', 'PC, PS4, PS5, Google Stadia, Xbox One, Xbox Series X y S', '26-10-2018', 'MMORPG', 'https://s1.gaming-cdn.com/images/products/5679/orig/red-dead-redemption-2-pc-juego-rockstar-cover.jpg'),
+	('Red Dead Redemption 2', 'Rockstar Games', 'Rockstar Games', 'PC, PS4, PS5, Google Stadia, Xbox One, Xbox Series X y S', '26-10-2018', 'Accion-Aventura', 'https://s1.gaming-cdn.com/images/products/5679/orig/red-dead-redemption-2-pc-juego-rockstar-cover.jpg'),
 	('The Legend of Zelda: Breath of the Wild', 'Nintendo EPD', 'Nintendo', 'Wii U, Nintendo Switch', '03-03-2017', 'Accion-Aventura, Rol', 'https://media.vandal.net/m/43030/the-legend-of-zelda-breath-of-the-wild-201732131429_1.jpg'),
 	('Viva Piñata', 'Rare', 'Xbox Game Studios', 'Xbox 360, PC, Nintendo DS', '09-11-2006', 'Life Simulation', 'https://m.media-amazon.com/images/I/81Vt4mfirVL._AC_SY500_.jpg'),
 	('Pokemon Legends: Arceus', 'Game Freak', 'The Pokemon Company, Nintendo', 'Nintendo Switch', '28-01-2022', 'RPG', 'https://m.media-amazon.com/images/I/81vaoG0k9CS._AC_SY500_.jpg'),
