@@ -1,7 +1,6 @@
 package com.example.myvideogamelist.views.fragments
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -14,10 +13,12 @@ import com.example.myvideogamelist.databinding.FragmentAnyadirOEditarBinding
 import com.example.myvideogamelist.models.clsEstado
 import com.example.myvideogamelist.models.clsListaConInfoDeVideojuego
 import com.example.myvideogamelist.models.clsListaVideojuego
+import com.example.myvideogamelist.utils.SnackbarHelper
 import com.example.myvideogamelist.viewmodels.VideojuegoViewModel
 import com.example.myvideogamelist.views.adapters.ListaEstadosAdapter
 import com.example.myvideogamelist.views.mensajes.Mensajes
 import com.example.myvideogamelist.views.sharedData.SharedData
+import com.example.myvideogamelist.views.textos.Textos
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
@@ -26,6 +27,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.lang.Exception
+import java.net.UnknownHostException
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -61,7 +63,13 @@ class AnyadirOEditarFragment : Fragment()  {
     private fun cargarListaEstadosYAsignarValores() {
         try {
             CoroutineScope(Dispatchers.IO).launch {
-                videojuegoViewModel.cargarListaEstados()
+                try{
+                    videojuegoViewModel.cargarListaEstados()
+                }catch (e: UnknownHostException){
+                    activity?.runOnUiThread {
+                        SnackbarHelper.errorNoInternet(this@AnyadirOEditarFragment)
+                    }
+                }
                 asignarValores()
             }
         } catch (e: Exception) {
@@ -112,7 +120,7 @@ class AnyadirOEditarFragment : Fragment()  {
     private fun formatearFecha(fecha: String, eTFecha: EditText) {
         eTFecha.setText(
             LocalDate.parse(fecha)
-                .format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
+                .format(DateTimeFormatter.ofPattern(Textos.FORMATO_FECHA_CON_GUIONES))
         )
     }
 
@@ -153,7 +161,7 @@ class AnyadirOEditarFragment : Fragment()  {
         binding.eTFechaComienzo.setOnClickListener {
             val datePicker =
                 MaterialDatePicker.Builder.datePicker()
-                    .setTitleText("Seleccione fecha de comienzo")
+                    .setTitleText(Textos.SELECCIONE_FECHA_COMIENZO)
                     .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
                     .build()
             mostrarFechaSeleccionada(datePicker, binding.eTFechaComienzo)
@@ -166,7 +174,7 @@ class AnyadirOEditarFragment : Fragment()  {
         binding.eTFechaFinalizacion.setOnClickListener {
             val datePicker =
                 MaterialDatePicker.Builder.datePicker()
-                    .setTitleText("Seleccione fecha de finalizacion")
+                    .setTitleText(Textos.SELECCIONE_FECHA_FINALIZACION)
                     .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
                     .build()
             mostrarFechaSeleccionada(datePicker, binding.eTFechaFinalizacion)
@@ -212,13 +220,12 @@ class AnyadirOEditarFragment : Fragment()  {
         binding.btnBorrar.setOnClickListener {
             if(isBorrable) {
                 MaterialAlertDialogBuilder(requireContext())
-                    .setTitle("¿Desea borrar ${oVideojuegoSeleccionado.nombreVideojuego} de su lista?")
-                    .setMessage("¿Está seguro de que desea borrar ${oVideojuegoSeleccionado.nombreVideojuego} de su lista de videojuegos? Lo podrá volver a añadir" +
-                            "más tarde")
-                    .setNeutralButton("Cancelar") { dialog, which ->
+                    .setTitle(String.format(Textos.TITULO_CONFIRMAR_BORRAR_VIDEOJUEGO, oVideojuegoSeleccionado.nombreVideojuego))
+                    .setMessage(String.format(Textos.MENSAJE_CONFIRMAR_BORRAR_VIDEOJUEGO, oVideojuegoSeleccionado.nombreVideojuego))
+                    .setNeutralButton(Textos.BOTON_CANCELAR) { dialog, which ->
                         // nada
                     }
-                    .setPositiveButton("Borrar") { dialog, which ->
+                    .setPositiveButton(Textos.BOTON_BORRAR) { dialog, which ->
                         try{
                             borrarJuego()
                         }catch (e: Exception){
@@ -240,22 +247,29 @@ class AnyadirOEditarFragment : Fragment()  {
             dificultadPersonal = 0
             idUsuario = null
             estado = 0
+            fechaDeComienzo = null
+            fechaDeFinalizacion = null
         }
     }
 
     private fun borrarJuego() {
         CoroutineScope(Dispatchers.IO).launch {
-            val filasEliminadas = videojuegoViewModel.eliminarVideojuegoEnLista(SharedData.idUsuario, oVideojuegoAInsertarOEditar.idVideojuego)
-
-            if(filasEliminadas == 4){
-                isBorrable = false
-                isEditable = false
-                activity?.runOnUiThread {
-                    binding.atVEstados.text = null
+            try{
+                val filasEliminadas = videojuegoViewModel.eliminarVideojuegoEnLista(SharedData.idUsuario, oVideojuegoAInsertarOEditar.idVideojuego)
+                if(filasEliminadas == 4){
+                    isBorrable = false
+                    isEditable = false
+                    activity?.runOnUiThread {
+                        binding.atVEstados.text = null
+                    }
+                    Snackbar.make(requireView(), String.format(Mensajes.informacion.VIDEOJUEGO_BORRADO, oVideojuegoSeleccionado.nombreVideojuego), Snackbar.LENGTH_SHORT).show()
+                }else{
+                    Snackbar.make(requireView(), String.format(Mensajes.errores.VIDEOJUEGO_NO_BORRADO, oVideojuegoSeleccionado.nombreVideojuego), Snackbar.LENGTH_SHORT).show()
                 }
-                Snackbar.make(requireView(), "Se ha eliminado "+oVideojuegoSeleccionado.nombreVideojuego+" de la lista", Snackbar.LENGTH_SHORT).show()
-            }else{
-                Snackbar.make(requireView(), "Ha ocurrido un problema mientras se intentaba eliminar "+oVideojuegoSeleccionado.nombreVideojuego+" de la lista, intentelo de nuevo mas tarde", Snackbar.LENGTH_SHORT).show()
+            }catch (e: UnknownHostException){
+                activity?.runOnUiThread {
+                    SnackbarHelper.errorNoInternet(this@AnyadirOEditarFragment)
+                }
             }
         }
     }
@@ -266,23 +280,31 @@ class AnyadirOEditarFragment : Fragment()  {
             dificultadPersonal = oVideojuegoAInsertarOEditar.dificultad
             idUsuario = oVideojuegoAInsertarOEditar.idUsuario
             estado = oVideojuegoAInsertarOEditar.estado
+            fechaDeComienzo = oVideojuegoAInsertarOEditar.fechaDeComienzo
+            fechaDeFinalizacion = oVideojuegoAInsertarOEditar.fechaDeFinalizacion
         }
     }
 
     private fun insertarJuego() {
         var filasInsertadas = 0
         CoroutineScope(Dispatchers.IO).launch{
-            filasInsertadas = videojuegoViewModel.insertarVideojuegoEnLista(oVideojuegoAInsertarOEditar)
-            /*
-            Tengo que hacer esto aqui, porque si no, siempre llegara la variable de filasInsertadas a 0 (porque se hace antes el Snackbar que la asignacion del valor de la variable con la API)
-             */
-            if(filasInsertadas == 4){
-                Snackbar.make(requireView(), "Se ha añadido "+oVideojuegoSeleccionado.nombreVideojuego+" a la lista satisfactoriamente", Snackbar.LENGTH_SHORT).show()
-                //este editar = true para que si el usuario le da 2 veces al boton, la 1º vez inserte y la 2º inserte, evitando asi, un error
-                isEditable = true
-                isBorrable = true
-            }else{
-                Snackbar.make(requireView(), "Ha ocurrido un problema mientras se intentaba añadir "+oVideojuegoSeleccionado.nombreVideojuego+" a la lista, intentelo de nuevo mas tarde", Snackbar.LENGTH_SHORT).show()
+            try{
+                filasInsertadas = videojuegoViewModel.insertarVideojuegoEnLista(oVideojuegoAInsertarOEditar)
+                /*
+                Tengo que hacer esto aqui, porque si no, siempre llegara la variable de filasInsertadas a 0 (porque se hace antes el Snackbar que la asignacion del valor de la variable con la API)
+                 */
+                if(filasInsertadas == 4){
+                    Snackbar.make(requireView(), String.format(Mensajes.informacion.VIDEOJUEGO_ANYADIDO, oVideojuegoSeleccionado.nombreVideojuego), Snackbar.LENGTH_SHORT).show()
+                    //este editar = true para que si el usuario le da 2 veces al boton, la 1º vez inserte y la 2º inserte, evitando asi, un error
+                    isEditable = true
+                    isBorrable = true
+                }else{
+                    Snackbar.make(requireView(), String.format(Mensajes.errores.VIDEOJUEGO_NO_ANYADIDO, oVideojuegoSeleccionado.nombreVideojuego), Snackbar.LENGTH_SHORT).show()
+                }
+            }catch (e: UnknownHostException){
+                activity?.runOnUiThread {
+                    SnackbarHelper.errorNoInternet(this@AnyadirOEditarFragment)
+                }
             }
         }
     }
@@ -290,15 +312,20 @@ class AnyadirOEditarFragment : Fragment()  {
     private fun editarJuego() {
         var filasEditadas = 0
         CoroutineScope(Dispatchers.IO).launch{
-            Log.d("_INFO", oVideojuegoAInsertarOEditar.toString())
-            filasEditadas = videojuegoViewModel.editarVideojuegoEnLista(oVideojuegoAInsertarOEditar)
-            /*
-            Tengo que hacer esto aqui, porque si no, siempre llegara la variable de filasEditadas a 0 (porque se hace antes el Snackbar que la asignacion del valor de la variable con la API)
-             */
-            if(filasEditadas == 4){
-                Snackbar.make(requireView(), "Se ha modificado "+oVideojuegoSeleccionado.nombreVideojuego+" satisfactoriamente", Snackbar.LENGTH_SHORT).show()
-            }else{
-                Snackbar.make(requireView(), "Ha ocurrido un problema mientras se intentaba editar "+oVideojuegoSeleccionado.nombreVideojuego+", intentelo de nuevo mas tarde", Snackbar.LENGTH_SHORT).show()
+            try{
+                filasEditadas = videojuegoViewModel.editarVideojuegoEnLista(oVideojuegoAInsertarOEditar)
+                /*
+                Tengo que hacer esto aqui, porque si no, siempre llegara la variable de filasEditadas a 0 (porque se hace antes el Snackbar que la asignacion del valor de la variable con la API)
+                 */
+                if(filasEditadas == 4){
+                    Snackbar.make(requireView(), String.format(Mensajes.informacion.VIDEOJUEGO_EDITADO, oVideojuegoSeleccionado.nombreVideojuego), Snackbar.LENGTH_SHORT).show()
+                }else{
+                    Snackbar.make(requireView(), String.format(Mensajes.errores.VIDEOJUEGO_NO_EDITADO, oVideojuegoSeleccionado.nombreVideojuego), Snackbar.LENGTH_SHORT).show()
+                }
+            }catch (e: UnknownHostException){
+                activity?.runOnUiThread {
+                    SnackbarHelper.errorNoInternet(this@AnyadirOEditarFragment)
+                }
             }
         }
     }
@@ -314,14 +341,14 @@ class AnyadirOEditarFragment : Fragment()  {
         datePicker.show(childFragmentManager, "tag")
         datePicker.addOnPositiveButtonClickListener {
             val fecha = Instant.ofEpochMilli(datePicker.selection!!).atZone(ZoneId.systemDefault()).toLocalDate()
-            val fechaFormateada = fecha.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
+            val fechaFormateada = fecha.format(DateTimeFormatter.ofPattern(Textos.FORMATO_FECHA_CON_GUIONES))
             eTFecha.setText(fechaFormateada.toString())
             oVideojuegoAInsertarOEditar.fechaDeComienzo = fecha.toString()
         }
     }
 
     private fun formatearHorizontalPicker(hPicker: HorizontalPicker) {
-        hPicker.values = listOf("-", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10").toTypedArray()
+        hPicker.values = Textos.NOTAS_POSIBLES_ANYADIR_O_EDITAR
         hPicker.sideItems = 2
         hPicker.scrollBarSize = 10
     }
@@ -331,7 +358,7 @@ class AnyadirOEditarFragment : Fragment()  {
             binding.eTFechaComienzo.visibility = View.VISIBLE
             binding.btnFechaComienzoHoy.visibility = View.VISIBLE
         }
-        if((listaEstados.find { it.nombreEstado == "Jugado" }!!.id == oVideojuegoAInsertarOEditar.estado) || listaEstados.find { it.nombreEstado == "Dropeado" }!!.id == oVideojuegoAInsertarOEditar.estado){
+        if((listaEstados.find { it.nombreEstado == Textos.NOMBRE_ESTADO_JUGADO }!!.id == oVideojuegoAInsertarOEditar.estado) || listaEstados.find { it.nombreEstado == Textos.NOMBRE_ESTADO_DROPEADO }!!.id == oVideojuegoAInsertarOEditar.estado){
             binding.eTFechaFinalizacion.visibility = View.VISIBLE
             binding.btnFechaFinalizacionHoy.visibility = View.VISIBLE
         }else{

@@ -17,6 +17,7 @@ import com.example.myvideogamelist.api.repositories.clsUsuarioRepository
 import com.example.myvideogamelist.databinding.FragmentSignUpBinding
 import com.example.myvideogamelist.models.clsUsuario
 import com.example.myvideogamelist.utils.InterfazUsuarioUtils
+import com.example.myvideogamelist.utils.SnackbarHelper
 import com.example.myvideogamelist.views.validaciones.Validaciones
 import com.google.android.gms.tasks.Task
 import com.google.android.material.snackbar.Snackbar
@@ -29,6 +30,7 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.net.UnknownHostException
 
 class SignUpFragment : Fragment() {
 
@@ -62,6 +64,15 @@ class SignUpFragment : Fragment() {
         inicializarListenersCamposTexto()
     }
 
+    /**
+     * Cabecera: private fun inicializarListenersCamposTexto()
+     * Descripcion: Este metodo se encarga de inicializar todos los listeners que tienen los textos, los cuales son los encargados de
+     * verificar si un campo es correcto, o no, y si todos son correctos, permitira hacer click en el boton de registro
+     * Precondiciones: Ninguna
+     * Postcondiciones: Se permitira o no el login, si los campos son correctos, o incorrectos
+     * Entrada: N/A
+     * Salida: N/A
+     */
     private fun inicializarListenersCamposTexto(){
         var eTPasswordCorrecta = false
         var eTUsernameCorrecto = false
@@ -102,6 +113,16 @@ class SignUpFragment : Fragment() {
         }
     }
 
+    /**
+     * Cabecera: private fun register(email: String, password: String)
+     * Descripcion: Este metodo registra al usuario en Firebase, y si el registro en Firebase es exitoso, tambien lo inserta en la BBDD a traves de la API
+     * Precondiciones: Conexion a Internet
+     * Postcondiciones: Se registrara al usuario en Firebase y en la BBDD
+     * Entrada:
+     *      email: String -> el email del usuario a registrar
+     *      password: String -> la contraseña del usuario a registrar
+     * Salida: N/A
+     */
     private fun register(email: String, password: String) {
         val nombreUsuario = binding.signUpUsername.editText!!.text!!.toString()
         CoroutineScope(Dispatchers.IO).launch {
@@ -114,31 +135,62 @@ class SignUpFragment : Fragment() {
                 auth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener(activity!!) { task ->
                         if(task.isSuccessful){
-                            insertarUsuarioEnBBDD(task, nombreUsuario)
-                            InterfazUsuarioUtils.hideKeyboard(binding.root, this@SignUpFragment)
+                            try{
+                                insertarUsuarioEnBBDD(task, nombreUsuario)
+                            }catch (e: UnknownHostException){
+                                auth.currentUser!!.delete() //borramos la cuenta, porque no se ha podido insertar en la BBDD
+                                activity?.runOnUiThread {
+                                    SnackbarHelper.errorNoInternet(this@SignUpFragment)
+                                }
+                            }
                         }else{
                             controlarExcepcion(task)
                         }
                     }
             }
         }
-
+        InterfazUsuarioUtils.hideKeyboard(binding.root, this@SignUpFragment)
     }
 
+    /**
+     * Cabecera: private fun insertarUsuarioEnBBDD(task: Task<AuthResult>, nombreUsuario: String)
+     * Descripcion: Este metodo insertara al usuario en la BBDD, con el id recientemente creado por Firebase, y el nombre de usuario deseado
+     * Precondiciones: Conexion a Internet, que el registro de Firebase haya sido correcto
+     * Postcondiciones: Se insertara al usuario en la BBDD
+     * Entrada:
+     *      task: Task<AuthResult> -> este task contendra el id del usuario recientemente creado
+     *      nombreUsuario: String -> El nombre de usuario del usuario a crear
+     * Salida: N/A
+     */
     private fun insertarUsuarioEnBBDD(task: Task<AuthResult>, nombreUsuario: String){
         val oUsuario = clsUsuario(id = task.result.user!!.uid, nombreUsuario = nombreUsuario) //creamos el usuario para su posterior insercion en la BBDD
         CoroutineScope(Dispatchers.IO).launch {
-            val respuesta = clsUsuarioRepository().insertarUsuario(oUsuario) //insertamos al usuario en la BBDD
-            if(respuesta != 1){
-                Snackbar.make(requireView(), Mensajes.errores.ERROR_GENERICO, Snackbar.LENGTH_SHORT).show()
-            }
-            activity?.runOnUiThread {
-                //hacemos el navigate en el runOnUiThread, para que solo naveguemos cuando acabemos de insertar al usuario en la BBDD
-                navController.navigate(R.id.action_signUpFragment_to_loginFragment) //pasamos al login
+            try{
+                val respuesta = clsUsuarioRepository().insertarUsuario(oUsuario) //insertamos al usuario en la BBDD
+                if(respuesta != 1){
+                    Snackbar.make(requireView(), Mensajes.errores.ERROR_GENERICO, Snackbar.LENGTH_SHORT).show()
+                }
+                activity?.runOnUiThread {
+                    //hacemos el navigate en el runOnUiThread, para que solo naveguemos cuando acabemos de insertar al usuario en la BBDD
+                    navController.navigate(R.id.action_signUpFragment_to_loginFragment) //pasamos al login
+                }
+            }catch (e: UnknownHostException){
+                activity?.runOnUiThread {
+                    SnackbarHelper.errorNoInternet(this@SignUpFragment)
+                }
             }
         }
     }
 
+    /**
+     * Cabecera: private fun controlarExcepcion(task: Task<AuthResult>)
+     * Descripcion: Este metodo controla la excepciones que puede darse al registrarse
+     * Precondiciones: Conexion a Internet
+     * Postcondiciones: Se controlara la excepcion y se informara al usuario
+     * Entrada:
+     *      task: Task<AuthResult> -> este task contendra la excepcion que ha sido lanzada
+     * Salida: N/A
+     */
     private fun controlarExcepcion(task: Task<AuthResult>){
         /*
         A continuacion vamos a manejar la excepcion de cuando se crea un usuario que ya tiene cuenta, si ponemos un try-catch capturando esa excepcion, no saltara al catch,

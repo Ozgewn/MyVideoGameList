@@ -67,7 +67,6 @@ namespace MVGL_DAL.Gestora
             int resultado = 0;
             clsMyConnection conexionBase = new clsMyConnection();
             SqlCommand miComando = new SqlCommand();
-            //SqlConnection conexionEstablecida; si falla revisar esto
             miComando.Parameters.Add("@idUsuario", System.Data.SqlDbType.VarChar).Value = oUsuario.Id;
             miComando.Parameters.Add("@esListaPrivada", System.Data.SqlDbType.Bit).Value = oUsuario.EsListaPrivada;
             miComando.Parameters.Add("@nombreUsuario", System.Data.SqlDbType.VarChar).Value = oUsuario.NombreUsuario;
@@ -106,8 +105,7 @@ namespace MVGL_DAL.Gestora
             int resultado = 0;
             clsMyConnection conexionBase = new clsMyConnection();
             SqlCommand miComando = new SqlCommand();
-            //SqlConnection conexionEstablecida; si falla revisar esto
-            miComando.Parameters.Add("@idUsuario", System.Data.SqlDbType.Int).Value = id;
+            miComando.Parameters.Add("@idUsuario", System.Data.SqlDbType.VarChar).Value = id;
 
             miComando.CommandText = "DELETE FROM Usuarios WHERE Id = @idUsuario";
 

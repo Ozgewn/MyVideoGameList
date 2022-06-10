@@ -24,6 +24,7 @@ import com.example.myvideogamelist.viewmodels.VideojuegoViewModel
 import com.example.myvideogamelist.views.adapters.ListaConInfoDeVideojuegoAdapter
 import com.example.myvideogamelist.views.mensajes.Mensajes
 import com.example.myvideogamelist.views.sharedData.SharedData
+import com.example.myvideogamelist.views.textos.Textos
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
@@ -90,15 +91,15 @@ class RankingFragment : Fragment(), SearchView.OnQueryTextListener {
     }
 
     private fun elegirOpcionOrdenadoYOrdenar() {
-        val opcionesDeOrdenado = arrayOf("Estado", "Nombre A-Z", "Nombre Z-A", "Nota media", "Dificultad media")
+        val opcionesDeOrdenado = Textos.OPCIONES_ORDENADO_RANKING
         var opcionOrdenado = 0
 
         MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Elija modo de ordenado")
-            .setNeutralButton("cancelar") { dialog, which ->
+            .setTitle(Textos.ELIJA_OPCION_ORDENADO)
+            .setNeutralButton(Textos.BOTON_CANCELAR) { dialog, which ->
                 // nada
             }
-            .setPositiveButton("Ok") { dialog, which ->
+            .setPositiveButton(Textos.BOTON_OK) { dialog, which ->
                 ordenar(opcionOrdenado)
             }
             .setSingleChoiceItems(opcionesDeOrdenado, opcionOrdenado) { dialog, which ->

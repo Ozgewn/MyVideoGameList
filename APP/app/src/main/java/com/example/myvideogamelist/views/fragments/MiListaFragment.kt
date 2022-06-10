@@ -25,6 +25,7 @@ import com.example.myvideogamelist.viewmodels.VideojuegoViewModel
 import com.example.myvideogamelist.views.adapters.MiListaAdapter
 import com.example.myvideogamelist.views.mensajes.Mensajes
 import com.example.myvideogamelist.views.sharedData.SharedData
+import com.example.myvideogamelist.views.textos.Textos
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
@@ -98,15 +99,15 @@ class MiListaFragment : Fragment(), SearchView.OnQueryTextListener {
         //Ordenar
         binding.btnOrdenar.setOnClickListener {
 
-            val opcionesDeOrdenado = arrayOf("Estado", "Nombre A-Z", "Nombre Z-A", "Nota personal", "Dificultad personal")
+            val opcionesDeOrdenado = Textos.OPCIONES_ORDENADO_MI_LISTA
             var opcionOrdenado = 0
 
             MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Elija modo de ordenado")
-                .setNeutralButton("cancelar") { dialog, which ->
+                .setTitle(Textos.ELIJA_OPCION_ORDENADO)
+                .setNeutralButton(Textos.BOTON_CANCELAR) { dialog, which ->
                     // nada
                 }
-                .setPositiveButton("Ok") { dialog, which ->
+                .setPositiveButton(Textos.BOTON_OK) { dialog, which ->
                     ordenar(opcionOrdenado)
                 }
                 .setSingleChoiceItems(opcionesDeOrdenado, opcionOrdenado) { dialog, which ->
@@ -118,7 +119,7 @@ class MiListaFragment : Fragment(), SearchView.OnQueryTextListener {
 
     private fun mostrarVideojuegosSegunEstado(tab: TabLayout.Tab) {
         listaVideojuegosEnEstado.clear()
-        if(tab!!.text.toString()=="Todos"){
+        if(tab.text.toString()==Textos.TAB_TEXT_MI_LISTA_TODOS){
             listaVideojuegosEnEstado.addAll(listaVideojuegosEnListaCompleta)
 
         }else{

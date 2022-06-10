@@ -17,6 +17,7 @@ import com.example.myvideogamelist.models.clsListaConInfoDeVideojuego
 import com.example.myvideogamelist.models.clsVideojuego
 import com.example.myvideogamelist.utils.MaterialAlertDialogHelper
 import com.example.myvideogamelist.viewmodels.VideojuegoViewModel
+import com.example.myvideogamelist.views.textos.Textos
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -79,7 +80,7 @@ class DetallesFragment : Fragment() {
                 tVDesarrolladorVideojuegoValue.text = it.desarrollador
                 tVDistribuidorVideojuegoValue.text = it.distribuidores
                 val fechaLanzamiento = LocalDate.parse(it.fechaDeLanzamiento.substring(0, 10))
-                tVFechaLanzamientoVideojuegoValue.text = fechaLanzamiento.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                tVFechaLanzamientoVideojuegoValue.text = fechaLanzamiento.format(DateTimeFormatter.ofPattern(Textos.FORMATO_FECHA_CON_BARRAS))
                 Glide.with(requireContext()).load(infoCompletaVideojuego.value!!.urlImagen).into(binding.iVImagenVideojuego)
 
                 if(infoDeVideojuegoEnLista!!.idUsuario.isNullOrEmpty()){ //si el usuario NO tiene el juego en su lista...
@@ -93,22 +94,22 @@ class DetallesFragment : Fragment() {
                 if(infoCompletaVideojuego.value!!.notaMedia > 0){
                     tVNotaMediaVideojuegoValue.text = df.format(it.notaMedia)
                 }else{
-                    tVNotaMediaVideojuegoValue.text = "-"
+                    tVNotaMediaVideojuegoValue.text = Textos.INFORMACION_VACIA
                 }
                 if(infoCompletaVideojuego.value!!.dificultadMedia > 0){
                     tVDificultadMediaVideojuegoValue.text = df.format(it.dificultadMedia)
                 }else{
-                    tVDificultadMediaVideojuegoValue.text = "-"
+                    tVDificultadMediaVideojuegoValue.text = Textos.INFORMACION_VACIA
                 }
                 if(infoDeVideojuegoEnLista!!.notaPersonal > 0){
                     tVNotaPersonalVideojuegoValue.text = infoDeVideojuegoEnLista!!.notaPersonal.toString()
                 }else{
-                    tVNotaPersonalVideojuegoValue.text = "-"
+                    tVNotaPersonalVideojuegoValue.text = Textos.INFORMACION_VACIA
                 }
                 if(infoDeVideojuegoEnLista!!.dificultadPersonal > 0){
                     tVDificultadPersonalVideojuegoValue.text = infoDeVideojuegoEnLista!!.dificultadPersonal.toString()
                 }else{
-                    tVDificultadPersonalVideojuegoValue.text = "-"
+                    tVDificultadPersonalVideojuegoValue.text = Textos.INFORMACION_VACIA
                 }
             }
         })

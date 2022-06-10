@@ -102,10 +102,10 @@ Verbos DELETE:
 
 DELETE /api/Usuario/1234 -> Se borrará al usuario que coincida con el id "1234" (en este caso), y su lista de videojuegos.
 	Dependiendo del resultado obtenido de dicha llamada, recibiremos los siguientes códigos de estado:
-		-200 (OK) -> Se devolverá el código 200 siempre que sea un número mayor a 1, no podemos definir un número fijo ya que cuando un usuario borra su cuenta,
+		-200 (OK) -> Se devolverá el código 200 siempre que sea 1, o un número mayor a 1, no podemos definir un número fijo ya que cuando un usuario borra su cuenta,
 		también borra toda su lista de videojuegos, lo cual lleva a su vez, a que todos los juegos de su lista vean afectada su nota/dificultad media, esto significa
-		que no sabremos con exactitud cuantas filas se veran afectadas de esta eliminación de usuario, pero si podemos asegurar que será un número mayor a 1
-		-404 (Not Found) -> Se devolverá el código 404 siempre que el número de filas afectadas sea igual a 0 o a 1
+		que no sabremos con exactitud cuantas filas se veran afectadas de esta eliminación de usuario, pero si podemos asegurar que será un número mayor a 0
+		-404 (Not Found) -> Se devolverá el código 404 siempre que el número de filas afectadas sea igual a 0
 		-500 (InternalServerError) -> Se devolverá el código 500 cuando ha ocurrido un error en el codigo, por ejemplo, un error de BBDD
 
 Controlador de Estados:

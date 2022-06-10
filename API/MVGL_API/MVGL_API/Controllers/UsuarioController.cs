@@ -141,13 +141,13 @@ namespace MVGL_API.Controllers
             try
             {
                 result.Value = new clsGestoraUsuariosBL().borrarUsuarioBL(id);
-                if (!result.Value.ToString().Equals("1") || !result.Value.ToString().Equals("0"))
+                if (result.Value.ToString().Equals("0"))
                 {
-                    result.StatusCode = (int)HttpStatusCode.NotFound; //esta instruccion deberia modificar mas 1 fila
+                    result.StatusCode = (int)HttpStatusCode.NotFound; //esta instruccion deberia modificar 1 o mas filas
                 }
-                else //si modifica mas de 1 fila, es que parece que todo ha ido correcto, ya que no se sabra cuantas filas necesita modificar,
+                else //si modifica mas de 0 filas, es que parece que todo ha ido correcto, ya que no se sabra cuantas filas necesita modificar,
                 //ya que este metodo borrara al usuario de la BBDD lo que desencadenara un trigger, el cual, borrara a su vez todos los juegos que esten
-                //en la lista del usuario a borrar, por lo cual, no sabremos cuantas filas va a borrar, solo sabemos que modificaremos mas de 1
+                //en la lista del usuario a borrar, por lo cual, no sabremos cuantas filas va a borrar, solo sabemos que modificaremos mas de 0
                 {
                     result.StatusCode = (int)HttpStatusCode.OK;
                 }

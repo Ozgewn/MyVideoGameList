@@ -1,0 +1,3 @@
+Se necesita Android 8.0 mínimo
+Se necesita activar esta opción en la configuración del móvil: "Permitir aplicaciones de origenes desconocidos".
+Esto ocurre porque la aplicación no esta firmada

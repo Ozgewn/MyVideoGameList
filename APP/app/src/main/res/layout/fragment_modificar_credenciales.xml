@@ -73,8 +73,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="24dp"
-            android:drawableLeft="@drawable/ic_papelera"
-            app:drawableTint="@color/red"
             android:textColor="@color/red"
             android:gravity="center_vertical"
             android:text="Eliminar cuenta" />

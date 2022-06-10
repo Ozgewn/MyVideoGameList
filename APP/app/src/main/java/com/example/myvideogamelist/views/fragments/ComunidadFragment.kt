@@ -18,6 +18,7 @@ import com.example.myvideogamelist.models.clsUsuario
 import com.example.myvideogamelist.utils.SnackbarHelper
 import com.example.myvideogamelist.viewmodels.UsuarioViewModel
 import com.example.myvideogamelist.views.adapters.ComunidadAdapter
+import com.example.myvideogamelist.views.mensajes.Mensajes
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -84,7 +85,9 @@ class ComunidadFragment : Fragment(), SearchView.OnQueryTextListener {
                 usuarioViewModel.cargarUsuarios()
                 listaDeUsuariosCompleta = usuarioViewModel.listaUsuariosCompleto
             }catch (e: retrofit2.HttpException){
-                Snackbar.make(requireView(), "No se han encontrado usuarios", Snackbar.LENGTH_SHORT).show()
+                activity?.runOnUiThread {
+                    Snackbar.make(requireView(), Mensajes.errores.NO_USUARIOS_ENCONTRADOS, Snackbar.LENGTH_SHORT).show()
+                }
             }catch (e: UnknownHostException){
                 activity?.runOnUiThread {
                     SnackbarHelper.errorNoInternet(this@ComunidadFragment)

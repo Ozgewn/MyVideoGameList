@@ -18,6 +18,7 @@ import com.example.myvideogamelist.databinding.FragmentLoginBinding
 import com.example.myvideogamelist.utils.InterfazUsuarioUtils
 import com.example.myvideogamelist.utils.SnackbarHelper
 import com.example.myvideogamelist.views.sharedData.SharedData
+import com.example.myvideogamelist.views.textos.Textos
 import com.example.myvideogamelist.views.validaciones.Validaciones
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
@@ -85,7 +86,7 @@ class LoginFragment : Fragment() {
         binding.loginAnonymous.setOnClickListener {
             auth.signInAnonymously().addOnCompleteListener { task ->
                 if(task.isSuccessful){
-                    SharedData.idUsuario = "anonimo"
+                    SharedData.idUsuario = Textos.USUARIO_ANONIMO_ID_NOMBRE_USUARIO
                     navController.navigate(R.id.action_loginFragment_to_mainContentFragment)
                     actualizarNombreEnSharedData()
                 }else{
@@ -99,7 +100,7 @@ class LoginFragment : Fragment() {
         super.onStart()
         if(auth.currentUser != null){
             if(auth.currentUser!!.isAnonymous){
-                SharedData.idUsuario = "anonimo"
+                SharedData.idUsuario = Textos.USUARIO_ANONIMO_ID_NOMBRE_USUARIO
             }else{
                 SharedData.idUsuario = auth.currentUser!!.uid //Lo pongo en la SharedData para no estar pasando Firebase en todos los fragments
             }
@@ -114,7 +115,6 @@ class LoginFragment : Fragment() {
                 if (task.isSuccessful) {
                     SharedData.idUsuario = task.result.user!!.uid
                     actualizarNombreEnSharedData()
-                    InterfazUsuarioUtils.hideKeyboard(binding.root, this)
                     navController.navigate(R.id.action_loginFragment_to_mainContentFragment)
                 } else {
                     Snackbar.make(
@@ -124,6 +124,7 @@ class LoginFragment : Fragment() {
                     ).show()
                 }
             }
+        InterfazUsuarioUtils.hideKeyboard(binding.root, this)
     }
 
     /**
@@ -131,7 +132,7 @@ class LoginFragment : Fragment() {
      */
     private fun actualizarNombreEnSharedData(){
         if(auth.currentUser!!.isAnonymous){
-            SharedData.nombreUsuario.postValue("Anónimo")
+            SharedData.nombreUsuario.postValue(Textos.USUARIO_ANONIMO_ID_NOMBRE_USUARIO)
         }else{
             CoroutineScope(Dispatchers.IO).launch {
                 try{

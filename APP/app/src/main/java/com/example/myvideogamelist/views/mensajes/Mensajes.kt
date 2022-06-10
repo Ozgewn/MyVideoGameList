@@ -1,6 +1,9 @@
 package com.example.myvideogamelist.views.mensajes
 
 class Mensajes {
+    /**
+     * En esta clase defino los mensajes que se mostraran en los distintos Snackbars a lo largo de la aplicación
+     */
     object errores{
         const val LOGIN_FALLIDO = "Algo ha fallado al iniciar sesión, compruebe su conexión a Internet e intentelo de nuevo más tarde"
         const val SIGNUP_FALLIDO = "Algo ha fallado al realizar el registro, compruebe su conexión a Internet e intentelo de nuevo más tarde"
@@ -15,6 +18,10 @@ class Mensajes {
         const val ERROR_GENERICO = "Ha ocurrido un error desconocido"
         const val USERNAME_MASDE2CHARS = "El nombre de usuario debe tener más de 2 carácteres"
         const val ELIGE_UN_ESTADO = "Elija un estado, por favor"
+        const val NO_USUARIOS_ENCONTRADOS = "No se han encontrado usuarios"
+        const val VIDEOJUEGO_NO_BORRADO = "Ha ocurrido un problema mientras se intentaba eliminar %s de la lista, intentelo de nuevo mas tarde"
+        const val VIDEOJUEGO_NO_ANYADIDO = "Ha ocurrido un problema mientras se intentaba añadir %s a la lista, intentelo de nuevo mas tarde"
+        const val VIDEOJUEGO_NO_EDITADO = "Ha ocurrido un problema mientras se intentaba editar %s, intentelo de nuevo mas tarde"
     }
     object informacion{
         const val LA_LISTA_ES_PRIVADA = "La lista del usuario es privada"
@@ -24,5 +31,8 @@ class Mensajes {
         const val CAMBIOS_CORRECTOS_GENERICO = "Los cambios se han efectuado correctamente"
         const val NO_VIDEOJUEGOS_EN_LISTA = "Todavía no hay videojuegos en esta lista"
         const val ERRORES_SIN_CORREGIR = "Hay errores sin corregir en el formulario"
+        const val VIDEOJUEGO_BORRADO = "Se ha eliminado %s de la lista"
+        const val VIDEOJUEGO_ANYADIDO = "Se ha añadido %s a la lista satisfactoriamente"
+        const val VIDEOJUEGO_EDITADO = "Se ha modificado %s satisfactoriamente"
     }
 }

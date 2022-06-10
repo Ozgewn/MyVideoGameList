@@ -11,6 +11,7 @@ import com.example.myvideogamelist.R
 import com.example.myvideogamelist.databinding.FragmentCambiarPasswordBinding
 import com.example.myvideogamelist.utils.InterfazUsuarioUtils
 import com.example.myvideogamelist.views.mensajes.Mensajes
+import com.example.myvideogamelist.views.textos.Textos
 import com.example.myvideogamelist.views.validaciones.Validaciones
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
@@ -58,12 +59,12 @@ class CambiarPasswordFragment : Fragment() {
             if(binding.tINuevaPasswordRepetida.editText!!.text.toString() == password){
                 if(datosValidos){
                     MaterialAlertDialogBuilder(requireContext())
-                        .setTitle("Confirmar")
-                        .setMessage("¿Estás seguro de que deseas cambiar tu contraseña?")
-                        .setNeutralButton("Cancelar") { dialog, which ->
+                        .setTitle(Textos.TITULO_CONFIRMAR_CAMBIO_CONTRASENYA)
+                        .setMessage(Textos.MENSAJE_CONFIRMAR_CAMBIO_CONTRASENYA)
+                        .setNeutralButton(Textos.BOTON_CANCELAR) { dialog, which ->
                             //No hacemos nada
                         }
-                        .setPositiveButton("Confirmar"){ dialog, which ->
+                        .setPositiveButton(Textos.BOTON_CONFIRMAR){ dialog, which ->
                             auth.currentUser!!.updatePassword(password).addOnCompleteListener { task ->
                                 if(task.isSuccessful){
                                     Snackbar.make(requireView(), Mensajes.informacion.MODIFICACION_CREDENCIALES_EXITOSA, Snackbar.LENGTH_SHORT).show()

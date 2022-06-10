@@ -16,6 +16,7 @@ import com.example.myvideogamelist.models.clsUsuario
 import com.example.myvideogamelist.utils.InterfazUsuarioUtils
 import com.example.myvideogamelist.views.mensajes.Mensajes
 import com.example.myvideogamelist.views.sharedData.SharedData
+import com.example.myvideogamelist.views.textos.Textos
 import com.example.myvideogamelist.views.validaciones.Validaciones
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
@@ -58,12 +59,12 @@ class CambiarNombreUsuarioFragment : Fragment() {
             if(datosValidos){
                 val nombreUsuario = binding.tINuevoNombreUsuario.editText!!.text.toString()
                 MaterialAlertDialogBuilder(requireContext())
-                    .setTitle("Confirmar")
-                    .setMessage("¿Estás seguro de que deseas cambiar el nombre de usuario a $nombreUsuario?")
-                    .setNeutralButton("Cancelar") { dialog, which ->
+                    .setTitle(Textos.TITULO_CONFIRMAR_CAMBIO_NOMBRE_USUARIO)
+                    .setMessage(String.format(Textos.MENSAJE_CONFIRMAR_CAMBIO_NOMBRE_USUARIO, nombreUsuario))
+                    .setNeutralButton(Textos.BOTON_CANCELAR) { dialog, which ->
                         //No hacemos nada
                     }
-                    .setPositiveButton("Confirmar") { dialog, which ->
+                    .setPositiveButton(Textos.BOTON_CONFIRMAR) { dialog, which ->
                         modificacionCompletadaCorrectamente = editarNombreUsuario(nombreUsuario)
                     }
                     .show()
