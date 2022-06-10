@@ -90,6 +90,15 @@ class RankingFragment : Fragment(), SearchView.OnQueryTextListener {
         }
     }
 
+    /**
+     * Cabecera: private fun elegirOpcionOrdenadoYOrdenar()
+     * Descripcion: Este metodo se encarga de mostrar un cuadro de dialogo el cual nos pregunta cual opcion de ordenado deseamos, si elegimos una y le damos a
+     * "ok" se ordenara la lista segun la opcion seleccionada
+     * Precondiciones: La lista no puede estar vacia, por lo cual, se debe tener conexion a Internet
+     * Postcondiciones: Se ordenara la lista segun la opcion seleccionada, o no se ordenara si el usuario le da a "Cancelar"
+     * Entrada: N/A
+     * Salida: N/A
+     */
     private fun elegirOpcionOrdenadoYOrdenar() {
         val opcionesDeOrdenado = Textos.OPCIONES_ORDENADO_RANKING
         var opcionOrdenado = 0
@@ -108,6 +117,15 @@ class RankingFragment : Fragment(), SearchView.OnQueryTextListener {
             .show()
     }
 
+    /**
+     * Cabecera: private fun ordenar(opcionOrdenado: Int)
+     * Descripcion: Este metodo se encarga de ordenar la lista segun la opcion seleccioanda
+     * Precondiciones: La lista no puede estar vacia, por lo cual, se debe tener conexion a Internet
+     * Postcondiciones: Se ordenara la lista segun la opcion seleccionada
+     * Entrada:
+     *      opcionOrdenado: Int -> la opcion por la cual se desea ordenar
+     * Salida: N/A
+     */
     private fun ordenar(opcionOrdenado: Int){
         listaVideojuegosConInfoFiltrada.clear()
         when(opcionOrdenado){
@@ -151,18 +169,45 @@ class RankingFragment : Fragment(), SearchView.OnQueryTextListener {
         }
     }
 
+    /**
+     * Cabecera: private fun initRecyclerView()
+     * Descripcion: Este metodo se encarga de inicializar el RecyclerView
+     * Precondiciones: Ninguna
+     * Postcondiciones: Se inicializara el recycler
+     * Entrada: N/A
+     * Salida: N/A
+     */
     private fun initRecyclerView() {
         adapter = ListaConInfoDeVideojuegoAdapter(listaVideojuegosConInfoFiltrada, {onVideojuegoSeleccionado(it)}, {onVideojuegoAnyadidoOEditado(it)})
         val manager = GridLayoutManager(requireContext(), 2)
-        binding.rVListaConInfoDeVideojuego.layoutManager = manager //LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        binding.rVListaConInfoDeVideojuego.layoutManager = manager
         binding.rVListaConInfoDeVideojuego.adapter = adapter
     }
 
+    /**
+     * Cabecera: private fun onVideojuegoSeleccionado(oVideojuego: clsListaConInfoDeVideojuego)
+     * Descripcion: Este metodo se encarga de gestionar el click de un videojuego, dicho click enviara al usuario al Fragment de Detalles
+     * Precondiciones: La lista no puede estar vacia
+     * Postcondiciones: Se navegara al Fragment de Detalles, y este mostrara los detalles del videojuego seleccionado
+     * Entrada:
+     *      oVideojuego: clsListaConInfoDeVideojuego -> El videojuego el cual se ha seleccionado
+     * Salida: N/A
+     */
     private fun onVideojuegoSeleccionado(oVideojuego: clsListaConInfoDeVideojuego) {
         videojuegoViewModel.videojuegoSeleccionado.postValue(oVideojuego)
         navController.navigate(R.id.detallesFragment)
     }
 
+    /**
+     * Cabecera: private fun onVideojuegoAnyadidoOEditado(oVideojuego: clsListaConInfoDeVideojuego)
+     * Descripcion: Este metodo se encarga de gestionar el click de añadir o editar (el click al simbolo "+" para añadir, o el click al simbolo
+     * con un lapiz en un rectangulo para editar)
+     * Precondiciones: La lista no puede estar vacia
+     * Postcondiciones: Se navegara al Fragment de AnyadirOEditar, y este permitira añadir, editar, o eliminar, segun lo desee el usuario
+     * Entrada:
+     *      oVideojuego: clsListaConInfoDeVideojuego -> El videojuego a añadir/editar/eliminar
+     * Salida: N/A
+     */
     private fun onVideojuegoAnyadidoOEditado(oVideojuego: clsListaConInfoDeVideojuego){
         if(auth.currentUser!!.isAnonymous){
             MaterialAlertDialogHelper.errorPorSerAnonimo(this, auth)
@@ -172,6 +217,14 @@ class RankingFragment : Fragment(), SearchView.OnQueryTextListener {
         }
     }
 
+    /**
+     * Cabecera: private fun cargarRanking()
+     * Descripcion: Este metodo se encarga de cargar el ranking (la lista de videojuegos)
+     * Precondiciones: Conexion a Internet
+     * Postcondiciones: Se cargara la lista y se mostrara por pantalla
+     * Entrada: N/A
+     * Salida: N/A
+     */
     private fun cargarRanking() {
         CoroutineScope(Dispatchers.IO).launch { //iniciamos la corrutina
             try{
@@ -191,11 +244,17 @@ class RankingFragment : Fragment(), SearchView.OnQueryTextListener {
         }
     }
 
+    /**
+     * Metodo que se llama automaticamente cuando hacemos "Enter" en la barra de busqueda
+     */
     override fun onQueryTextSubmit(query: String?): Boolean {
         InterfazUsuarioUtils.hideKeyboard(binding.root, this)
         return true
     }
 
+    /**
+     * Metodo que se llama automaticamente cada vez que el usuario escriba una letra en la barra de busqueda
+     */
     override fun onQueryTextChange(newText: String?): Boolean {
         listaVideojuegosConInfoFiltrada.clear()
         if(!newText.isNullOrEmpty()){

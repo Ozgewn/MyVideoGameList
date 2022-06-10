@@ -109,6 +109,16 @@ class LoginFragment : Fragment() {
         }
     }
 
+    /**
+     * Cabecera: private fun login(email: String, password: String)
+     * Descripcion: Este metodo se encarga de iniciar sesion
+     * Precondiciones: Conexion a Internet, el usuario debe existir previamente
+     * Postcondiciones: Se iniciara sesion si todos los campos son correctos y el usuario existe
+     * Entrada:
+     *      email: String -> el email del usuario que desea iniciar sesion
+     *      password: String -> la contraseña del usuario que desea iniciar sesion
+     * Salida: N/A
+     */
     private fun login(email: String, password: String) {
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener(activity!!) { task ->
@@ -128,7 +138,12 @@ class LoginFragment : Fragment() {
     }
 
     /**
-     * Actualiza el nombre de usuario en la clase estatica SharedData haciendo uso del idUsuario
+     * Cabecera: private fun actualizarNombreEnSharedData()
+     * Descripcion: Este metodo se encarga de actualizar el nombre de usuario en la clase estatica SharedData haciendo uso del idUsuario
+     * Precondiciones: Se debe haber iniciado sesion
+     * Postcondiciones: Se avisara al observable de que el nombre de usuario en la clase SharedData ha cambiado
+     * Entrada: N/A
+     * Salida: N/A
      */
     private fun actualizarNombreEnSharedData(){
         if(auth.currentUser!!.isAnonymous){

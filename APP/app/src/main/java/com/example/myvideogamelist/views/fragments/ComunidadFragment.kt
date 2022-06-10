@@ -68,17 +68,42 @@ class ComunidadFragment : Fragment(), SearchView.OnQueryTextListener {
         }
     }
 
+    /**
+     * Cabecera: private fun onUsuarioSeleccionado(oUsuario: clsUsuario)
+     * Descripcion: Este metodo se encarga de gestionar el click de un usuario, dicho click enviara al usuario al Fragment de Perfil
+     * Precondiciones: La lista no puede estar vacia
+     * Postcondiciones: Se navegara al Fragment de Perfil, y este mostrara los detalles del usuario seleccionado
+     * Entrada:
+     *      oUsuario: clsUsuario -> El usuario seleccionado
+     * Salida: N/A
+     */
     private fun onUsuarioSeleccionado(oUsuario: clsUsuario){
         usuarioViewModel.usuarioSeleccionado.postValue(oUsuario)
         navController.navigate(R.id.perfilFragment)
     }
 
+    /**
+     * Cabecera: private fun initRecyclerView()
+     * Descripcion: Este metodo se encarga de inicializar el RecyclerView
+     * Precondiciones: Ninguna
+     * Postcondiciones: Se inicializara el recycler
+     * Entrada: N/A
+     * Salida: N/A
+     */
     private fun initRecyclerView(){
         adapter = ComunidadAdapter(listaDeUsuariosFiltrada) {onUsuarioSeleccionado(it)}
         binding.rVComunidad.layoutManager = LinearLayoutManager(requireContext())
         binding.rVComunidad.adapter = adapter
     }
 
+    /**
+     * Cabecera: private fun cargarUsuarios()
+     * Descripcion: Este metodo se encarga de cargar la lista de todos los usuarios
+     * Precondiciones: Se necesita conexion a Internet
+     * Postcondiciones: Se mostrara por pantalla una lista completa de todos los usuarios y su informacion
+     * Entrada: N/A
+     * Salida: N/A
+     */
     private fun cargarUsuarios(){
         CoroutineScope(Dispatchers.IO).launch {
             try{
@@ -102,10 +127,16 @@ class ComunidadFragment : Fragment(), SearchView.OnQueryTextListener {
         }
     }
 
+    /**
+     * Metodo que se llama automaticamente cuando hacemos "Enter" en la barra de busqueda
+     */
     override fun onQueryTextSubmit(query: String?): Boolean {
         return true
     }
 
+    /**
+     * Metodo que se llama automaticamente cada vez que el usuario escriba una letra en la barra de busqueda
+     */
     override fun onQueryTextChange(newText: String?): Boolean {
         if(!newText.isNullOrEmpty() && !usuarioViewModel.listaUsuariosCompleto.isNullOrEmpty()){
             listaDeUsuariosFiltrada.clear()

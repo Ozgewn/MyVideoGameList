@@ -91,6 +91,15 @@ class MainContentFragment : Fragment() {
         })
     }
 
+    /**
+     * Cabecera: private fun irAlPerfilSiNoEsAnonimo(navControllerMainContent: NavController)
+     * Descripcion: Este metodo se encarga de navegar al perfil del usuario solo si este no ha iniciado sesion como anonimo
+     * Precondiciones: El usuario debe haber iniciado sesion, se debe tener conexion a Internet
+     * Postcondiciones: Se navegara al perfil del usuario si este no es anonimo
+     * Entrada:
+     *      navControllerMainContent: NavController -> El navController que controla el navHost que hay dentro de este Fragment
+     * Salida: N/A
+     */
     private fun irAlPerfilSiNoEsAnonimo(navControllerMainContent: NavController) {
         if(auth.currentUser!!.isAnonymous){
             MaterialAlertDialogHelper.errorPorSerAnonimo(this, auth)
@@ -101,6 +110,19 @@ class MainContentFragment : Fragment() {
         binding.drawerLayout.close()
     }
 
+    /**
+     * Cabecera: private fun gestionarClicksMenuHamburguesa(menuItem: MenuItem, navHostFragment: NavHostFragment, navControllerMainContent: NavController)
+     * Descripcion: Este metodo se encarga de gestionar el click a las opciones del menu hamburguesa (en este caso solo a 1 opcion, la cual es ajustes)
+     * Precondiciones: N/A
+     * Postcondiciones: Se navegara al Fragment de Detalles
+     * Entrada:
+     *      menuItem: MenuItem -> el item del menu, en este caso lo uso para que no aparezca marcado
+     *      navHostFragment: NavHostFragment -> el navHost, en este caso lo uso para que si el usuario le de varias veces a "Ajustes", solo se navegue si el
+     *      usuario se encuentra en un Fragment distinto a este ultimo
+     *      navControllerMainContent: NavController -> el navController que controla el navHost que hay dentro de este Fragment, en este caso lo uso
+     *      para navegar al Fragment de Ajustes
+     * Salida:
+     */
     private fun gestionarClicksMenuHamburguesa(menuItem: MenuItem, navHostFragment: NavHostFragment, navControllerMainContent: NavController) {
         //Vamos a manejar los items seleccionados
         binding.drawerLayout.close()
@@ -111,6 +133,20 @@ class MainContentFragment : Fragment() {
         }
     }
 
+    /**
+     * Cabecera: private fun evitarEntrarMismoFragment(navHostFragment: NavHostFragment, navControllerMainContent: NavController, menuItem: MenuItem)
+     * Descripcion: Este metodo se encarga de navegar a un fragment solo si el fragment al que se desea navegar es distinto al fragment en el que el usuario se encuentra
+     * en el momento del click
+     * Precondiciones: Se debe estar en un fragment distinto al que se desea navegar
+     * Postcondiciones: Se navegara al Fragment en caso de que sea distinto al Fragment en el que estamos
+     * Entrada:
+     *      navHostFragment: NavHostFragment -> el navHost, en este caso lo uso para averiguar en que fragment esta el usuario
+     *      navControllerMainContent: NavController -> el navController que controla el navHost que hay dentro de este Fragment, en este caso lo uso para
+     *      navegar a los distintos fragments
+     *      menuItem: MenuItem -> el item del menu, en este caso lo uso para averiguar que opcion se ha seleccionado, y navegar a dicha opcion si es distinta a
+     *      la opcion en la que estamos
+     * Salida:
+     */
     private fun evitarEntrarMismoFragment(navHostFragment: NavHostFragment, navControllerMainContent: NavController, menuItem: MenuItem) {
         /*
         Para entender este if, hay que entender el problema:
@@ -137,6 +173,18 @@ class MainContentFragment : Fragment() {
         }
     }
 
+    /**
+     * Cabecera: private fun gestionarClickBarraNavegacion(item: MenuItem, navControllerMainContent: NavController): Boolean
+     * Descripcion: Este metodo se encarga de navegar a la opcion seleccionada, borrando el historial de las demas opciones seleccionadas anteriormente
+     * Precondiciones: N/A
+     * Postcondiciones: Se navegara al Fragment deseado
+     * Entrada:
+     *      item: MenuItem -> El item del menu, en este caso lo uso para averiguar que opcion se ha seleccionado
+     *      navControllerMainContent: NavController -> el navController que controla el navHost que hay dentro de este Fragment, en este caso lo
+     *      uso para navegar a los distintos fragments
+     * Salida:
+     *      gestionado: Boolean -> true si se ha gestionado la seleccion, false si no
+     */
     private fun gestionarClickBarraNavegacion(item: MenuItem, navControllerMainContent: NavController): Boolean {
         var gestionado = false
         when(item.itemId) {

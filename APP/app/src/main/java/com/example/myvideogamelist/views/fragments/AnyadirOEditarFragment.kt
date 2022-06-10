@@ -164,7 +164,10 @@ class AnyadirOEditarFragment : Fragment()  {
                     .setTitleText(Textos.SELECCIONE_FECHA_COMIENZO)
                     .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
                     .build()
-            mostrarFechaSeleccionada(datePicker, binding.eTFechaComienzo)
+            datePicker.show(childFragmentManager, "tag")
+            datePicker.addOnPositiveButtonClickListener {
+                oVideojuegoAInsertarOEditar.fechaDeComienzo = mostrarFechaSeleccionada(datePicker, binding.eTFechaComienzo).toString()
+            }
             datePicker.addOnNegativeButtonClickListener {
                 oVideojuegoAInsertarOEditar.fechaDeComienzo = null
                 binding.eTFechaComienzo.setText("")
@@ -177,7 +180,10 @@ class AnyadirOEditarFragment : Fragment()  {
                     .setTitleText(Textos.SELECCIONE_FECHA_FINALIZACION)
                     .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
                     .build()
-            mostrarFechaSeleccionada(datePicker, binding.eTFechaFinalizacion)
+            datePicker.show(childFragmentManager, "tag")
+            datePicker.addOnPositiveButtonClickListener {
+                oVideojuegoAInsertarOEditar.fechaDeFinalizacion = mostrarFechaSeleccionada(datePicker, binding.eTFechaFinalizacion).toString()
+            }
             datePicker.addOnNegativeButtonClickListener {
                 oVideojuegoAInsertarOEditar.fechaDeFinalizacion = null
                 binding.eTFechaFinalizacion.setText("")
@@ -241,6 +247,15 @@ class AnyadirOEditarFragment : Fragment()  {
 
     }
 
+    /**
+     * Cabecera: private fun borrarInfoJuegoEnViewModel()
+     * Descripcion: Este metodo se encarga de borrar la informacion del videojuego en el viewModel, esto lo hacemos porque si el usuario borra un videojuego de su lista,
+     * y le da a la flecha hacia atras, y no actualiza la lista, el videojuego seguira apareciendo en su lista, de esta manera, evitamos eso
+     * Precondiciones: El videojuego debe estar en la lista previamente
+     * Postcondiciones: Se borrara la informacion asociada al usuario de dicho videojuego
+     * Entrada: N/A
+     * Salida: N/A
+     */
     private fun borrarInfoJuegoEnViewModel() {
         with(videojuegoViewModel.videojuegoSeleccionado.value!!){
             notaPersonal = 0
@@ -252,6 +267,14 @@ class AnyadirOEditarFragment : Fragment()  {
         }
     }
 
+    /**
+     * Cabecera: private fun borrarJuego()
+     * Descripcion: Este metodo se encarga de borrar el videojuego de la lista del usuario
+     * Precondiciones: El videojuego debe estar previamente en la lista del usuario, se necesita conexion a Internet
+     * Postcondiciones: Se borrara el videojuego de la lista del usuario
+     * Entrada: N/A
+     * Salida: N/A
+     */
     private fun borrarJuego() {
         CoroutineScope(Dispatchers.IO).launch {
             try{
@@ -274,6 +297,15 @@ class AnyadirOEditarFragment : Fragment()  {
         }
     }
 
+    /**
+     * Cabecera: private fun actualizarInfoJuegoEnViewModel()
+     * Descripcion: Este metodo se encarga de actualizar la informacion del videojuego en el viewModel, esto lo hacemos porque si el usuario edita un videojuego de su lista,
+     * y le da a la flecha hacia atras, y no actualiza la lista, el videojuego seguira apareciendo con informacion no actualizada
+     * Precondiciones: Se necesita editar/añadir un videojuego
+     * Postcondiciones: Se actualizara la informacion asociada al usuario de dicho videojuego
+     * Entrada: N/A
+     * Salida: N/A
+     */
     private fun actualizarInfoJuegoEnViewModel() {
         with(videojuegoViewModel.videojuegoSeleccionado.value!!){
             notaPersonal = oVideojuegoAInsertarOEditar.nota
@@ -285,6 +317,14 @@ class AnyadirOEditarFragment : Fragment()  {
         }
     }
 
+    /**
+     * Cabecera: private fun insertarJuego()
+     * Descripcion: Este metodo se encarga de insertar un videojuego en la lista del usuario
+     * Precondiciones: Se necesita conexion a Internet
+     * Postcondiciones: Se insertara el videojuego en la lista del usuario
+     * Entrada: N/A
+     * Salida: N/A
+     */
     private fun insertarJuego() {
         var filasInsertadas = 0
         CoroutineScope(Dispatchers.IO).launch{
@@ -309,6 +349,14 @@ class AnyadirOEditarFragment : Fragment()  {
         }
     }
 
+    /**
+     * Cabecera: private fun editarJuego()
+     * Descripcion: Se editara el videojuego de la lista del usuario
+     * Precondiciones: Se necesita conexion a Internet, el videojuego debe estar previamente en la lista del usuario
+     * Postcondiciones: Se editara el videojuego de la lista del usuario
+     * Entrada: N/A
+     * Salida: N/A
+     */
     private fun editarJuego() {
         var filasEditadas = 0
         CoroutineScope(Dispatchers.IO).launch{
@@ -330,6 +378,15 @@ class AnyadirOEditarFragment : Fragment()  {
         }
     }
 
+    /**
+     * Cabecera: private fun asignarNotaYDificultadPrevias()
+     * Descripcion: Este metodo se encarga de actualizar la informacion mostrada para que coincida con la información de dicho videojuego
+     * en la lista del usuario, por ejemplo: si el usuario le tiene un 7 de nota, que al entrar en este Fragment, aparezca la nota "7" ya seleccionada
+     * Precondiciones: Se necesita conexion a Internet
+     * Postcondiciones: Se actualizara la vista con informacion que coincida con la informacion del usuario asociada a dicho videojuego
+     * Entrada: N/A
+     * Salida: N/A
+     */
     private fun asignarNotaYDificultadPrevias() {
         oVideojuegoAInsertarOEditar.nota = oVideojuegoSeleccionado.notaPersonal
         oVideojuegoAInsertarOEditar.dificultad = oVideojuegoSeleccionado.dificultadPersonal
@@ -337,23 +394,50 @@ class AnyadirOEditarFragment : Fragment()  {
         binding.hPickerDificultad.selectedItem = oVideojuegoAInsertarOEditar.dificultad
     }
 
-    private fun mostrarFechaSeleccionada(datePicker: MaterialDatePicker<Long>, eTFecha: EditText) {
-        datePicker.show(childFragmentManager, "tag")
-        datePicker.addOnPositiveButtonClickListener {
-            val fecha = Instant.ofEpochMilli(datePicker.selection!!).atZone(ZoneId.systemDefault()).toLocalDate()
-            val fechaFormateada = fecha.format(DateTimeFormatter.ofPattern(Textos.FORMATO_FECHA_CON_GUIONES))
-            eTFecha.setText(fechaFormateada.toString())
-            oVideojuegoAInsertarOEditar.fechaDeComienzo = fecha.toString()
-        }
+    /**
+     * Cabecera: private fun mostrarFechaSeleccionada(datePicker: MaterialDatePicker<Long>, eTFecha: EditText): LocalDate
+     * Descripcion: Este metodo se encarga de transformar la fecha seleccionada por el datePicker en un LocalDate, y en escribir en el EditText
+     * introducido por parametros la fecha formateada
+     * Precondiciones: Se debe haber elegido una fecha valida
+     * Postcondiciones: Se escribira en el EditText pasaado por parametros la fecha formateada, y se devolvera un LocalDate con la fecha seleccioanda
+     * Entrada:
+     *      datePicker: MaterialDatePicker<Long> -> el datePicker, en este caso lo uso para averiguar cual ha sido la fecha seleccionada por el usuario
+     *      eTFecha: EditText -> El editText en el que se desea escribir la fecha formateada
+     * Salida:
+     *      fecha: LocalDate -> la fecha transformada en un LocalDate
+     */
+    private fun mostrarFechaSeleccionada(datePicker: MaterialDatePicker<Long>, eTFecha: EditText): LocalDate {
+        val fecha = Instant.ofEpochMilli(datePicker.selection!!).atZone(ZoneId.systemDefault()).toLocalDate()
+        val fechaFormateada = fecha.format(DateTimeFormatter.ofPattern(Textos.FORMATO_FECHA_CON_GUIONES))
+        eTFecha.setText(fechaFormateada.toString())
+        return fecha
     }
 
+    /**
+     * Cabecera: private fun formatearHorizontalPicker(hPicker: HorizontalPicker)
+     * Descripcion: Este metodo se encarga de darle formato al horizontalPicker introducido por parametros, se debe hacer por codigo debido a que la libreria
+     * no permite hacer estos ajustes por el layout
+     * Precondiciones: El horizontal picker debe existir
+     * Postcondiciones: Se le dara formato al horizontal picker
+     * Entrada:
+     *      hPicker: HorizontalPicker -> el horizontalPicker a formatear
+     * Salida: N/A
+     */
     private fun formatearHorizontalPicker(hPicker: HorizontalPicker) {
         hPicker.values = Textos.NOTAS_POSIBLES_ANYADIR_O_EDITAR
         hPicker.sideItems = 2
         hPicker.scrollBarSize = 10
     }
 
-    fun mostrarUOcultarFechasSegunIdEstado(){
+    /**
+     * Cabecera: private fun mostrarUOcultarFechasSegunIdEstado()
+     * Descripcion: Este metodo se encarga de mostrar u ocultar los campos de texto de las fechas dependiendo del estado seleccionado
+     * Precondiciones: Debe haber algun estado seleccionado
+     * Postcondiciones: Se mostraran u ocultaran las fechas dependiendo del estado seleccionado
+     * Entrada: N/A
+     * Salida: N/A
+     */
+    private fun mostrarUOcultarFechasSegunIdEstado(){
         if(oVideojuegoAInsertarOEditar.estado > 0){
             binding.eTFechaComienzo.visibility = View.VISIBLE
             binding.btnFechaComienzoHoy.visibility = View.VISIBLE
@@ -377,6 +461,14 @@ class AnyadirOEditarFragment : Fragment()  {
         }
     }
 
+    /**
+     * Cabecera: private fun initRecyclerView()
+     * Descripcion: Este metodo se encarga de inicializar el RecyclerView
+     * Precondiciones: Ninguna
+     * Postcondiciones: Se inicializara el recycler
+     * Entrada: N/A
+     * Salida: N/A
+     */
     private fun initRecyclerView() {
         adapter = ListaEstadosAdapter(requireContext(), R.layout.list_item_estado, listaEstados)
         binding.atVEstados.setAdapter(adapter)

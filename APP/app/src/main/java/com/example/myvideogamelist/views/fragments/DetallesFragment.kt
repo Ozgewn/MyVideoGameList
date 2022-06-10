@@ -69,6 +69,14 @@ class DetallesFragment : Fragment() {
         }
     }
 
+    /**
+     * Cabecera: private fun asignarValoresVideojuego()
+     * Descripcion: Este metodo se encarga de encarga de asignar valores a los datos que dependen del videojuego en cuestion
+     * Precondiciones: Se debe haber seleccionado un videojuego, se necesita conexion a Internet
+     * Postcondiciones: Se mostrara por pantalla la informacion del videojuego en cuestion
+     * Entrada: N/A
+     * Salida: N/A
+     */
     private fun asignarValoresVideojuego() {
         val df = DecimalFormat("#.##")
         infoCompletaVideojuego.observe(this, Observer {
@@ -115,6 +123,14 @@ class DetallesFragment : Fragment() {
         })
     }
 
+    /**
+     * Cabecera: private fun cargarInfoVideojuego()
+     * Descripcion: Este metodo se encarga de cargar la informacion del videojuego, trayendo dicha informacion de la BBDD a traves de la API
+     * Precondiciones: Se necesita conexion a Internet
+     * Postcondiciones: Se obtendra la informacion del videojuego
+     * Entrada: N/A
+     * Salida: N/A
+     */
     private fun cargarInfoVideojuego() {
         infoDeVideojuegoEnLista = videojuegoViewModel.videojuegoSeleccionado.value!!
         CoroutineScope(Dispatchers.IO).launch {

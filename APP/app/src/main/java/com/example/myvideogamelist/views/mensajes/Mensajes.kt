@@ -34,5 +34,6 @@ class Mensajes {
         const val VIDEOJUEGO_BORRADO = "Se ha eliminado %s de la lista"
         const val VIDEOJUEGO_ANYADIDO = "Se ha añadido %s a la lista satisfactoriamente"
         const val VIDEOJUEGO_EDITADO = "Se ha modificado %s satisfactoriamente"
+        const val NOMBRE_USUARIO_CAMBIADO_CORRECTAMENTE = "Se ha modificado el nombre de usuario satisfactoriamente"
     }
 }

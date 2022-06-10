@@ -10,6 +10,17 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 
 object MaterialAlertDialogHelper {
+    /**
+     * Cabecera: fun errorPorSerAnonimo(fragment: Fragment, auth: FirebaseAuth)
+     * Descripcion: Este metodo se encarga de mostrar un AlertDialog avisando al usuario de que es anonimo, y que necesita iniciar sesion para acceder
+     * a la funcionalidad en cuestion
+     * Precondiciones: Se debe haber iniciado sesion como anonimo
+     * Postcondiciones: Se mostrara un AlertDialog avisando del error, e informando la solucion
+     * Entrada:
+     *      fragment: Fragment -> El fragment desde el que se envia el AlertDialog, en este caso lo uso para encontrar el navController y navegar gracias a este
+     *      auth: FirebaseAuth -> El objeto FirebaseAuth, en este caso lo uso para averiguar si el usuario es anonimo o no
+     * Salida:
+     */
     fun errorPorSerAnonimo(fragment: Fragment, auth: FirebaseAuth){
         var navController = fragment.findNavController()
         MaterialAlertDialogBuilder(fragment.requireContext())

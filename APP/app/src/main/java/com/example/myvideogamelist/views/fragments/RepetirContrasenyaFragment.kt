@@ -52,6 +52,7 @@ class RepetirContrasenyaFragment : Fragment() {
                 binding.tIContrasenyaRepetida.error = Mensajes.errores.PASSWORD_MASDE5CHARS
             }
         }
+        //verificamos si la contraseña introducida es correcta...
         binding.btnConfirmar.setOnClickListener {
             InterfazUsuarioUtils.hideKeyboard(binding.root, this)
             if(datosValidos){

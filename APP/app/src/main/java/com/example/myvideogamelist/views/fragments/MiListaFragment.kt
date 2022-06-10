@@ -117,6 +117,15 @@ class MiListaFragment : Fragment(), SearchView.OnQueryTextListener {
         }
     }
 
+    /**
+     * Cabecera: private fun mostrarVideojuegosSegunEstado(tab: TabLayout.Tab)
+     * Descripcion: Este metodo se encarga de filtrar la lista que se mostrara dependiendo de a que opcion el usuario le de en el TabLayout que se
+     * observa en la parte superior de la pantalla, filtrando por estados
+     * Precondiciones: Conexion a Internet, la lista no puede estar vacia
+     * Postcondiciones: Se filtrara la lista
+     * Entrada: N/A
+     * Salida: N/A
+     */
     private fun mostrarVideojuegosSegunEstado(tab: TabLayout.Tab) {
         listaVideojuegosEnEstado.clear()
         if(tab.text.toString()==Textos.TAB_TEXT_MI_LISTA_TODOS){
@@ -132,7 +141,16 @@ class MiListaFragment : Fragment(), SearchView.OnQueryTextListener {
         adapter.notifyDataSetChanged()
     }
 
-    fun ordenar(opcionOrdenado: Int){
+    /**
+     * Cabecera: private fun ordenar(opcionOrdenado: Int)
+     * Descripcion: Este metodo se encarga de ordenar la lista segun la opcion seleccioanda
+     * Precondiciones: La lista no puede estar vacia, por lo cual, se debe tener conexion a Internet
+     * Postcondiciones: Se ordenara la lista segun la opcion seleccionada
+     * Entrada:
+     *      opcionOrdenado: Int -> la opcion por la cual se desea ordenar
+     * Salida: N/A
+     */
+    private fun ordenar(opcionOrdenado: Int){
         listaVideojuegosEnListaFiltrado.clear()
         when(opcionOrdenado){
             0 -> { //Estado
@@ -175,12 +193,30 @@ class MiListaFragment : Fragment(), SearchView.OnQueryTextListener {
         }
     }
 
+    /**
+     * Cabecera: private fun initRecyclerView()
+     * Descripcion: Este metodo se encarga de inicializar el RecyclerView
+     * Precondiciones: Ninguna
+     * Postcondiciones: Se inicializara el recycler
+     * Entrada: N/A
+     * Salida: N/A
+     */
     private fun initRecyclerView() {
         adapter = MiListaAdapter(listaVideojuegosEnListaFiltrado, {onVideojuegoSeleccionado(it)}, {getNombreEstado(it)}, {getEstadoDelUsuarioObservador(it)}, {onVideojuegoAnyadidoOEditado(it)})
         binding.rVSoloVideojuegosEnLista.layoutManager = LinearLayoutManager(requireContext())
         binding.rVSoloVideojuegosEnLista.adapter = adapter
     }
 
+    /**
+     * Cabecera: private fun onVideojuegoSeleccionado(oVideojuego: clsListaConInfoDeVideojuego)
+     * Descripcion: Este metodo se encarga de gestionar el click de un videojuego, dicho click enviara al usuario al Fragment de Detalles, pero con la informacion
+     * que este asociada a nosotros, y no al usuario al que le estamos viendo la lista
+     * Precondiciones: La lista no puede estar vacia
+     * Postcondiciones: Se navegara al Fragment de Detalles, y este mostrara los detalles del videojuego seleccionado
+     * Entrada:
+     *      oVideojuego: clsListaConInfoDeVideojuego -> El videojuego el cual se ha seleccionado
+     * Salida: N/A
+     */
     private fun onVideojuegoSeleccionado(oVideojuegoConInfo: clsListaConInfoDeVideojuego){
         /*
         Si el usuario desde el que estamos dando al juego no es el nuestro, si no desde la lista de otro usuario, debemos hacer un postValue
@@ -196,6 +232,16 @@ class MiListaFragment : Fragment(), SearchView.OnQueryTextListener {
         navController.navigate(R.id.detallesFragment)
     }
 
+    /**
+     * Cabecera: private fun getNombreEstado(oVideojuegoConInfo: clsListaConInfoDeVideojuego)
+     * Descripcion: Este metodo se encarga de devolver el nombre de estado de un videojuego en la lista, para posteriormente mostrarlo por pantalla
+     * Precondiciones: La lista no puede estar vacia, por lo cual, se necesita conexion a Internet
+     * Postcondiciones: Se devolvera el nombre del estado del videojuego en cuestion
+     * Entrada:
+     *      oVideojuegoConInfo: clsListaConInfoDeVideojuego -> el videojuego del cual se desea obtener el nombre del estado
+     * Salida:
+     *      nombreEstado: String -> el nombre del estado del videojuego deseado
+     */
     private fun getNombreEstado(oVideojuegoConInfo: clsListaConInfoDeVideojuego): String {
         var nombreEstado = ""
         if(!oVideojuegoConInfo.idUsuario.isNullOrEmpty()){
@@ -205,7 +251,8 @@ class MiListaFragment : Fragment(), SearchView.OnQueryTextListener {
     }
 
     /**
-     * Este metodo devuelve el estado del usuario que esta observando la lista.
+     * Cabecera: private fun getEstadoDelUsuarioObservador(oVideojuegoConInfo: clsListaConInfoDeVideojuego)
+     * Descripcion: Este metodo devuelve el estado del usuario que esta observando la lista.
      * Pongamos un ejemplo:
      * Supongamos que el usuario A esta viendo la lista del usuario B. El usuario B tiene en su lista el videojuego
      * "The Witcher 3", pero el usuario A no tiene ese juego en su lista.
@@ -215,6 +262,12 @@ class MiListaFragment : Fragment(), SearchView.OnQueryTextListener {
      * idDelEstadoDelUsuarioObservador: 0
      * idDelUsuarioDueñoDeLaLista: 3 (o 4, o el que sea).
      * Pero esa es la idea de este metodo, traer el id del estado del usuario que esta observando la lista de otro usuario
+     * Precondiciones: La lista del usuario no puede estar vacia
+     * Postcondiciones: Se devolvera el estado del usuario que esta viendo la lista
+     * Entrada:
+     *      oVideojuegoConInfo: clsListaConInfoDeVideojuego -> El videojuego del cual se desea obtener el estado del usuario observador
+     * Salida:
+     *      idEstadoObservador: Int -> el id del estado del usuario que esta observando la lista
      */
     private fun getEstadoDelUsuarioObservador(oVideojuegoConInfo: clsListaConInfoDeVideojuego): Int{
         val idEstadoObservador = videojuegoViewModel.listaConInfoDeVideojuegosModel.find {
@@ -223,6 +276,17 @@ class MiListaFragment : Fragment(), SearchView.OnQueryTextListener {
         return idEstadoObservador
     }
 
+    /**
+     * Cabecera: private fun onVideojuegoAnyadidoOEditado(oVideojuego: clsListaConInfoDeVideojuego)
+     * Descripcion: Este metodo se encarga de gestionar el click de añadir o editar (el click al simbolo "+" para añadir, o el click al simbolo
+     * con un lapiz en un rectangulo para editar), pero con la informacion que este asociada al usuario que esta viendo la lista, y no al usuario
+     * que posee dicha lista
+     * Precondiciones: La lista no puede estar vacia
+     * Postcondiciones: Se navegara al Fragment de AnyadirOEditar, y este permitira añadir, editar, o eliminar, segun lo desee el usuario
+     * Entrada:
+     *      oVideojuego: clsListaConInfoDeVideojuego -> El videojuego a añadir/editar/eliminar
+     * Salida: N/A
+     */
     private fun onVideojuegoAnyadidoOEditado(oVideojuego: clsListaConInfoDeVideojuego){
         if(auth.currentUser!!.isAnonymous){
             MaterialAlertDialogHelper.errorPorSerAnonimo(this, auth)
@@ -242,6 +306,14 @@ class MiListaFragment : Fragment(), SearchView.OnQueryTextListener {
         }
     }
 
+    /**
+     * Cabecera: private fun cargarVideojuegosEnLista()
+     * Descripcion: Este metodo se encarga de cargar la lista de videojuegos del usuario en cuestion
+     * Precondiciones: Conexion a Internet, el usuario debe tener al menos un videojuego en su lista
+     * Postcondiciones: Se mostrara la lista del usuario por pantalla
+     * Entrada: N/A
+     * Salida: N/A
+     */
     private fun cargarVideojuegosEnLista(){
         try{
             CoroutineScope(Dispatchers.IO).launch { //iniciamos la corrutina
@@ -315,6 +387,14 @@ class MiListaFragment : Fragment(), SearchView.OnQueryTextListener {
         }
     }
 
+    /**
+     * Cabecera: private fun actualizarListas()
+     * Descripcion: Este metodo se encarga de simplemente actualizar la lista y actualizar la vista a su vez
+     * Precondiciones: N/A
+     * Postcondiciones: Se actualizara la lista y se mostraran los cambios por pantalla
+     * Entrada: N/A
+     * Salida: N/A
+     */
     private fun actualizarListas() {
         listaVideojuegosEnListaFiltrado.clear()
         listaVideojuegosEnListaFiltrado.addAll(listaVideojuegosEnListaCompleta)//añadimos lo de la lista completa a la lista que vamos a ofrecer
@@ -324,11 +404,17 @@ class MiListaFragment : Fragment(), SearchView.OnQueryTextListener {
         adapter.notifyDataSetChanged() //avisamos el adapter que hemos modificado la lista
     }
 
+    /**
+     * Metodo que se llama automaticamente cuando hacemos "Enter" en la barra de busqueda
+     */
     override fun onQueryTextSubmit(query: String?): Boolean {
         InterfazUsuarioUtils.hideKeyboard(binding.root, this)
         return true
     }
 
+    /**
+     * Metodo que se llama automaticamente cada vez que el usuario escriba una letra en la barra de busqueda
+     */
     override fun onQueryTextChange(newText: String?): Boolean {
         listaVideojuegosEnListaFiltrado.clear()
         if(!newText.isNullOrEmpty()){

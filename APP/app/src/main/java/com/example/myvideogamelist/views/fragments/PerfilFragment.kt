@@ -81,6 +81,14 @@ class PerfilFragment : Fragment() {
         binding.pBIndeterminada.visibility = View.GONE
     }
 
+    /**
+     * Cabecera: private fun cargarUsuario()
+     * Descripcion: Este metodo se encarga de cargar la informacion del usuario deseado
+     * Precondiciones: Conexion a Internet
+     * Postcondiciones: Se mostrara la informacion del usuario por pantalla
+     * Entrada: N/A
+     * Salida: N/A
+     */
     private fun cargarUsuario(){
         CoroutineScope(Dispatchers.IO).launch {
             /*

@@ -79,6 +79,15 @@ class ModificarCredencialesFragment : Fragment() {
         }
     }
 
+    /**
+     * Cabecera: private fun borrarCuenta()
+     * Descripcion: Este metodo se encarga de borrar la cuenta de Firebase, y si esta se ha borrado satisfactoriamente, tambien se borrara al usuario
+     * de la BBDD a traves de la API
+     * Precondiciones: Conexion a Internet, el usuario debe existir en Firebase y en la BBDD
+     * Postcondiciones: Se borrara al usuario de Firebase y de la BBDD
+     * Entrada: N/A
+     * Salida: N/A
+     */
     private fun borrarCuenta() {
         val navControllerMainContent = requireParentFragment().requireParentFragment().findNavController()
         var respuesta = 0

@@ -72,10 +72,19 @@ class CambiarNombreUsuarioFragment : Fragment() {
                 Snackbar.make(requireView(), Mensajes.informacion.PEDIR_CORRECION_DE_ERRORES, Snackbar.LENGTH_SHORT).show()
                 binding.tINuevoNombreUsuario.error = Mensajes.errores.USERNAME_MASDE2CHARS
             }
-
         }
     }
 
+    /**
+     * Cabecera: private fun editarNombreUsuario(nombreUsuario: String): Boolean
+     * Descripcion: Este metodo se encarga de editar el nombre de usuario en la BBDD
+     * Precondiciones: Se necesita conexion a Internet, el nuevo nombre de usuario no puede estar repetido
+     * Postcondiciones: Se cambiara el nombre de usuario si este esta disponible y es valido
+     * Entrada:
+     *      nombreUsuario: String -> El nuevo nombre de usuario
+     * Salida:
+     *      modificacionRealizada: Boolean -> True si se ha modificado, false si no
+     */
     private fun editarNombreUsuario(nombreUsuario: String): Boolean {
         var modificacionRealizada = true
         CoroutineScope(Dispatchers.IO).launch {
